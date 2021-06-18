@@ -13,8 +13,9 @@ using ZF_AuditoriaCalidad.Shared.DTOs;
 
 namespace ZF_AuditoriaCalidad.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
+    [Route("api/[controller]")]
     public class DetallesAuditoriaController : ControllerBase
     {
         private readonly ApplicationDbContext context;

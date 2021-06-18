@@ -12,8 +12,9 @@ using ZF_AuditoriaCalidad.Shared;
 
 namespace ZF_AuditoriaCalidad.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
+    [Route("api/[controller]")]
     public class AreasController : ControllerBase
     {
         private readonly ApplicationDbContext context;

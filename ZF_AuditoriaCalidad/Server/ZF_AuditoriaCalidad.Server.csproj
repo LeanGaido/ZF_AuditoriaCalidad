@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\Migrations\20210618142510_Correccion-Auditorias.cs" />
+    <Compile Remove="Data\Migrations\20210618142510_Correccion-Auditorias.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210618142818_Correccion-Auditorias-v2.cs" />
+    <Compile Remove="Data\Migrations\20210618142818_Correccion-Auditorias-v2.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="3.2.1" />
   </ItemGroup>

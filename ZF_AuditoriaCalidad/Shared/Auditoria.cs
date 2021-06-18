@@ -41,14 +41,13 @@ namespace ZF_AuditoriaCalidad.Shared
         public int SupervisorID { get; set; }
 
         //UserId del auditor
-        public int UserID { get; set; }
+        public string UserID { get; set; }
 
         public bool DeBaja { get; set; }
 
-        [DataType(DataType.Date)]
-        public DataType FechaBaja { get; set; }
+        public DateTime? FechaBaja { get; set; }
 
-        public int UserBajaID { get; set; }
+        public string UserBajaID { get; set; }
 
         public virtual Maquina Maquina { get; set; }
 

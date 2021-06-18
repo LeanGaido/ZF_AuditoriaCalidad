@@ -22,6 +22,13 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
 
+        public AuditoriasController(ApplicationDbContext context,
+            IMapper mapper)
+        {
+            this.context = context;
+            this.mapper = mapper;
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<Auditoria>>> Get([FromQuery] Paginacion paginacion)
         {

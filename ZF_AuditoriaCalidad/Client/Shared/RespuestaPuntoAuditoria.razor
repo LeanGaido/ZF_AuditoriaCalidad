@@ -1,0 +1,113 @@
+﻿@inject IRepositorio repositorio
+
+<div class="form-group">
+    <label>@puntoAuditoria.Descripcion</label>
+    <div>
+        @*@foreach (var respuesta in ListadoRespuestasDetalleAuditoria)
+            {*@
+        <a class="btn btn-@claseBotonSi" @onclick="@(() => Responder(respuestaSi))">@respuestaSi.Descripcion</a>
+        <a class="btn btn-@claseBotonNo" @onclick="@(() => Responder(respuestaNo))">@respuestaNo.Descripcion</a>
+        <a class="btn btn-@claseBotonNA" @onclick="@(() => Responder(respuestaNA))">@respuestaNA.Descripcion</a>
+        @if (detalleAuditoria.ID != 0)
+        {
+            if (detalleAuditoria.RespuestaID == 2) // idRepuesta NO
+            {
+                <a class="btn btn-@claseBotonCorregido" @onclick="@(() => Corregir(detalleAuditoria.ID))">Corregir</a>
+            }
+            if (detalleAuditoria.RespuestaID == 4) // idRepuesta corregido
+            {
+                <a class="btn btn-@claseBotonCorregido">Corregido</a>
+            }
+        }
+        @*}*@
+    </div>
+</div>
+
+@code {
+
+    [Parameter] public DetalleAuditoria detalleAuditoria { get; set; } = new DetalleAuditoria();
+    public RespuestaDetalleAuditoria respuestaSi = new RespuestaDetalleAuditoria() { Descripcion = "SI", ClaseHtml = "success", ID = 1 };
+    public RespuestaDetalleAuditoria respuestaNo = new RespuestaDetalleAuditoria() { Descripcion = "NO", ClaseHtml = "danger", ID = 2 };
+    public RespuestaDetalleAuditoria respuestaNA = new RespuestaDetalleAuditoria() { Descripcion = "N/A", ClaseHtml = "warning", ID = 3 };
+
+    private PuntoAuditoria puntoAuditoria = new PuntoAuditoria();
+    private string claseBotonSi = "light";
+    private string claseBotonNo = "light";
+    private string claseBotonNA = "warning";
+    private string claseBotonCorregido = "light";
+
+    protected async override Task OnInitializedAsync()
+    {
+        var responseHttpPuntoAuditoria = await repositorio.Get<PuntoAuditoria>($"api/PuntosAuditoria/{detalleAuditoria.PuntoAuditoriaID}");
+        puntoAuditoria = responseHttpPuntoAuditoria.Response;
+
+        switch (detalleAuditoria.RespuestaID)
+        {
+            case 1:
+                claseBotonSi = "success";
+                claseBotonNo = "light";
+                claseBotonNA = "light";
+                break;
+            case 2:
+                claseBotonSi = "light";
+                claseBotonNo = "danger";
+                claseBotonNA = "light";
+                break;
+            case 3:
+                claseBotonSi = "light";
+                claseBotonNo = "light";
+                claseBotonNA = "warning";
+                break;
+            case 4:
+                claseBotonSi = "light";
+                claseBotonNo = "light";
+                claseBotonNA = "light";
+                claseBotonCorregido = "info";
+                break;
+        }
+    }
+
+    private void Responder(RespuestaDetalleAuditoria respuestaDetalleAuditoria)
+    {
+        if (detalleAuditoria.ID == 0)
+        {
+            switch (respuestaDetalleAuditoria.ID)
+            {
+                case 1:
+                    claseBotonSi = respuestaDetalleAuditoria.ClaseHtml;
+                    claseBotonNo = "light";
+                    claseBotonNA = "light";
+                    break;
+                case 2:
+                    claseBotonSi = "light";
+                    claseBotonNo = respuestaDetalleAuditoria.ClaseHtml;
+                    claseBotonNA = "light";
+                    break;
+                case 3:
+                    claseBotonSi = "light";
+                    claseBotonNo = "light";
+                    claseBotonNA = respuestaDetalleAuditoria.ClaseHtml;
+                    break;
+            }
+            detalleAuditoria.RespuestaID = respuestaDetalleAuditoria.ID;
+        }
+    }
+
+    private async Task Corregir(int DetalleAuditoriaID)
+    {
+        if (detalleAuditoria.ID != 0)
+        {
+            claseBotonSi = "light";
+            claseBotonNo = "light";
+            claseBotonNA = "light";
+
+            detalleAuditoria.RespuestaID = 4;
+
+            var httpResponse = await repositorio.Put("api/DetallesAuditoria", detalleAuditoria);
+            if (!httpResponse.Error)
+            {
+                claseBotonCorregido = "info";
+            }
+        }
+    }
+}

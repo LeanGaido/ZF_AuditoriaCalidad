@@ -1,12 +1,9 @@
+using ZF_AuditoriaCalidad.Client.Repositorios;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ZF_AuditoriaCalidad.Client
@@ -24,9 +21,20 @@ namespace ZF_AuditoriaCalidad.Client
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ZF_AuditoriaCalidad.ServerAPI"));
 
+            builder.Services.AddScoped<IRepositorio, Repositorio>();
+
             builder.Services.AddApiAuthorization();
 
+            //ConfigureServices(builder.Services);
+
             await builder.Build().RunAsync();
+        }
+
+        private static void ConfigureServices(IServiceCollection services)
+        {
+            services.AddOptions();
+            services.AddScoped<IRepositorio, Repositorio>();
+            services.AddAuthorizationCore();
         }
     }
 }
