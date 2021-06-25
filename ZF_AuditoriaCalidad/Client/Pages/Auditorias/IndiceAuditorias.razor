@@ -54,7 +54,7 @@
 
     private async Task Cargar(int pagina = 1)
     {
-        var responseHttp = await repositorio.Get<List<Auditoria>>($"api/Auditorias?pagina={pagina}");
+        var responseHttp = await repositorio.Get<List<Auditoria>>($"/Auditorias?paginacion={pagina}");
         if (!responseHttp.Error)
         {
             Auditorias = responseHttp.Response;
