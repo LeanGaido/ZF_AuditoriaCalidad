@@ -80,20 +80,24 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> Post(Auditoria auditoria)
+        [AllowAnonymous]
+        public ActionResult<int> Post(Auditoria auditoria)
         {
-            context.Add(auditoria);
-            await context.SaveChangesAsync();
-
-            int AuditoriaID = auditoria.ID;
-
-            foreach (var detalle in auditoria.DetallesAuditoria)
+            if (ModelState.IsValid)
             {
-                detalle.AuditoriaID = AuditoriaID;
-            }
+                context.Add(auditoria);
+                context.SaveChanges();
 
-            context.DetallesAuditoria.AddRange(auditoria.DetallesAuditoria);
-            await context.SaveChangesAsync();
+                //int AuditoriaID = auditoria.ID;
+
+                //foreach (var detalle in auditoria.DetallesAuditoria)
+                //{
+                //    detalle.AuditoriaID = AuditoriaID;
+                //}
+
+                //context.DetallesAuditoria.AddRange(auditoria.DetallesAuditoria);
+                //context.SaveChanges();
+            }
 
             return auditoria.ID;
         }
