@@ -12,7 +12,6 @@ using ZF_AuditoriaCalidad.Shared;
 
 namespace ZF_AuditoriaCalidad.Server.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class PuntosAuditoriaController : ControllerBase

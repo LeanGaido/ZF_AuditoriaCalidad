@@ -142,6 +142,8 @@
 
     protected override void OnInitialized()
     {
+        NroDeOrden = auditoria.NroOrden;
+
         foreach (var punto in ListadoPuntosAuditoria)
         {
             ListadoDetallesAuditoria.Add(new DetalleAuditoria()

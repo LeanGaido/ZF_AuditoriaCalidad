@@ -2,65 +2,66 @@
 @inject IRepositorio repositorio
 @inject NavigationManager navigationManager
 
-
-<div class="form-group">
-    <div class="row">
-        <div class="col-md-6">
-            <label>Nro de Orden:</label>
-            <div>
-                <input readonly class="form-control" value="@Auditoria.NroOrden" />
-            </div>
-        </div>
-        <div class="col-md-6">
-            <label>Nro de Pieza:</label>
-            <div>
-                <input readonly class="form-control" value="@Auditoria.NroPieza" />
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="form-group">
-    <label>Areas:</label>
-    <div>
-        <input readonly class="form-control" value="@TextoArea" />
-    </div>
-</div>
-
-<div class="form-group">
-    <label>Procesos:</label>
-    <div>
-        <input readonly class="form-control" value="@TextoProceso" />
-    </div>
-</div>
-
-<div class="form-group">
-    <label>Maquinas:</label>
-    <div>
-        <input readonly class="form-control" value="@TextoMaquina" />
-    </div>
-</div>
-
-<div class="form-group">
-    <div class="row">
-        <div class="col-sm-6">
-            <label>Operario:</label>
-            <div>
-                <input readonly class="form-control" value="@TextoOperario" />
-            </div>
-        </div>
-        <div class="col-sm-6">
-            <label>Supervisores:</label>
-            <div>
-                <input readonly class="form-control" value="@TextoSupervisor" />
-            </div>
-        </div>
-    </div>
-</div>
-
-@foreach (var detalleAuditoria in detallesAuditoria)
+@if (Mostrar)
 {
-    <RespuestaPuntoAuditoria detalleAuditoria="detalleAuditoria"></RespuestaPuntoAuditoria>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-6">
+                <label>Nro de Orden:</label>
+                <div>
+                    <input readonly class="form-control" value="@Auditoria.NroOrden" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label>Nro de Pieza:</label>
+                <div>
+                    <input readonly class="form-control" value="@Auditoria.NroPieza" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Areas:</label>
+        <div>
+            <input readonly class="form-control" value="@TextoArea" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Maquinas:</label>
+        <div>
+            <input readonly class="form-control" value="@TextoMaquina" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Operario:</label>
+                <div>
+                    <input readonly class="form-control" value="@TextoOperario" />
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <label>Supervisores:</label>
+                <div>
+                    <input readonly class="form-control" value="@TextoSupervisor" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @foreach (var detalleAuditoria in detallesAuditoria)
+    {
+        <RespuestaPuntoAuditoria detalleAuditoria="detalleAuditoria"></RespuestaPuntoAuditoria>
+    }
+}
+else
+{
+    <div>
+        <textarea readonly>@MensajeError</textarea>
+    </div>
 }
 
 @code {
@@ -68,20 +69,22 @@
 
     private AuditoriaDTO Auditoria = new AuditoriaDTO();
     private List<DetalleAuditoria> detallesAuditoria = new List<DetalleAuditoria>();
-    private string TextoArea = "", TextoProceso = "", TextoMaquina = "", TextoOperario = "", TextoSupervisor = "";
+    private string TextoArea = "", TextoMaquina = "", TextoOperario = "", TextoSupervisor = "", MensajeError;
+    private bool Mostrar = false;
 
     protected async override Task OnInitializedAsync()
     {
         var responseHttp = await repositorio.Get<AuditoriaDTO>($"api/Auditorias/{AuditoriaID}");
         if (responseHttp.Error)
         {
+            Mostrar = false;
             if (responseHttp.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
                 navigationManager.NavigateTo("");
             }
             else
             {
-                var mensajeError = await responseHttp.GetBody();
+                MensajeError = await responseHttp.GetBody();
                 //await mostrarMensajes.MostrarMensajeError(mensajeError);
             }
         }
@@ -93,9 +96,10 @@
             TextoOperario = Auditoria.Operario.ApellidoYNombre;
             TextoSupervisor = Auditoria.Supervisor.ApellidoYNombre;
 
-
             var responseHttpDetallesAuditoria = await repositorio.Get<List<DetalleAuditoria>>($"api/DetallesAuditoria/{AuditoriaID}");
             detallesAuditoria = responseHttpDetallesAuditoria.Response;
+
+            Mostrar = true;
         }
     }
 }

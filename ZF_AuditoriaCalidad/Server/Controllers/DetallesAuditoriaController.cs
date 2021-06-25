@@ -13,7 +13,6 @@ using ZF_AuditoriaCalidad.Shared.DTOs;
 
 namespace ZF_AuditoriaCalidad.Server.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class DetallesAuditoriaController : ControllerBase
@@ -30,14 +29,14 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<DetalleAuditoriaDTO>>> Get(int id)
+        public ActionResult<List<DetalleAuditoriaDTO>> Get(int id)
         {
             List<DetalleAuditoriaDTO> detallesAuditoria = new List<DetalleAuditoriaDTO>();
 
-            if (await context.DetallesAuditoria.AnyAsync(x => x.AuditoriaID == id))
+            if (context.DetallesAuditoria.Any(x => x.AuditoriaID == id))
             {
-                var detalles = await context.DetallesAuditoria.Where(x => x.AuditoriaID == id)
-                                                                   .ToListAsync();
+                var detalles = context.DetallesAuditoria.Where(x => x.AuditoriaID == id)
+                                                                   .ToList();
 
                 Auditoria auditoria = new Auditoria();
                 RespuestaDetalleAuditoria respuestaDetalleAuditoria = new RespuestaDetalleAuditoria();
@@ -47,29 +46,22 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                 {
                     DetalleAuditoriaDTO detalleAuditoria = new DetalleAuditoriaDTO();
 
-                    if(auditoria.ID != detalle.AuditoriaID)
-                    {
-                        auditoria = await context.Auditorias.Where(x => x.ID == detalle.AuditoriaID)
-                                                            .FirstOrDefaultAsync();
-                    }
-
                     if (respuestaDetalleAuditoria.ID != detalle.RespuestaID)
                     {
-                        respuestaDetalleAuditoria = await context.RespuestasDetalleAuditoria.Where(x => x.ID == detalle.RespuestaID)
-                                                                                            .FirstOrDefaultAsync();
+                        respuestaDetalleAuditoria = context.RespuestasDetalleAuditoria.Where(x => x.ID == detalle.RespuestaID)
+                                                                                            .FirstOrDefault();
                     }
 
                     if (puntoAuditoria.ID != detalle.PuntoAuditoriaID)
                     {
-                        puntoAuditoria = await context.PuntosAuditoria.Where(x => x.ID == detalle.PuntoAuditoriaID)
-                                                                      .FirstOrDefaultAsync();
+                        puntoAuditoria = context.PuntosAuditoria.Where(x => x.ID == detalle.PuntoAuditoriaID)
+                                                                      .FirstOrDefault();
                     }
 
                     detalleAuditoria.ID = detalle.ID;
                     detalleAuditoria.AuditoriaID = detalle.AuditoriaID;
                     detalleAuditoria.RespuestaID = detalle.RespuestaID;
                     detalleAuditoria.PuntoAuditoriaID = detalle.PuntoAuditoriaID;
-                    detalleAuditoria.Auditoria = auditoria;
                     detalleAuditoria.RespuestaDetalleAuditoria = respuestaDetalleAuditoria;
                     detalleAuditoria.PuntoAuditoria = puntoAuditoria;
 
@@ -81,20 +73,21 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Put(DetalleAuditoria detalleAuditoria)
+        public ActionResult Put(DetalleAuditoria detalleAuditoria)
         {
-            context.Attach(detalleAuditoria).State = EntityState.Modified;
             //Obtengo el registro del detalle de auditoria a modificar
-            var detalleAuditoriaDB = await context.DetallesAuditoria.FirstOrDefaultAsync(x => x.ID == detalleAuditoria.ID);
+            //var detalleAuditoriaDB = context.DetallesAuditoria.FirstOrDefault(x => x.ID == detalleAuditoria.ID);
 
-            //Retorno NotFound si no existe el registro detalle de auditoria
-            if (detalleAuditoriaDB == null) { return NotFound(); }
+            ////Retorno NotFound si no existe el registro detalle de auditoria
+            //if (detalleAuditoriaDB == null) { return NotFound(); }
 
-            //"implementa" cambios en el obejo auditoria en detalleAuditoriaDB, para asi guardarlo en la base de datos*
-            detalleAuditoriaDB = mapper.Map(detalleAuditoria, detalleAuditoriaDB);
+            ////"implementa" cambios en el obejo auditoria en detalleAuditoriaDB, para asi guardarlo en la base de datos*
+            //detalleAuditoriaDB = mapper.Map(detalleAuditoria, detalleAuditoriaDB);
+
+            context.Entry(detalleAuditoria).State = EntityState.Modified;
 
             //Guarda Cambios
-            await context.SaveChangesAsync();
+            context.SaveChanges();
 
             return NoContent();
         }

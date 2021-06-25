@@ -14,7 +14,6 @@ using ZF_AuditoriaCalidad.Shared.DTOs;
 
 namespace ZF_AuditoriaCalidad.Server.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AuditoriasController : ControllerBase
@@ -30,6 +29,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Auditoria>>> Get([FromQuery] Paginacion paginacion)
         {
             var queryable = context.Auditorias.AsQueryable();
@@ -41,40 +41,25 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<AuditoriaDTO>> Get(int id)
+        public ActionResult<AuditoriaDTO> Get(int id)
         {
-            var Auditoria = await context.Auditorias.Where(x => x.ID == id)
+            var Auditoria = context.Auditorias.Where(x => x.ID == id)
                                                     .Include(x => x.Maquina).ThenInclude(x => x.Area)
                                                     .Include(x => x.Operario)
                                                     .Include(x => x.Supervisor)
-                                                    .FirstOrDefaultAsync();
+                                                    .FirstOrDefault();
 
             if (Auditoria == null) { return NotFound(); }
-
-            Area area = new Area();
-            Maquina maquina = new Maquina();
-
-            if (await context.Maquinas.AnyAsync(x => x.ID == Auditoria.MaquinaID))
-            {
-                maquina = await context.Maquinas.Where(x => x.ID == Auditoria.MaquinaID)
-                                                .FirstOrDefaultAsync();
-            }
-
-            if (await context.DetallesAuditoria.AnyAsync(x => x.AuditoriaID == id))
-            {
-                Auditoria.DetallesAuditoria = await context.DetallesAuditoria.Where(x => x.AuditoriaID == id)
-                                                                             .ToListAsync();
-            }
 
             var AuditoriaDTO = new AuditoriaDTO();
 
             AuditoriaDTO.NroOrden = Auditoria.NroOrden;
             AuditoriaDTO.NroPieza = Auditoria.NroPieza;
-            AuditoriaDTO.Area = area;
-            AuditoriaDTO.Maquina = maquina;
+            AuditoriaDTO.Area = Auditoria.Maquina.Area;
+            AuditoriaDTO.Maquina = Auditoria.Maquina;
             AuditoriaDTO.Operario = Auditoria.Operario;
             AuditoriaDTO.Supervisor = Auditoria.Supervisor;
-            AuditoriaDTO.DetallesAuditoria = Auditoria.DetallesAuditoria;
+            AuditoriaDTO.DetallesAuditoria = new List<DetalleAuditoria>();
 
             return AuditoriaDTO;
         }
@@ -87,16 +72,6 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
             {
                 context.Add(auditoria);
                 context.SaveChanges();
-
-                //int AuditoriaID = auditoria.ID;
-
-                //foreach (var detalle in auditoria.DetallesAuditoria)
-                //{
-                //    detalle.AuditoriaID = AuditoriaID;
-                //}
-
-                //context.DetallesAuditoria.AddRange(auditoria.DetallesAuditoria);
-                //context.SaveChanges();
             }
 
             return auditoria.ID;
