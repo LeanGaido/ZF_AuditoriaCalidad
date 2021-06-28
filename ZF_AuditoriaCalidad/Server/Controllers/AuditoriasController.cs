@@ -29,7 +29,6 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<ActionResult<List<Auditoria>>> Get([FromQuery] Paginacion paginacion)
         {
             var queryable = context.Auditorias.AsQueryable();

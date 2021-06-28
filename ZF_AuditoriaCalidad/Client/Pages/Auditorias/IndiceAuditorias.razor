@@ -1,5 +1,7 @@
 ﻿@page "/auditorias"
 @inject IRepositorio repositorio
+@attribute [Authorize]
+@inject HttpClient Http
 @*@inject IMostrarMensajes mostrarMensajes*@
 
 <div class="form-group">
@@ -43,7 +45,14 @@
 
     protected async override Task OnInitializedAsync()
     {
-        await Cargar();
+        try
+        {
+            await Cargar();
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
     }
 
     private async Task paginaSeleccionada(int pagina)
@@ -54,7 +63,7 @@
 
     private async Task Cargar(int pagina = 1)
     {
-        var responseHttp = await repositorio.Get<List<Auditoria>>($"/Auditorias?paginacion={pagina}");
+        var responseHttp = await repositorio.Get<List<Auditoria>>($"api/Auditorias?pagina={pagina}");
         if (!responseHttp.Error)
         {
             Auditorias = responseHttp.Response;
@@ -77,3 +86,4 @@
 
     //}
 }
+
