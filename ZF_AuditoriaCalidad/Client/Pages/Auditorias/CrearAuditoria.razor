@@ -1,0 +1,72 @@
+﻿@page "/auditorias/crear"
+@inject NavigationManager navigationManager
+@inject IRepositorio repositorio
+
+<h3>Nueva Auditoria</h3>
+
+@if (MostrarFormulario)
+{
+    <FormularioAuditorias OnValidSubmit="Crear"
+                          auditoria="auditoria"
+                          ListadoAreas="ListadoAreas"
+                          ListadoMaquinas="ListadoMaquinas"
+                          ListadoPuntosAuditoria="ListadoPuntosAuditoria"
+                          ListadoRespuestasDetalleAuditoria="ListadoRespuestasDetalleAuditoria"></FormularioAuditorias>
+}
+else
+{
+    <text>Cargando...</text>
+}
+
+@code {
+    private bool MostrarFormulario { get; set; } = false;
+    private Auditoria auditoria = new Auditoria();
+
+    [Parameter] public List<Area> ListadoAreas { get; set; } = new List<Area>();
+    [Parameter] public List<Maquina> ListadoMaquinas { get; set; } = new List<Maquina>();
+    [Parameter] public List<Operario> ListadoSupervisores { get; set; } = new List<Operario>();
+    [Parameter] public List<Operario> ListadoOperarios { get; set; } = new List<Operario>();
+    [Parameter] public List<PuntoAuditoria> ListadoPuntosAuditoria { get; set; } = new List<PuntoAuditoria>();
+    [Parameter] public List<RespuestaDetalleAuditoria> ListadoRespuestasDetalleAuditoria { get; set; } = new List<RespuestaDetalleAuditoria>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        var responseHttpAreas = await repositorio.Get<List<Area>>("api/Areas");
+        ListadoAreas = responseHttpAreas.Response;
+
+
+        var responseHttpMaquinas = await repositorio.Get<List<Maquina>>("api/Maquinas");
+        ListadoMaquinas = responseHttpMaquinas.Response;
+
+
+        var responseHttpOperarios = await repositorio.Get<List<Operario>>("api/Operarios");
+        ListadoSupervisores = responseHttpOperarios.Response;
+        ListadoOperarios = responseHttpOperarios.Response;
+
+        var responseHttpPuntosAuditoria = await repositorio.Get<List<PuntoAuditoria>>("api/PuntosAuditoria");
+        ListadoPuntosAuditoria = responseHttpPuntosAuditoria.Response;
+
+        var responseHttpRespuestasDetalleAuditoria = await repositorio.Get<List<RespuestaDetalleAuditoria>>("api/RespuestasDetalleAuditoria");
+        ListadoRespuestasDetalleAuditoria = responseHttpRespuestasDetalleAuditoria.Response;
+
+        MostrarFormulario = true;
+    }
+
+    async Task Crear()
+    {
+        var httpResponse = await repositorio.Post<Auditoria, int>("api/Auditorias", auditoria);
+
+        if (httpResponse.Error)
+        {
+            var mensajeError = await httpResponse.GetBody();
+            //await mostrarMensajes.MostrarMensajeError(mensajeError);
+        }
+        else
+        {
+            var AuditoriaId = httpResponse.Response;
+            //navigationManager.NavigateTo($"/Auditorias/{AuditoriaId}");
+            navigationManager.NavigateTo($"/Auditorias");
+        }
+    }
+
+}
