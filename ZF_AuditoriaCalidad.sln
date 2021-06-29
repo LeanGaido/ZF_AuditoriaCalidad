@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZF_AuditoriaCalidad.Server", "ZF_AuditoriaCalidad\Server\ZF_AuditoriaCalidad.Server.csproj", "{7874E7F8-4496-40F3-ABEC-0C225ED3827D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZF_AuditoriaCalidad.Server", "ZF_AuditoriaCalidad\Server\ZF_AuditoriaCalidad.Server.csproj", "{7874E7F8-4496-40F3-ABEC-0C225ED3827D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZF_AuditoriaCalidad.Client", "ZF_AuditoriaCalidad\Client\ZF_AuditoriaCalidad.Client.csproj", "{F8F1FDB8-C7E5-4141-A062-F8827CACB482}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZF_AuditoriaCalidad.Client", "ZF_AuditoriaCalidad\Client\ZF_AuditoriaCalidad.Client.csproj", "{F8F1FDB8-C7E5-4141-A062-F8827CACB482}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZF_AuditoriaCalidad.Shared", "ZF_AuditoriaCalidad\Shared\ZF_AuditoriaCalidad.Shared.csproj", "{626FB643-202A-4EB9-920C-2A3955DB6D61}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZF_AuditoriaCalidad.Shared", "ZF_AuditoriaCalidad\Shared\ZF_AuditoriaCalidad.Shared.csproj", "{626FB643-202A-4EB9-920C-2A3955DB6D61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

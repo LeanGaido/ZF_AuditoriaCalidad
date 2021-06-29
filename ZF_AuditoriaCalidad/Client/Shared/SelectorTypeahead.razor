@@ -1,0 +1,54 @@
+﻿@typeparam T
+
+<CustomTypeahead SearchMethod="@((string value) => SearchMethod(value))"
+                 Value="@sampleItem"
+                 Placeholder="@Placeholder"
+                 ValueChanged="@((T item) => ElementoSeleccionado(item))">
+    <ResultTemplate>
+        @MyResultTemplate(context)
+    </ResultTemplate>
+</CustomTypeahead>
+
+<ul class="list-group">
+    @foreach (var item in ElementosSeleccionados)
+    {
+        <li class="list-group-item list-group-item-action">
+            @MyListTemplate(item)
+            @if (CanDelete)
+            {
+                <span @onclick="@(() => ElementosSeleccionados.Remove(item))"
+                      class="badge badge-primary badge-pill"
+                      style="cursor: pointer">X</span>
+            }
+        </li>
+    }
+</ul>
+
+@code {
+    [Parameter] public List<T> ElementosSeleccionados { get; set; } = new List<T>();
+    [Parameter] public bool CanDelete { get; set; } = false;
+    [Parameter] public Func<string, Task<IEnumerable<T>>> SearchMethod { get; set; }
+    [Parameter] public RenderFragment<T> MyResultTemplate { get; set; }
+    [Parameter] public RenderFragment<T> MyListTemplate { get; set; }
+    [Parameter] public string ControlName { get; set; }
+    [Parameter] public string Placeholder { get; set; }
+
+    T sampleItem = default(T);
+
+    private void ElementoSeleccionado(T item)
+    {
+        if (!ElementosSeleccionados.Any(x => x.Equals(item)))
+        {
+            if (ElementosSeleccionados.Count < 1)
+            {
+                ElementosSeleccionados.Add(item);
+            }
+            else
+            {
+                ElementosSeleccionados.Clear();
+                ElementosSeleccionados.Add(item);
+            }
+        }
+        sampleItem = default(T);
+    }
+}

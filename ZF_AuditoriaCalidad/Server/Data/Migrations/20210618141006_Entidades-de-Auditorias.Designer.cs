@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ZF_AuditoriaCalidad.Server.Data;
 
 namespace ZF_AuditoriaCalidad.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210618141006_Entidades-de-Auditorias")]
+    partial class EntidadesdeAuditorias
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -333,8 +335,8 @@ namespace ZF_AuditoriaCalidad.Server.Data.Migrations
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("FechaBaja")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("FechaBaja")
+                        .HasColumnType("int");
 
                     b.Property<string>("Hora")
                         .HasColumnType("nvarchar(5)")
@@ -358,11 +360,11 @@ namespace ZF_AuditoriaCalidad.Server.Data.Migrations
                     b.Property<int>("SupervisorID")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserBajaID")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UserBajaID")
+                        .HasColumnType("int");
 
-                    b.Property<string>("UserID")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 

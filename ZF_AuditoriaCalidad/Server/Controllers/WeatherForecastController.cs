@@ -9,7 +9,6 @@ using ZF_AuditoriaCalidad.Shared;
 
 namespace ZF_AuditoriaCalidad.Server.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
