@@ -19,6 +19,8 @@ namespace ZF_AuditoriaCalidad.Shared
         [ForeignKey("PuntoAuditoria")]
         public int PuntoAuditoriaID { get; set; }
 
+        public DateTime? FechaCorreccion { get; set; }
+
         public virtual Auditoria Auditoria { get; set; }
 
         public virtual RespuestaDetalleAuditoria RespuestaDetalleAuditoria { get; set; }

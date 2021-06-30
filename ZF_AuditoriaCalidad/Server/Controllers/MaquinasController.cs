@@ -44,12 +44,13 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         }
 
         [HttpGet("buscar/{textoBusqueda}")]
-        public async Task<ActionResult<List<Maquina>>> Get(string textoBusqueda)
+        public async Task<ActionResult<List<Maquina>>> Get(string textoBusqueda, int Id)
         {
             if (string.IsNullOrWhiteSpace(textoBusqueda)) { return new List<Maquina>(); }
             textoBusqueda = textoBusqueda.ToLower();
             return await context.Maquinas
-                .Where(x => x.Descripcion.ToLower().Contains(textoBusqueda)).ToListAsync();
+                .Where(x => x.Descripcion.ToLower().Contains(textoBusqueda)  &&
+                            x.AreaID == Id).ToListAsync();
         }
     }
 }
