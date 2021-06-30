@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using ZF_AuditoriaCalidad.Client.Helpers;
 
 namespace ZF_AuditoriaCalidad.Client.Repositorios
 {
@@ -12,9 +13,9 @@ namespace ZF_AuditoriaCalidad.Client.Repositorios
     {
         private readonly HttpClient httpClient;
 
-        public Repositorio(HttpClient httpClient)
+        public Repositorio(HttpClientConToken httpClient)
         {
-            this.httpClient = httpClient;
+            this.httpClient = httpClient.Client;
         }
 
         private JsonSerializerOptions OpcionesPorDefectoJSON =>
