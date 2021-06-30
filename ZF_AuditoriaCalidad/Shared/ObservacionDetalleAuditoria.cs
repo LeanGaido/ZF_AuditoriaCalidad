@@ -13,13 +13,16 @@ namespace ZF_AuditoriaCalidad.Shared
         [ForeignKey("DetalleAuditoria")]
         public int DetalleAuditoriaID { get; set; }
 
-        [ForeignKey("Observacion")]
         public int ObservacionID { get; set; }
 
         public bool Contemplada { get; set; }
 
         public virtual DetalleAuditoria DetalleAuditoria { get; set; }
 
-        public virtual Observacion Observacion { get; set; }
+        [NotMapped]
+        public Observacion Observacion { get; set; }
+
+        [NotMapped]
+        public ObservacionNoContemplada ObservacionNoContemplada { get; set; }
     }
 }
