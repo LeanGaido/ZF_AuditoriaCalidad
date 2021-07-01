@@ -14,6 +14,8 @@ namespace ZF_AuditoriaCalidad.Shared.DTOs
 
         public int PuntoAuditoriaID { get; set; }
 
+        public List<Observacion> Observaciones { get; set; }
+
         public virtual Auditoria Auditoria { get; set; }
 
         public virtual RespuestaDetalleAuditoria RespuestaDetalleAuditoria { get; set; }

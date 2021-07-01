@@ -1,0 +1,71 @@
+﻿@inject IRepositorio repositorio
+@inject IJSRuntime JsRuntime
+
+@if (detalleAuditoria.ID != 0)
+{
+    <label>Observaciones: </label>
+}
+<ul>
+    @if (detalleAuditoria.Observaciones != null)
+    {
+        foreach (var observacion in detalleAuditoria.Observaciones)
+        {
+            <li data-id="@observacion.ID">
+                @observacion.Descripcion
+            </li>
+        }
+    }
+</ul>
+@if(detalleAuditoria.ID == 0)
+{
+    <label>Observacion: </label>
+    <div>
+        <div class="input-group">
+            <select class="form-control" @bind="ObservacionSeleccionada">
+                @foreach (var observacion in ListadoObservaciones)
+                {
+                    <option value="@observacion.ID">@observacion.Descripcion</option>
+                }
+            </select>
+            <div class="input-group-append">
+                <a class="btn btn-outline-primary" @onclick="@(() => Seleccionar())">Seleccionar</a>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private int ObservacionSeleccionada = 0;
+    [Parameter] public List<Observacion> ListadoObservaciones { get; set; } = new List<Observacion>();
+    [Parameter] public DetalleAuditoria detalleAuditoria { get; set; } = new DetalleAuditoria();
+
+    private string descripcion = "";
+    private int CantObservaciones = new Random().Next(0, 3);
+
+    protected async override Task OnInitializedAsync()
+    {
+        var responseHttpObservaciones = await repositorio.Get<List<Observacion>>("api/Observaciones/" + detalleAuditoria.PuntoAuditoriaID);
+        ListadoObservaciones = responseHttpObservaciones.Response;
+        ObservacionSeleccionada = (ListadoObservaciones.FirstOrDefault() != null) ? ListadoObservaciones.First().ID : 0;
+    }
+
+    private async Task Seleccionar()
+    {
+        if (detalleAuditoria.Observaciones == null)
+        {
+            detalleAuditoria.Observaciones = new List<Observacion>();
+        }
+
+        var obsSeleccionada = ListadoObservaciones.Where(x => x.ID == ObservacionSeleccionada).FirstOrDefault();
+
+        if (obsSeleccionada != null)
+        {
+            if (detalleAuditoria.Observaciones.Where(x => x.ID == obsSeleccionada.ID).FirstOrDefault() == null)
+            {
+                detalleAuditoria.Observaciones.Add(obsSeleccionada);
+            }
+        }
+
+        ObservacionSeleccionada = 0;
+    }
+}

@@ -71,6 +71,24 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
             {
                 context.Add(auditoria);
                 context.SaveChanges();
+
+                foreach (var detalleAuditoria in auditoria.DetallesAuditoria)
+                {
+                    if(detalleAuditoria.Observaciones != null && detalleAuditoria.Observaciones.Count > 0)
+                    {
+                        foreach (var obs in detalleAuditoria.Observaciones)
+                        {
+                            ObservacionDetalleAuditoria observacionDetalleAuditoria = new ObservacionDetalleAuditoria();
+
+                            observacionDetalleAuditoria.DetalleAuditoriaID = detalleAuditoria.ID;
+                            observacionDetalleAuditoria.ObservacionID = obs.ID;
+                            observacionDetalleAuditoria.Contemplada = obs.Contemplada;
+
+                            context.ObservacionesDetalleAuditoria.Add(observacionDetalleAuditoria);
+                            context.SaveChanges();
+                        }
+                    }
+                }
             }
 
             return auditoria.ID;

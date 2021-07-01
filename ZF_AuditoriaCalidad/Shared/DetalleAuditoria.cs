@@ -21,6 +21,9 @@ namespace ZF_AuditoriaCalidad.Shared
 
         public DateTime? FechaCorreccion { get; set; }
 
+        [NotMapped]
+        public List<Observacion> Observaciones { get; set; }
+
         public virtual Auditoria Auditoria { get; set; }
 
         public virtual RespuestaDetalleAuditoria RespuestaDetalleAuditoria { get; set; }

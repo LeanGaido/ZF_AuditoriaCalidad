@@ -2,6 +2,7 @@
 
 <div class="form-group">
     <label>@puntoAuditoria.Descripcion</label>
+    <br />
     <div>
         @*@foreach (var respuesta in ListadoRespuestasDetalleAuditoria)
             {*@
@@ -21,6 +22,11 @@
         }
         @*}*@
     </div>
+    @if (detalleAuditoria.RespuestaID == 2 || detalleAuditoria.RespuestaID == 4)
+    {
+        <br />
+        <ObservacionesDetalleAuditoria detalleAuditoria="detalleAuditoria"></ObservacionesDetalleAuditoria>
+    }
 </div>
 
 @code {
