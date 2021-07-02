@@ -17,8 +17,13 @@ namespace ZF_AuditoriaCalidad.Shared
         [ForeignKey("AreaResponsable")]
         public int AreaResponsableID { get; set; }
 
+        [ForeignKey("PuntoAuditoria")]
+        public int PuntoAuditoriaID { get; set; }
+
         public string UserID { get; set; }
 
         public virtual Area AreaResponsable { get; set; }
+
+        public virtual PuntoAuditoria PuntoAuditoria { get; set; }
     }
 }

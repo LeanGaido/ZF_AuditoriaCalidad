@@ -41,6 +41,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                 Auditoria auditoria = new Auditoria();
                 RespuestaDetalleAuditoria respuestaDetalleAuditoria = new RespuestaDetalleAuditoria();
                 PuntoAuditoria puntoAuditoria = new PuntoAuditoria();
+                List<Observacion> observaciones = new List<Observacion>();
 
                 foreach (var detalle in detalles)
                 {
@@ -58,12 +59,47 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                                                                       .FirstOrDefault();
                     }
 
+                    List<int> observacionesContempladasId = context.ObservacionesDetalleAuditoria.Where(x => x.DetalleAuditoriaID == detalle.ID &&
+                                                                                                             x.Contemplada)
+                                                                                                 .Select(x => x.ObservacionID).ToList();
+
+                    List<int> observacionesNoContempladasId = context.ObservacionesDetalleAuditoria.Where(x => x.DetalleAuditoriaID == detalle.ID &&
+                                                                                                               !x.Contemplada)
+                                                                                                 .Select(x => x.ObservacionID).ToList();
+
+                    observaciones = (from oObsContempladas in context.Observaciones
+                                                       where observacionesContempladasId.Contains(oObsContempladas.ID)
+                                                       select new Observacion
+                                                       {
+                                                           ID = oObsContempladas.ID,
+                                                           Descripcion = oObsContempladas.Descripcion,
+                                                           ParaLaLinea = oObsContempladas.ParaLaLinea,
+                                                           AreaResponsableID = oObsContempladas.AreaResponsableID,
+                                                           PuntoAuditoriaID = oObsContempladas.PuntoAuditoriaID,
+                                                           Contemplada = true
+                                                       }).ToList();//context.Observaciones.Where(x => observacionesContempladasId.Contains(x.ID)).ToList();
+
+                    List<Observacion> observacionesNoContempladas = (from oObsNoContempladas in context.ObservacionesNoContempladas
+                                                                     where observacionesNoContempladasId.Contains(oObsNoContempladas.ID)
+                                                                     select new Observacion
+                                                                     {
+                                                                         ID = oObsNoContempladas.ID,
+                                                                         Descripcion = oObsNoContempladas.Descripcion,
+                                                                         ParaLaLinea = oObsNoContempladas.ParaLaLinea,
+                                                                         AreaResponsableID = oObsNoContempladas.AreaResponsableID,
+                                                                         PuntoAuditoriaID = oObsNoContempladas.PuntoAuditoriaID,
+                                                                         Contemplada = false
+                                                                     }).ToList();
+
+                    observaciones.AddRange(observacionesNoContempladas);
+
                     detalleAuditoria.ID = detalle.ID;
                     detalleAuditoria.AuditoriaID = detalle.AuditoriaID;
                     detalleAuditoria.RespuestaID = detalle.RespuestaID;
                     detalleAuditoria.PuntoAuditoriaID = detalle.PuntoAuditoriaID;
                     detalleAuditoria.RespuestaDetalleAuditoria = respuestaDetalleAuditoria;
                     detalleAuditoria.PuntoAuditoria = puntoAuditoria;
+                    detalleAuditoria.Observaciones = observaciones;
 
                     detallesAuditoria.Add(detalleAuditoria);
                 }

@@ -1,0 +1,145 @@
+﻿@inject IRepositorio repositorio
+@inject IJSRuntime JsRuntime
+
+@if (detalleAuditoria.ID != 0)
+{
+    <label>Observaciones: </label>
+}
+<ul>
+    @if (detalleAuditoria.Observaciones != null)
+    {
+        foreach (var observacion in detalleAuditoria.Observaciones)
+        {
+            <li data-id="@detalleAuditoria.Observaciones.IndexOf(observacion)">
+                @observacion.Descripcion <a class="btn btn-primary" @onclick="@(() => EliminarObservacion(detalleAuditoria.Observaciones.IndexOf(observacion)))" style="padding: 2px 10px 2px 10px; margin-left: 15px">x</a>
+            </li>
+        }
+    }
+</ul>
+@if (detalleAuditoria.ID == 0)
+{
+    <label>Observacion: </label>
+    <div class="col-md-12">
+        <label for="Contemplada">Contemplada: </label>
+        <input type="checkbox" id="Contemplada" @bind="Contemplada" />
+    </div>
+    if (Contemplada)
+    {
+        <div class="col-md-10">
+            <div class="input-group">
+                <select class="form-control" @bind="ObservacionSeleccionada">
+                    @foreach (var observacion in ListadoObservaciones)
+                    {
+                        <option value="@observacion.ID">@observacion.Descripcion</option>
+                    }
+                </select>
+                <div class="input-group-append">
+                    <a class="btn btn-outline-primary" @onclick="@(() => Seleccionar())">Agregar Observacion</a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-5">
+                    <input type="text" name="DescripcionNoContemplada" class="form-control" placeholder="Descripcion" @bind-value="DescripcionNoContemplada" />
+                </div>
+                <div class="col-md-3">
+                    <select class="form-control" @bind="AreaResponsableSeleccionada">
+                        @foreach (var area in ListadoAreas)
+                        {
+                            <option value="@area.ID">@area.Descripcion</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="ParaLaLinea">Para la Linea?</label>
+                    <input type="checkbox" id="ParaLaLinea" @bind="ParaLaLinea" />
+                </div>
+                <div class="col-md-2">
+                    <a class="btn btn-outline-primary" @onclick="@(() => SeleccionarNoContemplada())">Agregar Observacion</a>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    private bool Contemplada = true;
+    private int ObservacionSeleccionada = 0;
+    private int AreaResponsableSeleccionada = 0;
+    private bool ParaLaLinea = true;
+    private string DescripcionNoContemplada = "";
+    [Parameter] public List<Area> ListadoAreas { get; set; } = new List<Area>();
+    [Parameter] public List<Observacion> ListadoObservaciones { get; set; } = new List<Observacion>();
+    [Parameter] public DetalleAuditoria detalleAuditoria { get; set; } = new DetalleAuditoria();
+
+    private string descripcion = "";
+    private int CantObservaciones = new Random().Next(0, 3);
+
+    protected async override Task OnInitializedAsync()
+    {
+        var responseHttpObservaciones = await repositorio.Get<List<Observacion>>("api/Observaciones/" + detalleAuditoria.PuntoAuditoriaID);
+        ListadoObservaciones = responseHttpObservaciones.Response;
+        ObservacionSeleccionada = (ListadoObservaciones.FirstOrDefault() != null) ? ListadoObservaciones.First().ID : 0;
+
+        var responseHttpAreas = await repositorio.Get<List<Area>>("api/Areas/");
+        ListadoAreas = responseHttpAreas.Response;
+        AreaResponsableSeleccionada = (ListadoAreas.FirstOrDefault() != null) ? ListadoAreas.First().ID : 0;
+    }
+
+    private async Task Seleccionar()
+    {
+        if (detalleAuditoria.Observaciones == null)
+        {
+            detalleAuditoria.Observaciones = new List<Observacion>();
+        }
+
+        var obsSeleccionada = ListadoObservaciones.Where(x => x.ID == ObservacionSeleccionada).FirstOrDefault();
+
+        if (obsSeleccionada != null)
+        {
+            if (detalleAuditoria.Observaciones.Where(x => x.ID == obsSeleccionada.ID).FirstOrDefault() == null)
+            {
+                detalleAuditoria.Observaciones.Add(obsSeleccionada);
+            }
+        }
+
+        ObservacionSeleccionada = 0;
+    }
+
+    private async Task SeleccionarNoContemplada()
+    {
+        if(string.IsNullOrEmpty(DescripcionNoContemplada.Trim()))
+        {
+
+        }
+        if (detalleAuditoria.Observaciones == null)
+        {
+            detalleAuditoria.Observaciones = new List<Observacion>();
+        }
+
+        if (detalleAuditoria.Observaciones.Where(x => x.Descripcion == DescripcionNoContemplada).FirstOrDefault() == null)
+        {
+            detalleAuditoria.Observaciones.Add(new Observacion()
+            {
+                Descripcion = DescripcionNoContemplada.Trim(),
+                ParaLaLinea = ParaLaLinea,
+                AreaResponsableID = AreaResponsableSeleccionada,
+                PuntoAuditoriaID = detalleAuditoria.PuntoAuditoriaID,
+                Contemplada = false
+            });
+        }
+
+        DescripcionNoContemplada = "";
+        AreaResponsableSeleccionada = 0;
+        ParaLaLinea = false;
+    }
+
+    private async Task EliminarObservacion(int Index)
+    {
+        detalleAuditoria.Observaciones.RemoveAt(Index);
+    }
+}
