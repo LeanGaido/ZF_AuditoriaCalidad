@@ -8,9 +8,6 @@
     <a class="btn btn-info" href="auditorias/crear">Nueva Auditoria</a>
 </div>
 
-<Paginacion PaginaActual="paginaActual" PaginaSeleccionada="paginaSeleccionada"
-            PaginasTotales="paginasTotales"></Paginacion>
-
 <ListadoGenerico Listado="Auditorias">
     <HayRegistrosCompleto>
         <table class="table table-striped">
@@ -26,8 +23,8 @@
                 {
                     <tr>
                         <td>
-                            <a href="Auditorias/@item.ID" class="btn btn-success">Ver</a>
-                            @*<button @onclick="@(() => BorrarPersona(item))" class="btn btn-danger">Borrar</button>*@
+                            <a href="Auditorias/@item.ID" class="btn btn-success"><ion-icon name="folder-open"></ion-icon></a>
+                            <button @onclick="@(() => BorrarAuditoria(item))" class="btn btn-danger"><ion-icon name="trash"></ion-icon></button>
                         </td>
                         <td>@item.NroOrden</td>
                         <td>@item.NroPieza</td>
@@ -38,10 +35,71 @@
     </HayRegistrosCompleto>
 </ListadoGenerico>
 
+<Paginacion PaginaActual="paginaActual" PaginaSeleccionada="paginaSeleccionada"
+            PaginasTotales="paginasTotales"></Paginacion>
+
+<Confirmacion MostrarConfirmacion="Mostrar"
+              Titulo="@Titulo"
+              onCancel="CerrarConfirmacion"
+              onConfirm="@(() => ConfirmacionBorrarAuditoria(Auditoria))">
+    <ChildContent>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Nro de Orden:</label>
+                    <div>
+                        <input readonly class="form-control" value="@Auditoria.NroOrden" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label>Nro de Pieza:</label>
+                    <div>
+                        <input readonly class="form-control" value="@Auditoria.NroPieza" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Areas:</label>
+            <div>
+                <input readonly class="form-control" value="@Auditoria.Maquina.Area.Descripcion" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Maquinas:</label>
+            <div>
+                <input readonly class="form-control" value="@Auditoria.Maquina.Descripcion" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-sm-6">
+                    <label>Operario:</label>
+                    <div>
+                        <input readonly class="form-control" value="@Auditoria.Operario.ApellidoYNombre" />
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label>Supervisores:</label>
+                    <div>
+                        <input readonly class="form-control" value="@Auditoria.Supervisor.ApellidoYNombre" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ChildContent>
+</Confirmacion>
+
 @code {
     public List<Auditoria> Auditorias { get; set; }
+    private Auditoria Auditoria = new Auditoria();
     private int paginaActual = 1;
     private int paginasTotales;
+    private bool Mostrar = false;
+    private string Titulo = "";
 
     protected async override Task OnInitializedAsync()
     {
@@ -72,18 +130,32 @@
         }
     }
 
-    //private async Task BorrarPersona(Persona persona)
-    //{
-    //    var responseHttp = await repositorio.Delete($"api/personas/{persona.Id}");
-    //    if (responseHttp.Error)
-    //    {
-    //        await mostrarMensajes.MostrarMensajeError(await responseHttp.GetBody());
-    //    }
-    //    else
-    //    {
-    //        await Cargar();
-    //    }
+    private async Task CerrarConfirmacion()
+    {
+        Auditoria = null;
+        Titulo = "";
+        Mostrar = false;
+    }
 
-    //}
+    private async Task BorrarAuditoria(Auditoria auditoria)
+    {
+        Titulo = "Esta seguro de eliminar esta Auditoria?";
+        Auditoria = auditoria;
+        Mostrar = true;
+    }
+
+    async void ConfirmacionBorrarAuditoria(Auditoria auditoria)
+    {
+        var responseHttp = await repositorio.Delete($"api/Auditorias/{auditoria.ID}");
+        if (!responseHttp.Error)
+        {
+            await CerrarConfirmacion();
+            await Cargar();
+        }
+        else
+        {
+            await Cargar();
+        }
+    }
 }
 
