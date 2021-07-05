@@ -10,9 +10,13 @@
     {
         foreach (var observacion in detalleAuditoria.Observaciones)
         {
-            <li data-id="@detalleAuditoria.Observaciones.IndexOf(observacion)">
-                @observacion.Descripcion <a class="btn btn-primary" @onclick="@(() => EliminarObservacion(detalleAuditoria.Observaciones.IndexOf(observacion)))" style="padding: 2px 10px 2px 10px; margin-left: 15px">x</a>
-            </li>
+        <li data-id="@detalleAuditoria.Observaciones.IndexOf(observacion)">
+            @observacion.Descripcion
+            @if (detalleAuditoria.ID == 0)
+            {
+                <a class="btn btn-primary" @onclick="@(() => EliminarObservacion(detalleAuditoria.Observaciones.IndexOf(observacion)))" style="padding: 2px 10px 2px 10px; margin-left: 15px">x</a>
+            }
+        </li>
         }
     }
 </ul>
