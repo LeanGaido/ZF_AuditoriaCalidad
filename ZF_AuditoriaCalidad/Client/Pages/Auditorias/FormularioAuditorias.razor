@@ -142,17 +142,6 @@
 
     protected override void OnInitialized()
     {
-        NroDeOrden = auditoria.NroOrden;
-        NroDePieza = auditoria.NroPieza;
-
-        AreaSeleccionada.Add(auditoria.Maquina.Area);
-
-        MaquinaSeleccionada.Add(auditoria.Maquina);
-
-        SupervisorSeleccionado.Add(auditoria.Supervisor);
-
-        OperarioSeleccionado.Add(auditoria.Operario);
-
         if(auditoria.ID == 0)
         {
             foreach (var punto in ListadoPuntosAuditoria)
@@ -166,6 +155,17 @@
         }
         else
         {
+            NroDeOrden = auditoria.NroOrden;
+            NroDePieza = auditoria.NroPieza;
+
+            AreaSeleccionada.Add(auditoria.Maquina.Area);
+
+            MaquinaSeleccionada.Add(auditoria.Maquina);
+
+            SupervisorSeleccionado.Add(auditoria.Supervisor);
+
+            OperarioSeleccionado.Add(auditoria.Operario);
+
             ListadoDetallesAuditoria = auditoria.DetallesAuditoria;
         }
     }
