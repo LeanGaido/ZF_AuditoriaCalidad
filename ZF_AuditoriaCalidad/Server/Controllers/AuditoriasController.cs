@@ -31,7 +31,9 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Auditoria>>> Get([FromQuery] Paginacion paginacion)
         {
-            var queryable = context.Auditorias.AsQueryable();
+            var queryable = context.Auditorias.Include(x => x.Maquina).ThenInclude(x => x.Area)
+                                              .Include(x => x.Operario)
+                                              .Include(x => x.Supervisor).AsQueryable();
 
             await HttpContext.InsertarParametrosPaginacionEnRespuesta(queryable, paginacion.CantidadRegistros);
 
@@ -43,10 +45,9 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         public ActionResult<AuditoriaDTO> Get(int id)
         {
             var Auditoria = context.Auditorias.Where(x => x.ID == id)
-                                                    .Include(x => x.Maquina).ThenInclude(x => x.Area)
-                                                    .Include(x => x.Operario)
-                                                    .Include(x => x.Supervisor)
-                                                    .FirstOrDefault();
+                                              .Include(x => x.Maquina).ThenInclude(x => x.Area)
+                                              .Include(x => x.Operario)
+                                              .Include(x => x.Supervisor).FirstOrDefault();
 
             if (Auditoria == null) { return NotFound(); }
 
@@ -118,13 +119,41 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Put(Auditoria auditoria)
+        public ActionResult Put(Auditoria auditoria)
         {
             //Obtengo el registro de auditoria a modificar
             context.Entry(auditoria).State = EntityState.Modified;
 
             //Guarda Cambios
             context.SaveChanges();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var auditoria = await context.Auditorias.FindAsync(id);
+            if (auditoria == null) { return NotFound(); }
+
+            List<DetalleAuditoria> detallesAuditoria = context.DetallesAuditoria.Where(x => x.AuditoriaID == id).ToList();
+
+            foreach (var detalle in detallesAuditoria)
+            {
+                List<ObservacionDetalleAuditoria> observacionesDetalle = context.ObservacionesDetalleAuditoria.Where(x => x.DetalleAuditoriaID == detalle.ID).ToList();
+
+                if(observacionesDetalle != null && observacionesDetalle.Count > 0)
+                {
+                    context.ObservacionesDetalleAuditoria.RemoveRange(observacionesDetalle);
+                    await context.SaveChangesAsync();
+                }
+            }
+
+            context.DetallesAuditoria.RemoveRange(detallesAuditoria);
+            await context.SaveChangesAsync();
+
+            context.Auditorias.Remove(auditoria);
+            await context.SaveChangesAsync();
 
             return NoContent();
         }
