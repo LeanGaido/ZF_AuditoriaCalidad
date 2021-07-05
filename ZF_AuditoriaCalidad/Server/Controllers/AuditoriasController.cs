@@ -52,12 +52,25 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
             var AuditoriaDTO = new AuditoriaDTO();
 
+            AuditoriaDTO.ID = Auditoria.ID;
+            AuditoriaDTO.Fecha = Auditoria.Fecha;
+            AuditoriaDTO.Mes = Auditoria.Mes;
+            AuditoriaDTO.Anio = Auditoria.Anio;
+            AuditoriaDTO.Hora = Auditoria.Hora;
             AuditoriaDTO.NroOrden = Auditoria.NroOrden;
             AuditoriaDTO.NroPieza = Auditoria.NroPieza;
             AuditoriaDTO.Area = Auditoria.Maquina.Area;
+            AuditoriaDTO.MaquinaID = Auditoria.Maquina.ID;
             AuditoriaDTO.Maquina = Auditoria.Maquina;
+            AuditoriaDTO.OperarioID = Auditoria.Operario.ID;
             AuditoriaDTO.Operario = Auditoria.Operario;
+            AuditoriaDTO.SupervisorID = Auditoria.Supervisor.ID;
             AuditoriaDTO.Supervisor = Auditoria.Supervisor;
+            AuditoriaDTO.UserID = Auditoria.UserID;
+            AuditoriaDTO.DeBaja = Auditoria.DeBaja;
+            AuditoriaDTO.FechaBaja = Auditoria.FechaBaja;
+            AuditoriaDTO.UserBajaID = Auditoria.UserBajaID;
+
             AuditoriaDTO.DetallesAuditoria = new List<DetalleAuditoria>();
 
             return AuditoriaDTO;
@@ -108,16 +121,10 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         public async Task<ActionResult> Put(Auditoria auditoria)
         {
             //Obtengo el registro de auditoria a modificar
-            var auditoriaDB = await context.Auditorias.FirstOrDefaultAsync(x => x.ID == auditoria.ID);
-
-            //Retorno NotFound si no existe el registro de auditoria
-            if (auditoriaDB == null) { return NotFound(); }
-
-            //"implementa" cambios en el obejo auditoria en auditoriaDB, para asi guardarlo en la base de datos*
-            auditoriaDB = mapper.Map(auditoria, auditoriaDB);
+            context.Entry(auditoria).State = EntityState.Modified;
 
             //Guarda Cambios
-            await context.SaveChangesAsync();
+            context.SaveChanges();
 
             return NoContent();
         }

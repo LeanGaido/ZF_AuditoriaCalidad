@@ -143,14 +143,30 @@
     protected override void OnInitialized()
     {
         NroDeOrden = auditoria.NroOrden;
+        NroDePieza = auditoria.NroPieza;
 
-        foreach (var punto in ListadoPuntosAuditoria)
+        AreaSeleccionada.Add(auditoria.Maquina.Area);
+
+        MaquinaSeleccionada.Add(auditoria.Maquina);
+
+        SupervisorSeleccionado.Add(auditoria.Supervisor);
+
+        OperarioSeleccionado.Add(auditoria.Operario);
+
+        if(auditoria.ID == 0)
         {
-            ListadoDetallesAuditoria.Add(new DetalleAuditoria()
+            foreach (var punto in ListadoPuntosAuditoria)
             {
-                PuntoAuditoriaID = punto.ID,
-                RespuestaID = 3
-            });
+                ListadoDetallesAuditoria.Add(new DetalleAuditoria()
+                {
+                    PuntoAuditoriaID = punto.ID,
+                    RespuestaID = 3
+                });
+            }
+        }
+        else
+        {
+            ListadoDetallesAuditoria = auditoria.DetallesAuditoria;
         }
     }
 

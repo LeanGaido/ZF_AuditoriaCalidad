@@ -34,13 +34,13 @@ namespace ZF_AuditoriaCalidad.Shared.DTOs
         public int SupervisorID { get; set; }
 
         //UserId del auditor
-        public int UserID { get; set; }
+        public string UserID { get; set; }
 
         public bool DeBaja { get; set; }
 
-        public DateTime FechaBaja { get; set; }
+        public DateTime? FechaBaja { get; set; }
 
-        public int UserBajaID { get; set; }
+        public string UserBajaID { get; set; }
 
         public Area Area { get; set; }
 

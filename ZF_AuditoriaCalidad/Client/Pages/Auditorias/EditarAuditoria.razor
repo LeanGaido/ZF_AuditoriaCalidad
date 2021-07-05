@@ -1,0 +1,108 @@
+﻿@page "/auditorias/editar/{AuditoriaId:int}"
+@inject NavigationManager navigationManager
+@inject IRepositorio repositorio
+
+@using ZF_AuditoriaCalidad.Shared.DTOs
+
+<h3>Nueva Auditoria</h3>
+
+@if (MostrarFormulario)
+{
+    <FormularioAuditorias OnValidSubmit="Editar"
+                          auditoria="auditoria"
+                          ListadoAreas="ListadoAreas"
+                          ListadoMaquinas="ListadoMaquinas"
+                          ListadoPuntosAuditoria="ListadoPuntosAuditoria"
+                          ListadoRespuestasDetalleAuditoria="ListadoRespuestasDetalleAuditoria"></FormularioAuditorias>
+}
+else
+{
+    <text>Cargando...</text>
+}
+
+@code {
+    private bool MostrarFormulario { get; set; } = false;
+    [Parameter] public int AuditoriaId { get; set; }
+    private Auditoria auditoria = new Auditoria();
+
+    [Parameter] public List<Area> ListadoAreas { get; set; } = new List<Area>();
+    [Parameter] public List<Maquina> ListadoMaquinas { get; set; } = new List<Maquina>();
+    [Parameter] public List<Operario> ListadoSupervisores { get; set; } = new List<Operario>();
+    [Parameter] public List<Operario> ListadoOperarios { get; set; } = new List<Operario>();
+    [Parameter] public List<PuntoAuditoria> ListadoPuntosAuditoria { get; set; } = new List<PuntoAuditoria>();
+    [Parameter] public List<RespuestaDetalleAuditoria> ListadoRespuestasDetalleAuditoria { get; set; } = new List<RespuestaDetalleAuditoria>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        var httpResponse = await repositorio.Get<AuditoriaDTO>($"api/Auditorias/{AuditoriaId}");
+
+        if (httpResponse.Error)
+        {
+            if (httpResponse.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("IndiceAuditorias");
+            }
+        }
+        else
+        {
+            auditoria.ID = httpResponse.Response.ID;
+            auditoria.Fecha = httpResponse.Response.Fecha;
+            auditoria.Mes = httpResponse.Response.Mes;
+            auditoria.Anio = httpResponse.Response.Anio;
+            auditoria.Hora = httpResponse.Response.Hora;
+            auditoria.NroOrden = httpResponse.Response.NroOrden;
+            auditoria.NroPieza = httpResponse.Response.NroPieza;
+            auditoria.MaquinaID = httpResponse.Response.Maquina.ID;
+            auditoria.Maquina = httpResponse.Response.Maquina;
+            auditoria.OperarioID = httpResponse.Response.Operario.ID;
+            auditoria.Operario = httpResponse.Response.Operario;
+            auditoria.SupervisorID = httpResponse.Response.Supervisor.ID;
+            auditoria.Supervisor = httpResponse.Response.Supervisor;
+            auditoria.UserID = httpResponse.Response.UserID;
+            auditoria.DeBaja = httpResponse.Response.DeBaja;
+            auditoria.FechaBaja = httpResponse.Response.FechaBaja;
+            auditoria.UserBajaID = httpResponse.Response.UserBajaID;
+
+            var responseHttpDetallesAuditoria = await repositorio.Get<List<DetalleAuditoria>>($"api/DetallesAuditoria/{AuditoriaId}");
+            auditoria.DetallesAuditoria = responseHttpDetallesAuditoria.Response;
+        }
+
+        var responseHttpAreas = await repositorio.Get<List<Area>>("api/Areas");
+        ListadoAreas = responseHttpAreas.Response;
+
+
+        var responseHttpMaquinas = await repositorio.Get<List<Maquina>>("api/Maquinas");
+        ListadoMaquinas = responseHttpMaquinas.Response;
+
+
+        var responseHttpOperarios = await repositorio.Get<List<Operario>>("api/Operarios");
+        ListadoSupervisores = responseHttpOperarios.Response;
+        ListadoOperarios = responseHttpOperarios.Response;
+
+        var responseHttpPuntosAuditoria = await repositorio.Get<List<PuntoAuditoria>>("api/PuntosAuditoria");
+        ListadoPuntosAuditoria = responseHttpPuntosAuditoria.Response;
+
+        var responseHttpRespuestasDetalleAuditoria = await repositorio.Get<List<RespuestaDetalleAuditoria>>("api/RespuestasDetalleAuditoria");
+        ListadoRespuestasDetalleAuditoria = responseHttpRespuestasDetalleAuditoria.Response;
+
+        MostrarFormulario = true;
+    }
+
+    async Task Editar()
+    {
+        var httpResponse = await repositorio.Put<Auditoria>("api/Auditorias", auditoria);
+
+        if (httpResponse.Error)
+        {
+            var mensajeError = await httpResponse.GetBody();
+            //await mostrarMensajes.MostrarMensajeError(mensajeError);
+        }
+        else
+        {
+            var AuditoriaId = httpResponse.Response;
+            //navigationManager.NavigateTo($"/Auditorias/{AuditoriaId}");
+            navigationManager.NavigateTo($"/Auditorias");
+        }
+    }
+
+}
