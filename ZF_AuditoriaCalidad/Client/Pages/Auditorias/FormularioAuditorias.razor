@@ -113,12 +113,71 @@
             </div>*@
     }
 
-    <button type="submit" class="btn btn-success">Guardar</button>
 </EditForm>
+
+<button @onclick="@(() => CrearAuditoria())" class="btn btn-success">Guardar</button>
+
+<Confirmacion MostrarConfirmacion="Mostrar"
+              Titulo="@Titulo"
+              onCancel="CerrarConfirmacion"
+              onConfirm="@(() => ConfirmacionCrearAuditoria())">
+    <ChildContent>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Nro de Orden:</label>
+                    <div>
+                        <input readonly class="form-control" value="@auditoria.NroOrden" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label>Nro de Pieza:</label>
+                    <div>
+                        <input readonly class="form-control" value="@auditoria.NroPieza" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Areas:</label>
+            <div>
+                <input readonly class="form-control" value="@auditoria.Maquina.Area.Descripcion" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Maquinas:</label>
+            <div>
+                <input readonly class="form-control" value="@auditoria.Maquina.Descripcion" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-sm-6">
+                    <label>Operario:</label>
+                    <div>
+                        <input readonly class="form-control" value="@auditoria.Operario.ApellidoYNombre" />
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label>Supervisores:</label>
+                    <div>
+                        <input readonly class="form-control" value="@auditoria.Supervisor.ApellidoYNombre" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ChildContent>
+</Confirmacion>
 
 @code {
     private string claseColor = "light", NroDeOrden = "", NroDePieza = "";
     private bool MostrarScanner = false, LeerNroOrden = false, LeerNroPieza = false;
+
+    private bool Mostrar = false;
+    private string Titulo = "";
 
     [Parameter] public Auditoria auditoria { get; set; }
     [Parameter] public EventCallback OnValidSubmit { get; set; }
@@ -142,7 +201,7 @@
 
     protected override void OnInitialized()
     {
-        if(auditoria.ID == 0)
+        if (auditoria.ID == 0)
         {
             foreach (var punto in ListadoPuntosAuditoria)
             {
@@ -228,5 +287,49 @@
         auditoria.DetallesAuditoria = ListadoDetallesAuditoria;
 
         await OnValidSubmit.InvokeAsync(null);
+    }
+
+    private async Task CrearAuditoria()
+    {
+        Mostrar = true;
+        Titulo = "¿Esta seguro de crear esta Auditoria?";
+
+        //auditoria.NroOrden = NroDeOrden;
+
+        //auditoria.NroPieza = NroDePieza;
+
+        //auditoria.MaquinaID = MaquinaSeleccionada.Select(x => x.ID).FirstOrDefault();
+
+        //auditoria.SupervisorID = SupervisorSeleccionado.Select(x => x.ID).FirstOrDefault();
+
+        //auditoria.OperarioID = OperarioSeleccionado.Select(x => x.ID).FirstOrDefault();
+
+        //DateTime fecha = DateTime.Now;
+
+        //auditoria.Fecha = fecha;
+        //auditoria.Hora = fecha.Hour.ToString().PadLeft(2, '0') + ":" + fecha.Minute.ToString().PadLeft(2, '0');
+        //auditoria.Mes = fecha.Month;
+        //auditoria.Anio = fecha.Year;
+
+        //auditoria.DetallesAuditoria = ListadoDetallesAuditoria;
+    }
+
+    private async Task CerrarConfirmacion()
+    {
+        auditoria = null;
+        Titulo = "";
+        Mostrar = false;
+    }
+
+    async void ConfirmacionCrearAuditoria(/*Auditoria auditoria*/)
+    {
+        var responseHttp = await repositorio.Delete($"api/Auditorias/{auditoria.ID}");
+        if (!responseHttp.Error)
+        {
+            await CerrarConfirmacion();
+        }
+        else
+        {
+        }
     }
 }
