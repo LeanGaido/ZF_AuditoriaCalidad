@@ -29,15 +29,52 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Auditoria>>> Get([FromQuery] Paginacion paginacion)
+        public async Task<ActionResult<List<Auditoria>>> Get([FromQuery] ParametrosBusquedaAuditorias parametrosBusqueda)
         {
             var queryable = context.Auditorias.Include(x => x.Maquina).ThenInclude(x => x.Area)
                                               .Include(x => x.Operario)
                                               .Include(x => x.Supervisor).AsQueryable();
 
-            await HttpContext.InsertarParametrosPaginacionEnRespuesta(queryable, paginacion.CantidadRegistros);
+            if (!string.IsNullOrWhiteSpace(parametrosBusqueda.NroDeOrden))
+            {
+                queryable = queryable
+                    .Where(x => x.NroOrden.ToLower().Contains(parametrosBusqueda.NroDeOrden.ToLower()));
+            }
 
-            return await queryable.Paginar(paginacion).ToListAsync();
+            if (!string.IsNullOrWhiteSpace(parametrosBusqueda.NroDeOrden))
+            {
+                queryable = queryable
+                    .Where(x => x.NroPieza.ToLower().Contains(parametrosBusqueda.NroDePieza.ToLower()));
+            }
+
+            if (parametrosBusqueda.Fecha != null)
+            {
+                queryable = queryable.Where(x => x.Fecha >= parametrosBusqueda.Fecha);
+            }
+
+            if (parametrosBusqueda.AreaID != null && parametrosBusqueda.AreaID != 0)
+            {
+                queryable = queryable.Where(x => x.Maquina.AreaID == parametrosBusqueda.AreaID);
+            }
+
+            if (parametrosBusqueda.MaquinaID != null && parametrosBusqueda.MaquinaID != 0)
+            {
+                queryable = queryable.Where(x => x.MaquinaID == parametrosBusqueda.MaquinaID);
+            }
+
+            if (parametrosBusqueda.OperarioID != null && parametrosBusqueda.OperarioID != 0)
+            {
+                queryable = queryable.Where(x => x.OperarioID == parametrosBusqueda.OperarioID);
+            }
+
+            if (parametrosBusqueda.SupervisorID != null && parametrosBusqueda.SupervisorID != 0)
+            {
+                queryable = queryable.Where(x => x.SupervisorID == parametrosBusqueda.SupervisorID);
+            }
+
+            await HttpContext.InsertarParametrosPaginacionEnRespuesta(queryable, parametrosBusqueda.CantidadRegistros);
+
+            return await queryable.Paginar(parametrosBusqueda.Paginacion).ToListAsync();
         }
 
         [HttpGet("{id}")]
@@ -157,5 +194,22 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
             return NoContent();
         }
+    }
+
+    public class ParametrosBusquedaAuditorias
+    {
+        public int Pagina { get; set; } = 1;
+        public int CantidadRegistros { get; set; } = 10;
+        public Paginacion Paginacion
+        {
+            get { return new Paginacion() { Pagina = Pagina, CantidadRegistros = CantidadRegistros }; }
+        }
+        public string NroDeOrden { get; set; }
+        public string NroDePieza { get; set; }
+        public DateTime? Fecha { get; set; }
+        public int? AreaID { get; set; }
+        public int? MaquinaID { get; set; }
+        public int? OperarioID { get; set; }
+        public int? SupervisorID { get; set; }
     }
 }

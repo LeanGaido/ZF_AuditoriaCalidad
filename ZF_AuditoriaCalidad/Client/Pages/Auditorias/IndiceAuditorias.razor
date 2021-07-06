@@ -4,6 +4,72 @@
 @inject HttpClientConToken Http
 @*@inject IMostrarMensajes mostrarMensajes*@
 
+<div class="">
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label for="titulo" class="">Nro De Orden</label>
+            <input @bind-value="NroDeOrden" @bind-value:event="oninput"
+                   @onkeypress="@((KeyboardEventArgs e) => NroDeOrdenKeyPress(e))"
+                   type="text" class="form-control" id="NroDeOrden" placeholder="Nro De Orden" />
+        </div>
+        <div class="form-group col-md-3">
+            <label for="titulo" class="">Nro De Pieza</label>
+            <input @bind-value="NroDePieza" @bind-value:event="oninput"
+                   @onkeypress="@((KeyboardEventArgs e) => NroDePiezaKeyPress(e))"
+                   type="text" class="form-control" id="NroDePieza" placeholder="Nro De Pieza" />
+        </div>
+        <div class="form-group col-md-3">
+            <label for="titulo">Area/Linea</label>
+            <select class="form-control" value="@AreaID" @onchange="ActualizarMaquinas">
+                <option value="0">--Seleccione una Area--</option>
+                @foreach (var item in ListadoAreas)
+                {
+                    <option value="@item.ID">@item.Descripcion</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="titulo" class="">Maquina</label>
+            <select class="form-control" @bind="MaquinaID">
+                <option value="0">--Seleccione una Maquina--</option>
+                @foreach (var item in ListadoMaquinas)
+                {
+                    <option value="@item.ID">@item.Descripcion</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label for="titulo" class="">Operario</label>
+            <select class="form-control" @bind="OperarioID">
+                <option value="0">--Seleccione un Operario--</option>
+                @foreach (var item in ListadoOperarios)
+                {
+                    <option value="@item.ID">@item.Legajo - @item.ApellidoYNombre</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="titulo" class="">Auditor</label>
+            <select class="form-control" @bind="AuditorID">
+                <option value="0">--Seleccione un Auditor--</option>
+                @foreach (var item in ListadoAuditores)
+                {
+                    <option value="@item.ID">@item.Legajo - @item.ApellidoYNombre</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-md-2"></div>
+        <div class="form-group col-md-2"></div>
+        <div class="form-group col-md-2">
+            <button type="button" class="btn btn-primary mb-2 mx-sm-3" @onclick="@(() => Cargar())">Filtrar</button>
+        </div>
+    </div>
+
+    @*<button type="button" class="btn btn-danger mb-2" @onclick="LimpiarOnClick">Limpiar</button>*@
+</div>
+
 <div class="form-group">
     <a class="btn btn-info" href="auditorias/crear">Nueva Auditoria</a>
 </div>
@@ -16,6 +82,9 @@
                     <th></th>
                     <th>Nro de Orden</th>
                     <th>Nro de Pieza</th>
+                    <td>Area/Linea</td>
+                    <td>Maquina</td>
+                    <td>Operario</td>
                 </tr>
             </thead>
             <tbody>
@@ -28,6 +97,9 @@
                         </td>
                         <td>@item.NroOrden</td>
                         <td>@item.NroPieza</td>
+                        <td>@item.Maquina.Area.Descripcion</td>
+                        <td>@item.Maquina.Descripcion</td>
+                        <td>@item.Operario.Legajo - @item.Operario.ApellidoYNombre</td>
                     </tr>
                 }
             </tbody>
@@ -96,21 +168,75 @@
 @code {
     public List<Auditoria> Auditorias { get; set; }
     private Auditoria Auditoria = new Auditoria();
+
     private int paginaActual = 1;
     private int paginasTotales;
+
     private bool Mostrar = false;
     private string Titulo = "";
 
-    protected async override Task OnInitializedAsync()
+    #region Filtros y Busqueda
+    public string NroDeOrden = "";
+    public string NroDePieza = "";
+    public DateTime? Fecha = null;
+    public int? AreaID = 0;
+    public int? MaquinaID = 0;
+    public int? OperarioID = 0;
+    public int? SupervisorID = 0;
+    public int? AuditorID = 0;
+
+    [Parameter] public List<Area> ListadoAreas { get; set; } = new List<Area>();
+
+    [Parameter] public List<Maquina> ListadoMaquinas { get; set; } = new List<Maquina>();
+
+    [Parameter] public List<Operario> ListadoSupervisores { get; set; } = new List<Operario>();
+
+    [Parameter] public List<Operario> ListadoOperarios { get; set; } = new List<Operario>();
+
+    [Parameter] public List<Operario> ListadoAuditores { get; set; } = new List<Operario>();
+
+    private async Task NroDeOrdenKeyPress(KeyboardEventArgs e)
     {
-        try
+        if (e.Key == "Enter")
         {
             await Cargar();
         }
-        catch (AccessTokenNotAvailableException exception)
+    }
+
+    private async Task NroDePiezaKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
         {
-            exception.Redirect();
+            await Cargar();
         }
+    }
+
+    private async Task ActualizarMaquinas(ChangeEventArgs countryEvent)
+    {
+        AreaID = int.Parse(countryEvent.Value.ToString());
+        var responseHttpMaquinas = await repositorio.Get<List<Maquina>>($"api/Maquinas/{AreaID.Value}");
+        ListadoMaquinas = responseHttpMaquinas.Response;
+        MaquinaID = (ListadoMaquinas.FirstOrDefault() != null) ? ListadoMaquinas.First().ID : 0;
+    }
+
+    private string GenerarQueryStrings()
+    {
+        if (queryStringsDict == null) { queryStringsDict = new Dictionary<string, string>(); }
+        queryStringsDict["NroDeOrden"] = NroDeOrden;
+        queryStringsDict["NroDePieza"] = NroDePieza;
+        queryStringsDict["Fecha"] = Fecha.ToString();
+        queryStringsDict["AreaID"] = AreaID.ToString();
+        queryStringsDict["MaquinaID"] = MaquinaID.ToString();
+        queryStringsDict["OperarioID"] = OperarioID.ToString();
+        queryStringsDict["SupervisorID"] = SupervisorID.ToString();
+
+        var valoresPorDefecto = new List<string>() { "false", "", "0" };
+
+        // generoid=7&titulo=spider ...
+
+        return string.Join("&", queryStringsDict
+            .Where(x => !valoresPorDefecto.Contains(x.Value.ToLower()))
+            .Select(x => $"{x.Key}={System.Web.HttpUtility.UrlEncode(x.Value)}").ToArray());
     }
 
     private async Task paginaSeleccionada(int pagina)
@@ -121,12 +247,46 @@
 
     private async Task Cargar(int pagina = 1)
     {
-        var responseHttp = await repositorio.Get<List<Auditoria>>($"api/Auditorias?pagina={pagina}");
+        var queryStrings = GenerarQueryStrings();
+        var responseHttp = await repositorio.Get<List<Auditoria>>($"api/Auditorias?" + queryStrings);
         if (!responseHttp.Error)
         {
             Auditorias = responseHttp.Response;
             var conteo = responseHttp.HttpResponseMessage.Headers.GetValues("conteo").FirstOrDefault();
             paginasTotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
+        }
+    }
+    #endregion
+
+    Dictionary<string, string> queryStringsDict = new Dictionary<string, string>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            var responseHttpAreas = await repositorio.Get<List<Area>>("api/Areas/");
+            ListadoAreas = responseHttpAreas.Response;
+            ///AreaID = (ListadoAreas.FirstOrDefault() != null) ? ListadoAreas.First().ID : 0;
+
+            var responseHttpMaquinas = await repositorio.Get<List<Maquina>>($"api/Maquinas/{AreaID}");
+            ListadoMaquinas = responseHttpMaquinas.Response;
+            //MaquinaID = (ListadoMaquinas.FirstOrDefault() != null) ? ListadoMaquinas.First().ID : 0;
+
+            var responseHttpOperarios = await repositorio.Get<List<Operario>>("api/Operarios/");
+            ListadoOperarios = responseHttpOperarios.Response.Where(x => !x.Auditor && !x.Supervisor).ToList();
+            //OperarioID = (ListadoOperarios.FirstOrDefault() != null) ? ListadoOperarios.First().ID : 0;
+
+            //ListadoSupervisores = responseHttpOperarios.Response.Where(x => x.Supervisor).ToList();
+            //SupervisorID = (ListadoOperarios.FirstOrDefault() != null) ? ListadoOperarios.First().ID : 0;
+
+            ListadoAuditores = responseHttpOperarios.Response.Where(x => x.Auditor).ToList();
+            //AuditorID = (ListadoOperarios.FirstOrDefault() != null) ? ListadoOperarios.First().ID : 0;
+
+            await Cargar();
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
         }
     }
 

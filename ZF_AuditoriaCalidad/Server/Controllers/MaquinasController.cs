@@ -34,13 +34,13 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Maquina>> Get(int id)
+        public async Task<ActionResult<List<Maquina>>> Get(int id)
         {
-            var maquina = await context.Maquinas.FirstOrDefaultAsync(x => x.ID == id);
+            var maquinas = await context.Maquinas.Where(x => x.AreaID == id).ToListAsync();
 
-            if (maquina == null) { return NotFound(); }
+            if (maquinas == null) { return NotFound(); }
 
-            return maquina;
+            return maquinas;
         }
 
         [HttpGet("buscar/{textoBusqueda}")]
