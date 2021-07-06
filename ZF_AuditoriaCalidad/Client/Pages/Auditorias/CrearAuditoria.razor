@@ -11,16 +11,75 @@
                           ListadoAreas="ListadoAreas"
                           ListadoMaquinas="ListadoMaquinas"
                           ListadoPuntosAuditoria="ListadoPuntosAuditoria"
-                          ListadoRespuestasDetalleAuditoria="ListadoRespuestasDetalleAuditoria"></FormularioAuditorias>
+                          ListadoRespuestasDetalleAuditoria="ListadoRespuestasDetalleAuditoria">
+    </FormularioAuditorias>
 }
 else
 {
     <text>Cargando...</text>
 }
 
+<Confirmacion MostrarConfirmacion="Mostrar"
+              Titulo="@Titulo"
+              onCancel="CerrarConfirmacion"
+              onConfirm="@(() => ConfirmacionBorrarAuditoria(Auditoria))">
+    <ChildContent>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Nro de Orden:</label>
+                    <div>
+                        <input readonly class="form-control" value="@Auditoria.NroOrden" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label>Nro de Pieza:</label>
+                    <div>
+                        <input readonly class="form-control" value="@Auditoria.NroPieza" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Areas:</label>
+            <div>
+                <input readonly class="form-control" value="@Auditoria.Maquina.Area.Descripcion" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Maquinas:</label>
+            <div>
+                <input readonly class="form-control" value="@Auditoria.Maquina.Descripcion" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-sm-6">
+                    <label>Operario:</label>
+                    <div>
+                        <input readonly class="form-control" value="@Auditoria.Operario.ApellidoYNombre" />
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label>Supervisores:</label>
+                    <div>
+                        <input readonly class="form-control" value="@Auditoria.Supervisor.ApellidoYNombre" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ChildContent>
+</Confirmacion>
+
+
 @code {
     private bool MostrarFormulario { get; set; } = false;
     private Auditoria auditoria = new Auditoria();
+    private bool Mostrar = false;
+    private string Titulo = "";
 
     [Parameter] public List<Area> ListadoAreas { get; set; } = new List<Area>();
     [Parameter] public List<Maquina> ListadoMaquinas { get; set; } = new List<Maquina>();
@@ -28,6 +87,7 @@ else
     [Parameter] public List<Operario> ListadoOperarios { get; set; } = new List<Operario>();
     [Parameter] public List<PuntoAuditoria> ListadoPuntosAuditoria { get; set; } = new List<PuntoAuditoria>();
     [Parameter] public List<RespuestaDetalleAuditoria> ListadoRespuestasDetalleAuditoria { get; set; } = new List<RespuestaDetalleAuditoria>();
+
 
     protected async override Task OnInitializedAsync()
     {
@@ -66,6 +126,25 @@ else
             var AuditoriaId = httpResponse.Response;
             //navigationManager.NavigateTo($"/Auditorias/{AuditoriaId}");
             navigationManager.NavigateTo($"/Auditorias");
+        }
+    }
+
+    private async Task CerrarConfirmacion()
+    {
+        Auditoria = null;
+        Titulo = "";
+        Mostrar = false;
+    }
+
+    async void ConfirmacionBorrarAuditoria(Auditoria auditoria)
+    {
+        var responseHttp = await repositorio.Delete($"api/Auditorias/{auditoria.ID}");
+        if (!responseHttp.Error)
+        {
+            await CerrarConfirmacion();
+        }
+        else
+        {
         }
     }
 
