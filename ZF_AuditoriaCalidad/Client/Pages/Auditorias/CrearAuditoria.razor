@@ -11,7 +11,8 @@
                           ListadoAreas="ListadoAreas"
                           ListadoMaquinas="ListadoMaquinas"
                           ListadoPuntosAuditoria="ListadoPuntosAuditoria"
-                          ListadoRespuestasDetalleAuditoria="ListadoRespuestasDetalleAuditoria"></FormularioAuditorias>
+                          ListadoRespuestasDetalleAuditoria="ListadoRespuestasDetalleAuditoria">
+    </FormularioAuditorias>
 }
 else
 {
@@ -28,6 +29,7 @@ else
     [Parameter] public List<Operario> ListadoOperarios { get; set; } = new List<Operario>();
     [Parameter] public List<PuntoAuditoria> ListadoPuntosAuditoria { get; set; } = new List<PuntoAuditoria>();
     [Parameter] public List<RespuestaDetalleAuditoria> ListadoRespuestasDetalleAuditoria { get; set; } = new List<RespuestaDetalleAuditoria>();
+
 
     protected async override Task OnInitializedAsync()
     {

@@ -1,6 +1,6 @@
 ﻿@inject IRepositorio repositorio
 
-<EditForm Model="auditoria" OnValidSubmit="OnDataAnnonationsValidated">
+<EditForm Model="auditoria">
     <DataAnnotationsValidator />
 
     <div class="form-group">
@@ -112,13 +112,75 @@
                 </div>
             </div>*@
     }
-
-    <button type="submit" class="btn btn-success">Guardar</button>
+    <a @onclick="@(() => GuardarAuditoria())" class="btn btn-success">Guardar</a>
 </EditForm>
+
+<Confirmacion MostrarConfirmacion="Mostrar"
+              Titulo="@Titulo"
+              onCancel="CerrarConfirmacion"
+              onConfirm="OnDataAnnonationsValidated">
+    <ChildContent>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Nro de Orden:</label>
+                    <div>
+                        <input readonly class="form-control" value="@NroDeOrden" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label>Nro de Pieza:</label>
+                    <div>
+                        <input readonly class="form-control" value="@NroDePieza" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Areas:</label>
+            <div>
+                <input readonly class="form-control" value="@AreaSeleccionada.First().Descripcion" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Maquinas:</label>
+            <div>
+                <input readonly class="form-control" value="@MaquinaSeleccionada.First().Descripcion" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-sm-6">
+                    <label>Operario:</label>
+                    <div>
+                        <input readonly class="form-control" value="@OperarioSeleccionado.First().ApellidoYNombre" />
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label>Supervisores:</label>
+                    <div>
+                        <input readonly class="form-control" value="@SupervisorSeleccionado.First().ApellidoYNombre" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @foreach (var detalleAuditoria in ListadoDetallesAuditoria)
+        {
+            <RespuestaPuntoAuditoria detalleAuditoria="detalleAuditoria">
+            </RespuestaPuntoAuditoria>}
+    </ChildContent>
+</Confirmacion>
 
 @code {
     private string claseColor = "light", NroDeOrden = "", NroDePieza = "";
-    private bool MostrarScanner = false, LeerNroOrden = false, LeerNroPieza = false;
+    //private bool MostrarScanner = false, LeerNroOrden = false, LeerNroPieza = false;
+
+    private bool Mostrar = false;
+    private string Titulo = "";
 
     [Parameter] public Auditoria auditoria { get; set; }
     [Parameter] public EventCallback OnValidSubmit { get; set; }
@@ -142,7 +204,7 @@
 
     protected override void OnInitialized()
     {
-        if(auditoria.ID == 0)
+        if (auditoria.ID == 0)
         {
             foreach (var punto in ListadoPuntosAuditoria)
             {
@@ -229,4 +291,17 @@
 
         await OnValidSubmit.InvokeAsync(null);
     }
+
+    private async Task GuardarAuditoria()
+    {
+        Titulo = "¿Esta seguro de guardar esta auditoria?";
+        Mostrar = true;
+    }
+
+    private async Task CerrarConfirmacion()
+    {
+        Titulo = "";
+        Mostrar = false;
+    }
+
 }
