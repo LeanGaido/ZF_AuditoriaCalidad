@@ -99,7 +99,9 @@
 
     @foreach (var detalleAuditoria in ListadoDetallesAuditoria)
     {
-        <RespuestaPuntoAuditoria detalleAuditoria="detalleAuditoria">
+        <RespuestaPuntoAuditoria detalleAuditoria="detalleAuditoria"
+                                 PuedeObservar="true"
+                                 PuedeResponder="true">
         </RespuestaPuntoAuditoria>
         @*<div class="form-group">
                 <label>@punto.Descripcion</label>
@@ -170,8 +172,11 @@
 
         @foreach (var detalleAuditoria in ListadoDetallesAuditoria)
         {
-            <RespuestaPuntoAuditoria detalleAuditoria="detalleAuditoria">
-            </RespuestaPuntoAuditoria>}
+            <RespuestaPuntoAuditoria detalleAuditoria="detalleAuditoria"
+                                     PuedeObservar="false"
+                                     PuedeResponder="false">
+            </RespuestaPuntoAuditoria>
+        }
     </ChildContent>
 </Confirmacion>
 

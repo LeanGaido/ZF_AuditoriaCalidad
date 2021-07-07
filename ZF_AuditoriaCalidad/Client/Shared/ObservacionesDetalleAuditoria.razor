@@ -20,7 +20,7 @@
         }
     }
 </ul>
-@if (detalleAuditoria.ID == 0)
+@if (PuedeObservar)
 {
     <label>Observacion: </label>
     <div class="col-md-12">
@@ -79,6 +79,7 @@
     [Parameter] public List<Area> ListadoAreas { get; set; } = new List<Area>();
     [Parameter] public List<Observacion> ListadoObservaciones { get; set; } = new List<Observacion>();
     [Parameter] public DetalleAuditoria detalleAuditoria { get; set; } = new DetalleAuditoria();
+    [Parameter] public bool PuedeObservar { get; set; } = true;
 
     private string descripcion = "";
     private int CantObservaciones = new Random().Next(0, 3);
