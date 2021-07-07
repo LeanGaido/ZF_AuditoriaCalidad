@@ -56,7 +56,10 @@
 
     @foreach (var detalleAuditoria in detallesAuditoria)
     {
-        <RespuestaPuntoAuditoria detalleAuditoria="detalleAuditoria"></RespuestaPuntoAuditoria>
+        <RespuestaPuntoAuditoria detalleAuditoria="detalleAuditoria"
+                                 PuedeObservar="false"
+                                 PuedeResponder="false">
+        </RespuestaPuntoAuditoria>
     }
 }
 else

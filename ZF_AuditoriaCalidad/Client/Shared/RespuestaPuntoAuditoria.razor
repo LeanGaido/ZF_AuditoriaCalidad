@@ -4,34 +4,48 @@
     <label>@puntoAuditoria.Descripcion</label>
     <br />
     <div>
-        @*@foreach (var respuesta in ListadoRespuestasDetalleAuditoria)
-            {*@
-        <a class="btn btn-@claseBotonSi" @onclick="@(() => Responder(respuestaSi))">@respuestaSi.Descripcion</a>
-        <a class="btn btn-@claseBotonNo" @onclick="@(() => Responder(respuestaNo))">@respuestaNo.Descripcion</a>
-        <a class="btn btn-@claseBotonNA" @onclick="@(() => Responder(respuestaNA))">@respuestaNA.Descripcion</a>
-        @if (detalleAuditoria.ID != 0)
+        @if (PuedeResponder)
         {
-            if (detalleAuditoria.RespuestaID == 2) // idRepuesta NO
+            <a class="btn btn-@claseBotonSi" @onclick="@(() => Responder(respuestaSi))">@respuestaSi.Descripcion</a>
+            <a class="btn btn-@claseBotonNo" @onclick="@(() => Responder(respuestaNo))">@respuestaNo.Descripcion</a>
+            <a class="btn btn-@claseBotonNA" @onclick="@(() => Responder(respuestaNA))">@respuestaNA.Descripcion</a>
+            @if (detalleAuditoria.ID != 0)
             {
-                <a class="btn btn-@claseBotonCorregido" @onclick="@(() => Corregir(detalleAuditoria.ID))">Corregir</a>
+                if (detalleAuditoria.RespuestaID == 2) // idRepuesta NO
+                {
+                    <a class="btn btn-@claseBotonCorregido" @onclick="@(() => Corregir(detalleAuditoria.ID))">Corregir</a>
+                }
+                if (detalleAuditoria.RespuestaID == 4) // idRepuesta corregido
+                {
+                    <a class="btn btn-@claseBotonCorregido">Corregido</a>
+                }
             }
+        }
+        else
+        {
+            <a class="btn btn-@claseBotonSi">@respuestaSi.Descripcion</a>
+            <a class="btn btn-@claseBotonNo">@respuestaNo.Descripcion</a>
+            <a class="btn btn-@claseBotonNA">@respuestaNA.Descripcion</a>
             if (detalleAuditoria.RespuestaID == 4) // idRepuesta corregido
             {
                 <a class="btn btn-@claseBotonCorregido">Corregido</a>
             }
         }
-        @*}*@
     </div>
     @if (detalleAuditoria.RespuestaID == 2 || detalleAuditoria.RespuestaID == 4)
     {
         <br />
-        <ObservacionesDetalleAuditoria detalleAuditoria="detalleAuditoria"></ObservacionesDetalleAuditoria>
+        <ObservacionesDetalleAuditoria detalleAuditoria="detalleAuditoria"
+                                        PuedeObservar="PuedeObservar">
+        </ObservacionesDetalleAuditoria>
     }
 </div>
 
 @code {
 
     [Parameter] public DetalleAuditoria detalleAuditoria { get; set; } = new DetalleAuditoria();
+    [Parameter] public bool PuedeObservar { get; set; } = true;
+    [Parameter] public bool PuedeResponder { get; set; } = true;
     public RespuestaDetalleAuditoria respuestaSi = new RespuestaDetalleAuditoria() { Descripcion = "SI", ClaseHtml = "success", ID = 1 };
     public RespuestaDetalleAuditoria respuestaNo = new RespuestaDetalleAuditoria() { Descripcion = "NO", ClaseHtml = "danger", ID = 2 };
     public RespuestaDetalleAuditoria respuestaNA = new RespuestaDetalleAuditoria() { Descripcion = "N/A", ClaseHtml = "warning", ID = 3 };
