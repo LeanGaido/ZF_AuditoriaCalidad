@@ -118,19 +118,9 @@
     @foreach (var detalleAuditoria in ListadoDetallesAuditoria)
     {
         <RespuestaPuntoAuditoria detalleAuditoria="detalleAuditoria"
-                                 PuedeObservar="true"
-                                 PuedeResponder="true">
+                                 PuedeObservar="PuedeObservar"
+                                 PuedeResponder="PuedeResponder">
         </RespuestaPuntoAuditoria>
-        @*<div class="form-group">
-                <label>@punto.Descripcion</label>
-                <div>
-                    @foreach (var respuesta in ListadoRespuestasDetalleAuditoria)
-                    {
-                        respuesta.PuntoAuditoriaID = punto.ID;
-                        <a class="btn btn-@claseColor" @onclick="@(() => Responder(respuesta))">@respuesta.Descripcion</a>
-                    }
-                </div>
-            </div>*@
     }
     <a @onclick="@(() => GuardarAuditoria())" class="btn btn-success">Guardar</a>
 </EditForm>
@@ -223,6 +213,9 @@
     [Parameter] public List<PuntoAuditoria> ListadoPuntosAuditoria { get; set; } = new List<PuntoAuditoria>();
     [Parameter] public List<RespuestaDetalleAuditoria> ListadoRespuestasDetalleAuditoria { get; set; } = new List<RespuestaDetalleAuditoria>();
 
+    [Parameter] public bool PuedeObservar { get; set; } = true;
+    [Parameter] public bool PuedeResponder { get; set; } = true;
+
     public List<DetalleAuditoria> ListadoDetallesAuditoria = new List<DetalleAuditoria>();
     public List<string> mensajesError = new List<string>();
 
@@ -302,7 +295,25 @@
         auditoria.Mes = fecha.Month;
         auditoria.Anio = fecha.Year;
 
-        auditoria.DetallesAuditoria = ListadoDetallesAuditoria;
+        if (auditoria.DetallesAuditoria == null)
+        {
+            auditoria.DetallesAuditoria = new List<DetalleAuditoria>();
+        }
+
+        foreach (var detalle in ListadoDetallesAuditoria)
+        {
+            if(auditoria.DetallesAuditoria.Where(x => x.PuntoAuditoriaID == detalle.PuntoAuditoriaID).FirstOrDefault() == null)
+            {
+                auditoria.DetallesAuditoria.Add(new DetalleAuditoria()
+                {
+                    ID = detalle.ID,
+                    PuntoAuditoriaID = detalle.PuntoAuditoriaID,
+                    PuntoAuditoria = null,
+                    RespuestaID = detalle.RespuestaID,
+                    Observaciones = detalle.Observaciones
+                });
+            }
+        }
 
         await OnValidSubmit.InvokeAsync(null);
     }
@@ -369,9 +380,9 @@
         auditoria.Mes = fecha.Month;
         auditoria.Anio = fecha.Year;
 
-        auditoria.DetallesAuditoria = ListadoDetallesAuditoria;
+        //auditoria.DetallesAuditoria = ListadoDetallesAuditoria;
 
-        foreach (var detalle in auditoria.DetallesAuditoria)
+        foreach (var detalle in ListadoDetallesAuditoria)
         {
             if (detalle.RespuestaID == 2 && (detalle.Observaciones == null || detalle.Observaciones.Count < 1))
             {
