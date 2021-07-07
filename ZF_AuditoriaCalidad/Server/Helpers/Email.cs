@@ -24,9 +24,9 @@ namespace ZF_AuditoriaCalidad.Server.Helpers
             //smtpCredentials = true;
             //enableSsl = false;
             mail = new MailMessage();
-            SmtpServer = new SmtpClient("mail.emugas.com.ar");
-            From = new MailAddress("no-reply@emugas.com.ar", "Avisos Emugas", Encoding.Default);
-            cuenta = new NetworkCredential("no-reply@emugas.com.ar", "iwLZZ7TsH9");
+            SmtpServer = new SmtpClient("dtc004.ferozo.com");
+            From = new MailAddress("no-reply@v0041907.ferozo.com", "Avisos Zf Sachs", Encoding.Default);
+            cuenta = new NetworkCredential("no-reply@v0041907.ferozo.com", "POzi07givo");
             puerto = 587;
             autenticacion = false;
         }
