@@ -111,36 +111,35 @@
                 detalleAuditoria.Observaciones.Add(obsSeleccionada);
             }
         }
-
-        ObservacionSeleccionada = 0;
     }
 
     private async Task SeleccionarNoContemplada()
     {
-        if(string.IsNullOrEmpty(DescripcionNoContemplada.Trim()))
+        if(!string.IsNullOrEmpty(DescripcionNoContemplada.Trim()))
         {
-
-        }
-        if (detalleAuditoria.Observaciones == null)
-        {
-            detalleAuditoria.Observaciones = new List<Observacion>();
-        }
-
-        if (detalleAuditoria.Observaciones.Where(x => x.Descripcion == DescripcionNoContemplada).FirstOrDefault() == null)
-        {
-            detalleAuditoria.Observaciones.Add(new Observacion()
+            if (detalleAuditoria.Observaciones == null)
             {
-                Descripcion = DescripcionNoContemplada.Trim(),
-                ParaLaLinea = ParaLaLinea,
-                AreaResponsableID = AreaResponsableSeleccionada,
-                PuntoAuditoriaID = detalleAuditoria.PuntoAuditoriaID,
-                Contemplada = false
-            });
-        }
+                detalleAuditoria.Observaciones = new List<Observacion>();
+            }
 
-        DescripcionNoContemplada = "";
-        AreaResponsableSeleccionada = 0;
-        ParaLaLinea = false;
+            if (detalleAuditoria.Observaciones.Where(x => x.Descripcion == DescripcionNoContemplada).FirstOrDefault() == null)
+            {
+                detalleAuditoria.Observaciones.Add(new Observacion()
+                {
+                    Descripcion = DescripcionNoContemplada.Trim(),
+                    ParaLaLinea = ParaLaLinea,
+                    AreaResponsableID = AreaResponsableSeleccionada,
+                    PuntoAuditoriaID = detalleAuditoria.PuntoAuditoriaID,
+                    Contemplada = false
+                });
+            }
+
+            DescripcionNoContemplada = "";
+        }
+        else
+        {
+
+        }
     }
 
     private async Task EliminarObservacion(int Index)
