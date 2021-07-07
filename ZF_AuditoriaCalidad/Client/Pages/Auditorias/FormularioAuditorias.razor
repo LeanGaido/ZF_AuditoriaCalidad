@@ -1,6 +1,6 @@
 ﻿@inject IRepositorio repositorio
 
-<EditForm Model="auditoria" OnValidSubmit="OnDataAnnonationsValidated">
+<EditForm Model="auditoria">
     <DataAnnotationsValidator />
 
     <div class="form-group">
@@ -112,28 +112,26 @@
                 </div>
             </div>*@
     }
-
+    <a @onclick="@(() => GuardarAuditoria())" class="btn btn-success">Guardar</a>
 </EditForm>
-
-<button @onclick="@(() => CrearAuditoria())" class="btn btn-success">Guardar</button>
 
 <Confirmacion MostrarConfirmacion="Mostrar"
               Titulo="@Titulo"
               onCancel="CerrarConfirmacion"
-              onConfirm="@(() => ConfirmacionCrearAuditoria())">
+              onConfirm="OnDataAnnonationsValidated">
     <ChildContent>
         <div class="form-group">
             <div class="row">
                 <div class="col-md-6">
                     <label>Nro de Orden:</label>
                     <div>
-                        <input readonly class="form-control" value="@auditoria.NroOrden" />
+                        <input readonly class="form-control" value="@NroDeOrden" />
                     </div>
                 </div>
                 <div class="col-md-6">
                     <label>Nro de Pieza:</label>
                     <div>
-                        <input readonly class="form-control" value="@auditoria.NroPieza" />
+                        <input readonly class="form-control" value="@NroDePieza" />
                     </div>
                 </div>
             </div>
@@ -142,14 +140,14 @@
         <div class="form-group">
             <label>Areas:</label>
             <div>
-                <input readonly class="form-control" value="@auditoria.Maquina.Area.Descripcion" />
+                <input readonly class="form-control" value="@AreaSeleccionada.First().Descripcion" />
             </div>
         </div>
 
         <div class="form-group">
             <label>Maquinas:</label>
             <div>
-                <input readonly class="form-control" value="@auditoria.Maquina.Descripcion" />
+                <input readonly class="form-control" value="@MaquinaSeleccionada.First().Descripcion" />
             </div>
         </div>
 
@@ -158,23 +156,28 @@
                 <div class="col-sm-6">
                     <label>Operario:</label>
                     <div>
-                        <input readonly class="form-control" value="@auditoria.Operario.ApellidoYNombre" />
+                        <input readonly class="form-control" value="@OperarioSeleccionado.First().ApellidoYNombre" />
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <label>Supervisores:</label>
                     <div>
-                        <input readonly class="form-control" value="@auditoria.Supervisor.ApellidoYNombre" />
+                        <input readonly class="form-control" value="@SupervisorSeleccionado.First().ApellidoYNombre" />
                     </div>
                 </div>
             </div>
         </div>
+
+        @foreach (var detalleAuditoria in ListadoDetallesAuditoria)
+        {
+            <RespuestaPuntoAuditoria detalleAuditoria="detalleAuditoria">
+            </RespuestaPuntoAuditoria>}
     </ChildContent>
 </Confirmacion>
 
 @code {
     private string claseColor = "light", NroDeOrden = "", NroDePieza = "";
-    private bool MostrarScanner = false, LeerNroOrden = false, LeerNroPieza = false;
+    //private bool MostrarScanner = false, LeerNroOrden = false, LeerNroPieza = false;
 
     private bool Mostrar = false;
     private string Titulo = "";
@@ -289,47 +292,16 @@
         await OnValidSubmit.InvokeAsync(null);
     }
 
-    private async Task CrearAuditoria()
+    private async Task GuardarAuditoria()
     {
+        Titulo = "¿Esta seguro de guardar esta auditoria?";
         Mostrar = true;
-        Titulo = "¿Esta seguro de crear esta Auditoria?";
-
-        //auditoria.NroOrden = NroDeOrden;
-
-        //auditoria.NroPieza = NroDePieza;
-
-        //auditoria.MaquinaID = MaquinaSeleccionada.Select(x => x.ID).FirstOrDefault();
-
-        //auditoria.SupervisorID = SupervisorSeleccionado.Select(x => x.ID).FirstOrDefault();
-
-        //auditoria.OperarioID = OperarioSeleccionado.Select(x => x.ID).FirstOrDefault();
-
-        //DateTime fecha = DateTime.Now;
-
-        //auditoria.Fecha = fecha;
-        //auditoria.Hora = fecha.Hour.ToString().PadLeft(2, '0') + ":" + fecha.Minute.ToString().PadLeft(2, '0');
-        //auditoria.Mes = fecha.Month;
-        //auditoria.Anio = fecha.Year;
-
-        //auditoria.DetallesAuditoria = ListadoDetallesAuditoria;
     }
 
     private async Task CerrarConfirmacion()
     {
-        auditoria = null;
         Titulo = "";
         Mostrar = false;
     }
 
-    async void ConfirmacionCrearAuditoria(/*Auditoria auditoria*/)
-    {
-        var responseHttp = await repositorio.Delete($"api/Auditorias/{auditoria.ID}");
-        if (!responseHttp.Error)
-        {
-            await CerrarConfirmacion();
-        }
-        else
-        {
-        }
-    }
 }
