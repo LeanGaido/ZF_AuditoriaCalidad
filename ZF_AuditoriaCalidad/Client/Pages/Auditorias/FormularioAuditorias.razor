@@ -3,6 +3,24 @@
 <EditForm Model="auditoria">
     <DataAnnotationsValidator />
 
+    <Confirmacion MostrarConfirmacion="MostrarErrores"
+                  Titulo="@TituloErrores"
+                  onCancel="CerrarErrores"
+                  onConfirm="CerrarErrores"
+                  TextoBotonConfirmar="Revisar">
+        <ChildContent>
+            @if (mensajesError.Count > 0)
+            {
+                <ul class="list-group">
+                    @foreach (var error in mensajesError)
+                    {
+                        <li class="list-group-item list-group-item-danger"><b>@error</b></li>
+                    }
+                </ul>
+            }
+        </ChildContent>
+    </Confirmacion>
+
     <div class="form-group">
         <div class="row">
             <div class="col-md-6">
@@ -100,19 +118,9 @@
     @foreach (var detalleAuditoria in ListadoDetallesAuditoria)
     {
         <RespuestaPuntoAuditoria detalleAuditoria="detalleAuditoria"
-                                 PuedeObservar="true"
-                                 PuedeResponder="true">
+                                 PuedeObservar="PuedeObservar"
+                                 PuedeResponder="PuedeResponder">
         </RespuestaPuntoAuditoria>
-        @*<div class="form-group">
-                <label>@punto.Descripcion</label>
-                <div>
-                    @foreach (var respuesta in ListadoRespuestasDetalleAuditoria)
-                    {
-                        respuesta.PuntoAuditoriaID = punto.ID;
-                        <a class="btn btn-@claseColor" @onclick="@(() => Responder(respuesta))">@respuesta.Descripcion</a>
-                    }
-                </div>
-            </div>*@
     }
     <a @onclick="@(() => GuardarAuditoria())" class="btn btn-success">Guardar</a>
 </EditForm>
@@ -184,8 +192,8 @@
     private string claseColor = "light", NroDeOrden = "", NroDePieza = "";
     //private bool MostrarScanner = false, LeerNroOrden = false, LeerNroPieza = false;
 
-    private bool Mostrar = false;
-    private string Titulo = "";
+    private bool Mostrar = false,  MostrarErrores = false;
+    private string Titulo = "", TituloErrores = "";
 
     [Parameter] public Auditoria auditoria { get; set; }
     [Parameter] public EventCallback OnValidSubmit { get; set; }
@@ -205,7 +213,11 @@
     [Parameter] public List<PuntoAuditoria> ListadoPuntosAuditoria { get; set; } = new List<PuntoAuditoria>();
     [Parameter] public List<RespuestaDetalleAuditoria> ListadoRespuestasDetalleAuditoria { get; set; } = new List<RespuestaDetalleAuditoria>();
 
+    [Parameter] public bool PuedeObservar { get; set; } = true;
+    [Parameter] public bool PuedeResponder { get; set; } = true;
+
     public List<DetalleAuditoria> ListadoDetallesAuditoria = new List<DetalleAuditoria>();
+    public List<string> mensajesError = new List<string>();
 
     protected override void OnInitialized()
     {
@@ -216,6 +228,7 @@
                 ListadoDetallesAuditoria.Add(new DetalleAuditoria()
                 {
                     PuntoAuditoriaID = punto.ID,
+                    PuntoAuditoria = punto,
                     RespuestaID = 3
                 });
             }
@@ -275,15 +288,90 @@
 
     private async Task OnDataAnnonationsValidated()
     {
+        DateTime fecha = DateTime.Now;
+
+        auditoria.Fecha = fecha;
+        auditoria.Hora = fecha.Hour.ToString().PadLeft(2, '0') + ":" + fecha.Minute.ToString().PadLeft(2, '0');
+        auditoria.Mes = fecha.Month;
+        auditoria.Anio = fecha.Year;
+
+        if (auditoria.DetallesAuditoria == null)
+        {
+            auditoria.DetallesAuditoria = new List<DetalleAuditoria>();
+        }
+
+        foreach (var detalle in ListadoDetallesAuditoria)
+        {
+            if(auditoria.DetallesAuditoria.Where(x => x.PuntoAuditoriaID == detalle.PuntoAuditoriaID).FirstOrDefault() == null)
+            {
+                auditoria.DetallesAuditoria.Add(new DetalleAuditoria()
+                {
+                    ID = detalle.ID,
+                    PuntoAuditoriaID = detalle.PuntoAuditoriaID,
+                    PuntoAuditoria = null,
+                    RespuestaID = detalle.RespuestaID,
+                    Observaciones = detalle.Observaciones
+                });
+            }
+        }
+
+        await OnValidSubmit.InvokeAsync(null);
+    }
+
+    private async Task GuardarAuditoria()
+    {
+        bool error = false;
+        mensajesError = new List<string>();
+
+        if (string.IsNullOrEmpty(NroDeOrden.Trim()))
+        {
+            error = true;
+            mensajesError.Add("El Numero de Orden no puede estar Vacio");
+        }
         auditoria.NroOrden = NroDeOrden;
 
+        if (string.IsNullOrEmpty(NroDePieza.Trim()))
+        {
+            error = true;
+            mensajesError.Add("El Numero de Pieza no puede estar Vacio");
+        }
         auditoria.NroPieza = NroDePieza;
 
-        auditoria.MaquinaID = MaquinaSeleccionada.Select(x => x.ID).FirstOrDefault();
+        if (AreaSeleccionada.Count < 1)
+        {
+            error = true;
+            mensajesError.Add("Es Nesesario que Seleccione un/a Area/Linea para Poder Continuar");
+        }
 
-        auditoria.SupervisorID = SupervisorSeleccionado.Select(x => x.ID).FirstOrDefault();
+        if (MaquinaSeleccionada.Count < 1)
+        {
+            error = true;
+            mensajesError.Add("Es Nesesario que Seleccione una Maquina para Poder Continuar");
+        }
+        else
+        {
+            auditoria.MaquinaID = MaquinaSeleccionada.Select(x => x.ID).FirstOrDefault();
+        }
 
-        auditoria.OperarioID = OperarioSeleccionado.Select(x => x.ID).FirstOrDefault();
+        if (OperarioSeleccionado.Count < 1)
+        {
+            error = true;
+            mensajesError.Add("Es Nesesario que Seleccione un Operario para Poder Continuar");
+        }
+        else
+        {
+            auditoria.OperarioID = OperarioSeleccionado.Select(x => x.ID).FirstOrDefault();
+        }
+
+        if (SupervisorSeleccionado.Count < 1)
+        {
+            error = true;
+            mensajesError.Add("Es Nesesario que Seleccione un Supervisor para Poder Continuar");
+        }
+        else
+        {
+            auditoria.SupervisorID = SupervisorSeleccionado.Select(x => x.ID).FirstOrDefault();
+        }
 
         DateTime fecha = DateTime.Now;
 
@@ -292,21 +380,39 @@
         auditoria.Mes = fecha.Month;
         auditoria.Anio = fecha.Year;
 
-        auditoria.DetallesAuditoria = ListadoDetallesAuditoria;
+        //auditoria.DetallesAuditoria = ListadoDetallesAuditoria;
 
-        await OnValidSubmit.InvokeAsync(null);
-    }
+        foreach (var detalle in ListadoDetallesAuditoria)
+        {
+            if (detalle.RespuestaID == 2 && (detalle.Observaciones == null || detalle.Observaciones.Count < 1))
+            {
+                error = true;
+                mensajesError.Add("El Punto: " + detalle.PuntoAuditoria.Descripcion + ", tiene como Respuesta  No, por lo que debe tener una Observacion Contemplada o No Contemplada");
+            }
+        }
 
-    private async Task GuardarAuditoria()
-    {
-        Titulo = "¿Esta seguro de guardar esta auditoria?";
-        Mostrar = true;
+        if (!error)
+        {
+            Titulo = "¿Esta seguro de guardar esta auditoria?";
+            Mostrar = true;
+        }
+        else
+        {
+            TituloErrores = "Por favor revise la Auditoria y corriga los siguientes Errores";
+            MostrarErrores = true;
+        }
     }
 
     private async Task CerrarConfirmacion()
     {
         Titulo = "";
         Mostrar = false;
+    }
+
+    private async Task CerrarErrores()
+    {
+        TituloErrores = "";
+        MostrarErrores = false;
     }
 
 }

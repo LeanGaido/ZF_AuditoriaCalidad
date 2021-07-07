@@ -24,20 +24,25 @@ namespace ZF_AuditoriaCalidad.Shared
         public string Hora { get; set; }
 
         [ForeignKey("Maquina")]
+        [Required(ErrorMessage = "El numero de Maquina es Requerido")]
         public int MaquinaID { get; set; }
 
         //Nro de orden de produccion, dato obtenido al scannear el codigo de barras
+        [Required(ErrorMessage = "El numero de Orden es Requerido y no puede estar vacio")]
         public string NroOrden { get; set; }
 
         //Nro de orden de produccion, dato obtenido al scannear el codigo de barras
+        [Required(ErrorMessage = "El numero de Pieza es Requerido y no puede estar vacio")]
         public string NroPieza { get; set; }
 
         //UserId del operario
         [ForeignKey("Operario")]
+        [Required(ErrorMessage = "El Operario es Requerido")]
         public int OperarioID { get; set; }
 
         //UserId del supervisor
         [ForeignKey("Supervisor")]
+        [Required(ErrorMessage = "El Supervisor es Requerido")]
         public int SupervisorID { get; set; }
 
         //UserId del auditor
