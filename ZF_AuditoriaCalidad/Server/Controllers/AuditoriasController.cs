@@ -38,13 +38,13 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
             if (!string.IsNullOrWhiteSpace(parametrosBusqueda.NroDeOrden))
             {
                 queryable = queryable
-                    .Where(x => x.NroOrden.ToLower().Contains(parametrosBusqueda.NroDeOrden.ToLower()));
+                    .Where(x => x.NroOrden.ToLower() == parametrosBusqueda.NroDeOrden.ToLower());
             }
 
-            if (!string.IsNullOrWhiteSpace(parametrosBusqueda.NroDeOrden))
+            if (!string.IsNullOrWhiteSpace(parametrosBusqueda.NroDePieza))
             {
                 queryable = queryable
-                    .Where(x => x.NroPieza.ToLower().Contains(parametrosBusqueda.NroDePieza.ToLower()));
+                    .Where(x => x.NroPieza.ToLower() == parametrosBusqueda.NroDePieza.ToLower());
             }
 
             if (parametrosBusqueda.Fecha != null)

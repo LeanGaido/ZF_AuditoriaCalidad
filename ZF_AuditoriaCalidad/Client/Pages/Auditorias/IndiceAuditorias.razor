@@ -10,13 +10,13 @@
             <label for="titulo" class="">Nro De Orden</label>
             <input @bind-value="NroDeOrden" @bind-value:event="oninput"
                    @onkeypress="@((KeyboardEventArgs e) => NroDeOrdenKeyPress(e))"
-                   type="text" class="form-control" id="NroDeOrden" placeholder="Nro De Orden" />
+                   type="number" class="form-control" id="NroDeOrden" placeholder="Nro De Orden" />
         </div>
         <div class="form-group col-md-3">
             <label for="titulo" class="">Nro De Pieza</label>
             <input @bind-value="NroDePieza" @bind-value:event="oninput"
                    @onkeypress="@((KeyboardEventArgs e) => NroDePiezaKeyPress(e))"
-                   type="text" class="form-control" id="NroDePieza" placeholder="Nro De Pieza" />
+                   type="number" class="form-control" id="NroDePieza" placeholder="Nro De Pieza" />
         </div>
         <div class="form-group col-md-3">
             <label for="titulo">Area/Linea</label>
