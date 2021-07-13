@@ -3,9 +3,152 @@
 
 @{
     ViewData["Title"] = "Log in";
+    Layout = null;
 }
 
-<h1>@ViewData["Title"]</h1>
+<style>
+    BODY {
+        background: #000;
+        font-family: "Tahoma", verdana, arial;
+        font-size: 12px;
+        margin: auto;
+        margin-top: 30px;
+    }
+
+    #capa_titulo_login {
+        background: url(../extranet_archivos/titulo_login.png);
+        font-family: "Tahoma", verdana, arial;
+        height: 100px;
+        margin: auto;
+        width: 540px;
+    }
+
+    #capa_cuerpo_login {
+        background-color: #fff;
+        border-radius: 10px;
+        color: #000;
+        margin: auto;
+        padding: 10px 20px 20px 20px;
+        width: 500px;
+    }
+
+    input {
+        background-color: #0079DC;
+        border-radius: 5px;
+        color: #FFF;
+        height: 20px;
+        width: 250px;
+    }
+
+    .boton {
+        height: 40px;
+        width: 141px;
+    }
+
+    .textoblanco {
+        font: 9pt tahoma, verdana, Arial, sans-serif;
+        color: #FFFFFF;
+        text-align: justify;
+    }
+
+    .tituloBlanco {
+        font: 20pt tahoma, verdana, Arial, sans-serif;
+        color: #FFFFFF;
+        text-align: justify;
+    }
+
+    .subtituloBlanco {
+        font: 14pt tahoma, verdana, Arial, sans-serif;
+        color: #FFFFFF;
+        text-align: justify;
+    }
+
+    .link {
+        color: #333;
+        text-decoration: none;
+    }
+</style>
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>ContentAdmin | Sistema Administrador</title>
+    <link href="~/Content/login/login.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" type="image\/png" href="~/Content/images/favicon/favicon.png" />
+</head>
+
+<body>
+
+    @*<div align="center"><img src="~/Areas/ContentAdmin/Data/images/logo_contentadmin.jpg"></div>*@
+    <p></p>
+    <div id="capa_cuerpo_login">
+        <form id="account" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <table border="0" width="100%" height="100">
+                <tr>
+                    <td width="5%">&nbsp;</td>
+                    <td colspan="5">
+                        <h2>LOGIN DE ACCESO</h2>
+                        <P></P>
+                        Ingrese el usuario y contraseña para poder acceder al Sistema Administrador.
+                        &nbsp;
+                        <p></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="5%">&nbsp;</td>
+                    <td width="100%"><b>NOMBRE DE USUARIO:</b></td>
+                    <td rowspan="2" width="1px" height="50px" bgcolor="#dcdcdc"></td>
+                    <td width="5%">&nbsp;</td>
+                    <td><input asp-for="Input.Email" required class="texto10"> </td>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    @*<div class="form-group">
+                        <label asp-for="Input.Email"></label>
+                        <input asp-for="Input.Email" class="form-control" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>*@
+                    <td width="5%">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td width="5%">&nbsp;</td>
+                    <td width="100%"><b>CONTRASEÑA:</b></td>
+                    <td width="5%">&nbsp;</td>
+                    <td><input asp-for="Input.Password" required class="texto10"></td>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    @*<div class="form-group">
+                        <label asp-for="Input.Password"></label>
+                        <input asp-for="Input.Password" class="form-control" />
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>*@
+                    <td width="5%">&nbsp;</td>
+                </tr>
+            </table>
+            <P>
+
+                <div align="center"><input type="submit" name="ingresar" value="INGRESAR" class="boton"></div>
+                &nbsp;
+            </P>
+            <div class="form-group">
+                <p>
+                    <a id="forgot-password" asp-page="./ForgotPassword">¿Olvido su contraseña?</a>
+                </p>
+                <p>
+                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Registrarse</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+
+
+
+@*<h1>@ViewData["Title"]</h1>
 <div class="row">
     <div class="col-md-4">
         <section>
@@ -79,4 +222,4 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}
+}*@
