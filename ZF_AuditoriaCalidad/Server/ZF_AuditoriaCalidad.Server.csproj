@@ -35,9 +35,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\ContentAdmin\Data\" />
-    <Folder Include="Areas\ContentAdmin\Models\" />
-  </ItemGroup>
-
 </Project>
