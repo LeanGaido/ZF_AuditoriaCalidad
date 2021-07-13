@@ -49,8 +49,8 @@ namespace ZF_AuditoriaCalidad.Server.Data
                new Area { ID = 3, Descripcion = "HD", Email = "" },
                new Area { ID = 4, Descripcion = "Empaque", Email = "" },
                new Area { ID = 5, Descripcion = "Vástago", Email = "" },
-               new Area { ID = 5, Descripcion = "Manual", Email = "" },
-               new Area { ID = 5, Descripcion = "Tubos", Email = "" }
+               new Area { ID = 6, Descripcion = "Manual", Email = "" },
+               new Area { ID = 7, Descripcion = "Tubos", Email = "" }
            );
 
             modelBuilder.Entity<Maquina>().HasData(
