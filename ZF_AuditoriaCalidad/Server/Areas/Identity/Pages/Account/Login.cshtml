@@ -67,6 +67,16 @@
         color: #333;
         text-decoration: none;
     }
+
+    .center {
+        text-align: center
+    }
+
+    .enlaces{
+        text-decoration: none;
+        font-size: 14px;
+        color: black;
+    }
 </style>
 
 <!DOCTYPE HTML>
@@ -77,10 +87,8 @@
     <link href="~/Content/login/login.css" rel="stylesheet" type="text/css" />
     <link rel="icon" type="image\/png" href="~/Content/images/favicon/favicon.png" />
 </head>
-
 <body>
-
-    @*<div align="center"><img src="~/Areas/ContentAdmin/Data/images/logo_contentadmin.jpg"></div>*@
+    <br /><br /><br />
     <p></p>
     <div id="capa_cuerpo_login">
         <form id="account" method="post">
@@ -89,11 +97,13 @@
                 <tr>
                     <td width="5%">&nbsp;</td>
                     <td colspan="5">
-                        <h2>LOGIN DE ACCESO</h2>
-                        <P></P>
-                        Ingrese el usuario y contraseña para poder acceder al Sistema Administrador.
-                        &nbsp;
-                        <p></p>
+                        <div class="center">
+                            <h2>LOGIN DE ACCESO</h2>
+                            <P></P>
+                            Ingrese el usuario y contraseña para poder acceder al Sistema Administrador.
+                            &nbsp;
+                            <p></p>
+                        </div>                        
                     </td>
                 </tr>
                 <tr>
@@ -129,12 +139,12 @@
                 <div align="center"><input type="submit" name="ingresar" value="INGRESAR" class="boton"></div>
                 &nbsp;
             </P>
-            <div class="form-group">
+            <div class="form-group center">
                 <p>
-                    <a id="forgot-password" asp-page="./ForgotPassword">¿Olvido su contraseña?</a>
+                    <a id="forgot-password" class="enlaces" asp-page="./ForgotPassword">¿Olvido su contraseña?</a>
                 </p>
                 <p>
-                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Registrarse</a>
+                    <a asp-page="./Register" class="enlaces" asp-route-returnUrl="@Model.ReturnUrl">Registrarse</a>
                 </p>
             </div>
         </form>
