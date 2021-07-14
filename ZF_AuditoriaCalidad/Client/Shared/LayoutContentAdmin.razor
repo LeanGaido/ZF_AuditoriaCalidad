@@ -1,0 +1,58 @@
+﻿@inherits LayoutComponentBase
+
+<div class="d-flex" id="wrapper">
+    @*@using (Html.BeginForm("LogOff", "Account", new { area = "" }, FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+    }*@
+    <!-- Sidebar -->
+    <div class="bg-light background-turquesa3" id="sidebar-wrapper">
+        <div class="sidebar-heading">
+            <span class="logo-text textoBlanco" style="font-size:30px;"><b>ContentAdmin</b></span>
+            @*<a href="@Url.Action("Index","Home")"><img class="img-responsive" id="img-logo" src="~/Content/images/logo/logo-web.png" alt="AG EMERGENCIAS" style="margin-left: 50px;"></a>*@
+        </div>
+        <hr />
+        <div class="list-group list-group-flush">
+            <a href="#" class="list-group-item list-group-item-action bg-light textoBlanco background-turquesa3"><b>HOME</b></a>
+            <a href="#" class="list-group-item list-group-item-action bg-light textoBlanco background-turquesa3"><b>CONTACTOS</b></a>
+            <a href="javascript:document.getElementById('logoutForm').submit()" class="list-group-item list-group-item-action bg-light textoBlanco background-turquesa3"><b>CERRAR SESIÓN</b></a>
+        </div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-light border-bottom background-turquesa4">
+            <button class="btn btn-default" id="menu-toggle">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </nav>
+        <div class="container-fluid">
+            @Body
+            <div id="footer">
+                <div class="col-sm-12 text-right textoBlanco">
+                    <p class="text-right">Desarrollado y Hosteado por <a href="http://stnt.com.ar/" style="color: black" target="_blank"><b>StartNet</b></a></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Copyright -->
+    <!-- /#page-content-wrapper -->
+</div>
+
+@*<div class="sidebar">
+    <NavMenu />
+</div>
+<div class="main">
+    <div class="top-row px-4 auth">
+        <LoginDisplay />
+        <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+    </div>
+
+    <div class="content px-4">
+        @Body
+    </div>
+</div>
+@code {
+
+}*@
