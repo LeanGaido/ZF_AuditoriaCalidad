@@ -23,7 +23,7 @@ using ZF_AuditoriaCalidad.Shared;
 
 namespace ZF_AuditoriaCalidad.Server.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
+    [Authorize(Roles = "Administrador")]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
