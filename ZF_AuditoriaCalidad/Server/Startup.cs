@@ -107,6 +107,10 @@ namespace ZF_AuditoriaCalidad.Server
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
+
+                endpoints.MapControllerRoute(
+                    name: "ContentAdmin",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             });
         }
 
