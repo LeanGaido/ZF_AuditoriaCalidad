@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using ZF_AuditoriaCalidad.Server.Data;
 using ZF_AuditoriaCalidad.Server.Helpers;
 using ZF_AuditoriaCalidad.Server.Models;
@@ -27,7 +28,6 @@ namespace ZF_AuditoriaCalidad.Server
         {
             Configuration = configuration;
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-            
         }
 
         public IConfiguration Configuration { get; }
@@ -69,12 +69,13 @@ namespace ZF_AuditoriaCalidad.Server
 
             services.AddControllersWithViews();
             services.AddRazorPages();
-
+            
             services.AddAutoMapper(typeof(Startup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<IdentityRole> roleManager,
+               UserManager<ApplicationUser> userManager)
         {
             if (env.IsDevelopment())
             {
@@ -88,6 +89,8 @@ namespace ZF_AuditoriaCalidad.Server
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            ApplicationDbInitialiser.SeedRoles(roleManager);
+            ApplicationDbInitialiser.SeedUsers(userManager);
 
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
@@ -110,5 +113,6 @@ namespace ZF_AuditoriaCalidad.Server
                     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             });
         }
+
     }
 }

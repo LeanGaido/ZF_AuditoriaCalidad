@@ -1,7 +1,10 @@
 ﻿using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System;
+using System.Linq;
 using ZF_AuditoriaCalidad.Server.Models;
 using ZF_AuditoriaCalidad.Shared;
 
@@ -105,7 +108,7 @@ namespace ZF_AuditoriaCalidad.Server.Data
                 new RespuestaDetalleAuditoria { ID = 3, Descripcion = "N/A", ClaseHtml = "warning" },
                 new RespuestaDetalleAuditoria { ID = 4, Descripcion = "Corregido", ClaseHtml = "info" }
             );
-        }
+        }       
 
         //Zf
         public virtual DbSet<Operario> Operarios { get; set; }
