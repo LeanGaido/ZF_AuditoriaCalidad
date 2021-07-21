@@ -1,5 +1,5 @@
 ﻿@page "/ContentAdmin"
-@*@attribute [Authorize]*@
+@attribute [Authorize(Roles = "Administrador")]
 
 <br />
 <div class="page-content">
@@ -23,7 +23,7 @@
             </div>
             <br />
             <div class="col-sm-4">
-                <a  class="text-decoration-none">
+                <a class="text-decoration-none">
                     <div class="panel card card-ContentAdmin titulo-Blanco">
                         <div class="card-body">
                             <p class="icon iconoPanel">
