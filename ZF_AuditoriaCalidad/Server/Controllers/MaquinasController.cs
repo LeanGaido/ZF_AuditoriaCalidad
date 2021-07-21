@@ -48,9 +48,26 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         {
             if (string.IsNullOrWhiteSpace(textoBusqueda)) { return new List<Maquina>(); }
             textoBusqueda = textoBusqueda.ToLower();
-            return await context.Maquinas
+            var maquinas = await context.Maquinas
                 .Where(x => x.Descripcion.ToLower().Contains(textoBusqueda)  &&
                             x.AreaID == Id).ToListAsync();
+
+            var periodoDeAudicion = context.ParametrosGenerales.Where(x => x.Key == "Periodo de Audicion(Dias)").FirstOrDefault();
+
+            DateTime hoy = DateTime.Today;
+
+            int Dias = int.Parse(periodoDeAudicion.Value);
+
+            hoy = hoy.AddDays(-Dias);
+
+            foreach (var maquina in maquinas)
+            {
+                var cantDeAudiciones = context.Auditorias.Where(x => x.MaquinaID == maquina.ID && x.Fecha >= hoy).ToList().Count;
+
+                maquina.CantDeVecesAuditada = "Esta maquina ha sido auditada " + cantDeAudiciones + " veces en los ultimos " + Dias;
+            }
+
+            return maquinas;
         }
     }
 }

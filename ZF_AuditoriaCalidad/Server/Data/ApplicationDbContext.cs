@@ -97,10 +97,9 @@ namespace ZF_AuditoriaCalidad.Server.Data
                 new PuntoAuditoria { ID = 13, Descripcion = "Polivalencia" }
             );
 
-            //Datos correctos
-            //modelBuilder.Entity<PuntoAuditoria>().HasData(
-                
-            //);
+            modelBuilder.Entity<ParametroGeneral>().HasData(
+                new ParametroGeneral { ID = 1, Key = "Periodo de Audicion(Dias)", Value = "30" }
+            );
 
             modelBuilder.Entity<RespuestaDetalleAuditoria>().HasData(
                 new RespuestaDetalleAuditoria { ID = 1, Descripcion = "SI", ClaseHtml = "success" },
@@ -130,5 +129,7 @@ namespace ZF_AuditoriaCalidad.Server.Data
         public virtual DbSet<Observacion> Observaciones { get; set; }
 
         public virtual DbSet<ObservacionNoContemplada> ObservacionesNoContempladas { get; set; }
+
+        public virtual DbSet<ParametroGeneral> ParametrosGenerales { get; set; }
     }
 }
