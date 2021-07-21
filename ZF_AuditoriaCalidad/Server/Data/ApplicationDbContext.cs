@@ -19,26 +19,39 @@ namespace ZF_AuditoriaCalidad.Server.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            //Datos correctos
             modelBuilder.Entity<Operario>().HasData(
-                new Operario { ID = 1, Nombre = "Operario", Apellido = "Auditor 0001", Legajo = "0001", Auditor = true, Supervisor = false },
-                new Operario { ID = 2, Nombre = "Operario", Apellido = "Auditor 0002", Legajo = "0002", Auditor = true, Supervisor = false },
-                new Operario { ID = 3, Nombre = "Operario", Apellido = "Supervisor 0003", Legajo = "0003", Auditor = false, Supervisor = true },
-                new Operario { ID = 4, Nombre = "Operario", Apellido = "Supervisor 0004", Legajo = "0004", Auditor = false, Supervisor = true },
-                new Operario { ID = 5, Nombre = "Operario", Apellido = "0005", Legajo = "0005", Auditor = false, Supervisor = false },
-                new Operario { ID = 6, Nombre = "Operario", Apellido = "0006", Legajo = "0006", Auditor = false, Supervisor = false },
-                new Operario { ID = 7, Nombre = "Operario", Apellido = "0007", Legajo = "0007", Auditor = false, Supervisor = false },
-                new Operario { ID = 8, Nombre = "Operario", Apellido = "0008", Legajo = "0008", Auditor = false, Supervisor = false },
-                new Operario { ID = 9, Nombre = "Operario", Apellido = "0009", Legajo = "0009", Auditor = false, Supervisor = false },
-                new Operario { ID = 10, Nombre = "Operario", Apellido = "0010", Legajo = "0010", Auditor = false, Supervisor = false }
+                new Operario { ID = 1, Nombre = "RAUL SEBASTIAN", Apellido = "NEGRO", Legajo = "7", Auditor = false, Supervisor = true },
+                new Operario { ID = 2, Nombre = "LORENZO JUAN", Apellido = "QUINTEROS", Legajo = "11", Auditor = false, Supervisor = true },
+                new Operario { ID = 3, Nombre = "DANTE ALBERTO", Apellido = "VILLOSIO", Legajo = "13", Auditor = false, Supervisor = true },
+                new Operario { ID = 4, Nombre = "GERMAN SANTIAGO", Apellido = "GARETTO", Legajo = "20", Auditor = false, Supervisor = true },
+                new Operario { ID = 5, Nombre = "CRISTIAN GABRIEL", Apellido = "GOMEZ", Legajo = "286", Auditor = true, Supervisor = false },
+                new Operario { ID = 6, Nombre = "JORGE ALBERTO", Apellido = "ALBARRACIN", Legajo = "290", Auditor = true, Supervisor = false },
+                new Operario { ID = 7, Nombre = "JAVIER EDUARDO", Apellido = "MINA", Legajo = "102", Auditor = true, Supervisor = false },
+                new Operario { ID = 8, Nombre = "RUBEN JOSE DARIO", Apellido = "PASTORE", Legajo = "211", Auditor = true, Supervisor = false },
+                new Operario { ID = 9, Nombre = "DAVID", Apellido = "SEGHEZZI", Legajo = "1107", Auditor = false, Supervisor = false },
+                new Operario { ID = 10, Nombre = "NORBERTO RENATO", Apellido = "PASCHIERO", Legajo = "33", Auditor = false, Supervisor = false },
+                new Operario { ID = 11, Nombre = "MIGUEL ELIO", Apellido = "MORONE", Legajo = "39", Auditor = false, Supervisor = false },
+                new Operario { ID = 12, Nombre = "OSCAR HONORIO", Apellido = "JAIMES", Legajo = "53", Auditor = false, Supervisor = false },
+                new Operario { ID = 13, Nombre = "OMAR ENRIQUE", Apellido = "ZAPATA", Legajo = "65", Auditor = false, Supervisor = false },
+                new Operario { ID = 14, Nombre = "OSCAR ALBERTO", Apellido = "PRIOTTI", Legajo = "68", Auditor = false, Supervisor = false },
+                new Operario { ID = 15, Nombre = "JORGE OMAR", Apellido = "BURGOS", Legajo = "70", Auditor = false, Supervisor = false },
+                new Operario { ID = 16, Nombre = "CLAUDIO RAMON", Apellido = "BUSATO", Legajo = "85", Auditor = false, Supervisor = false },
+                new Operario { ID = 17, Nombre = "JAVIER EDUARDO", Apellido = "MINA", Legajo = "102", Auditor = false, Supervisor = false },
+                new Operario { ID = 18, Nombre = "ENRIQUE DOLORES", Apellido = "PEREZ", Legajo = "108", Auditor = false, Supervisor = false },
+                new Operario { ID = 19, Nombre = "MARCELO FABIAN", Apellido = "ABBURRA", Legajo = "118", Auditor = false, Supervisor = false },
+                new Operario { ID = 20, Nombre = "EDGARDO JAVIER", Apellido = "ZAPATA", Legajo = "126", Auditor = false, Supervisor = false }
             );
 
             modelBuilder.Entity<Area>().HasData(
-                new Area { ID = 1, Descripcion = "Area de Produccion Nro 1", Email = "" },
-                new Area { ID = 2, Descripcion = "Area de Produccion Nro 2", Email = "" },
-                new Area { ID = 3, Descripcion = "Area de Produccion Nro 3", Email = "" },
-                new Area { ID = 4, Descripcion = "Area de Produccion Nro 4", Email = "" },
-                new Area { ID = 5, Descripcion = "Area de Produccion Nro 5", Email = "" }
-            );
+               new Area { ID = 1, Descripcion = "GPS1", Email = "" },
+               new Area { ID = 2, Descripcion = "GPS2", Email = "" },
+               new Area { ID = 3, Descripcion = "HD", Email = "" },
+               new Area { ID = 4, Descripcion = "Empaque", Email = "" },
+               new Area { ID = 5, Descripcion = "Vástago", Email = "" },
+               new Area { ID = 6, Descripcion = "Manual", Email = "" },
+               new Area { ID = 7, Descripcion = "Tubos", Email = "" }
+           );
 
             modelBuilder.Entity<Maquina>().HasData(
                 new Maquina { ID = 1, AreaID = 1, Descripcion = "Maquina Nro 1 del Area de Produccion Nro 1" },
@@ -64,19 +77,27 @@ namespace ZF_AuditoriaCalidad.Server.Data
                 new Maquina { ID = 21, AreaID = 5, Descripcion = "Maquina Nro 21 del Area de Produccion Nro 5" }
             );
 
-
+            //Datos correctos
             modelBuilder.Entity<PuntoAuditoria>().HasData(
-                new PuntoAuditoria { ID = 1, Descripcion = "Punto de Auditoria Nro 1" },
-                new PuntoAuditoria { ID = 2, Descripcion = "Punto de Auditoria Nro 2" },
-                new PuntoAuditoria { ID = 3, Descripcion = "Punto de Auditoria Nro 3" },
-                new PuntoAuditoria { ID = 4, Descripcion = "Punto de Auditoria Nro 4" },
-                new PuntoAuditoria { ID = 5, Descripcion = "Punto de Auditoria Nro 5" },
-                new PuntoAuditoria { ID = 6, Descripcion = "Punto de Auditoria Nro 6" },
-                new PuntoAuditoria { ID = 7, Descripcion = "Punto de Auditoria Nro 7" },
-                new PuntoAuditoria { ID = 8, Descripcion = "Punto de Auditoria Nro 8" },
-                new PuntoAuditoria { ID = 9, Descripcion = "Punto de Auditoria Nro 9" },
-                new PuntoAuditoria { ID = 10, Descripcion = "Punto de Auditoria Nro 10" }
+                new PuntoAuditoria { ID = 1, Descripcion = "Existe Pieza Puesta a Punto" },
+                new PuntoAuditoria { ID = 2, Descripcion = "Orden de Fabricación Disponible" },
+                new PuntoAuditoria { ID = 3, Descripcion = "Control de Frabr.  ¿Registros?" },
+                new PuntoAuditoria { ID = 4, Descripcion = "Documentación necesaria disponible" },
+                new PuntoAuditoria { ID = 5, Descripcion = "Dimensional Pieza en Proceso" },
+                new PuntoAuditoria { ID = 6, Descripcion = "Funciona caja NO CONFORME" },
+                new PuntoAuditoria { ID = 7, Descripcion = "Ins. de medición calibrado/apropiado/POKA YOKE" },
+                new PuntoAuditoria { ID = 8, Descripcion = "TPM" },
+                new PuntoAuditoria { ID = 9, Descripcion = "Seguridad" },
+                new PuntoAuditoria { ID = 10, Descripcion = "5S" },
+                new PuntoAuditoria { ID = 11, Descripcion = "Mejoras" },
+                new PuntoAuditoria { ID = 12, Descripcion = "Identificación" },
+                new PuntoAuditoria { ID = 13, Descripcion = "Polivalencia" }
             );
+
+            //Datos correctos
+            //modelBuilder.Entity<PuntoAuditoria>().HasData(
+                
+            //);
 
             modelBuilder.Entity<RespuestaDetalleAuditoria>().HasData(
                 new RespuestaDetalleAuditoria { ID = 1, Descripcion = "SI", ClaseHtml = "success" },

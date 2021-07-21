@@ -1,7 +1,7 @@
 ﻿@page
 @model RegisterModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Crear Cuenta de Usuario a un Auditor";
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -9,9 +9,23 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h4>Create a new account.</h4>
             <hr />
             <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+                <label>Legajo</label>
+                <select class="form-control" asp-for="Input.Legajo">
+                    @foreach (var auditor in Model.Auditores)
+                    {
+                        <option value="@auditor.Value">@auditor.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Email"></label>
+                <input asp-for="Input.Email" class="form-control" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="Input.Email"></label>
                 <input asp-for="Input.Email" class="form-control" />
@@ -31,7 +45,7 @@
         </form>
     </div>
     <div class="col-md-6 col-md-offset-2">
-        <section>
+        @*<section>
             <h4>Use another service to register.</h4>
             <hr />
             @{
@@ -58,7 +72,7 @@
                     </form>
                 }
             }
-        </section>
+        </section>*@
     </div>
 </div>
 
