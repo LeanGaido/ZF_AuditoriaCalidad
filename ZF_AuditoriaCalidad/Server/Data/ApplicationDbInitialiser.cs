@@ -20,7 +20,7 @@ namespace ZF_AuditoriaCalidad.Server.Data
             (string name, string password, string role)[] demoUsers = new[]
             {
                 (name: "admin@gmail.com", password: "Adminzf.20", role: "Administrador"),
-                (name: "auditor1@gmail.com", password: "Auditor1.18", role: "Auditor"),
+                (name: "auditor1@gmail.com", password: " ", role: "Auditor"),
                 (name: "auditor2@gmail.com", password: "Auditor2.18", role: "Auditor"),
             };
 
