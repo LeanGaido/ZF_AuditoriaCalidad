@@ -67,7 +67,7 @@
                                ControlName="Maquina"
                                Placeholder="Nro de la Maquina">
                 <MyListTemplate>
-                    @Maquina.Descripcion
+                    <div class="col-sm-12 col-md-8">@Maquina.Descripcion - <span class="text-info">@Maquina.CantDeVecesAuditada</span></div>
                 </MyListTemplate>
                 <MyResultTemplate>
                     @Maquina.Descripcion
@@ -260,6 +260,7 @@
     {
         int id = AreaSeleccionada.FirstOrDefault().ID;
         var responseHttp = await repositorio.Get<List<Maquina>>($"api/Maquinas/buscar/{searchText}?Id=" + id);
+
         return responseHttp.Response;
     }
 

@@ -17,6 +17,9 @@ namespace ZF_AuditoriaCalidad.Shared
         [StringLength(240, ErrorMessage = "El largo del texto no puede superar 240 Caracteres")]
         public string Descripcion { get; set; }
 
+        [NotMapped]
+        public string CantDeVecesAuditada { get; set; }
+
         public virtual Area Area { get; set; }
     }
 }
