@@ -325,3 +325,7 @@ app {
 .progress-bar-blanco {
     background-color: white;
 }
+
+.EnlacesLoginDisplay {
+    color: #d7d7d7 !important;
+}

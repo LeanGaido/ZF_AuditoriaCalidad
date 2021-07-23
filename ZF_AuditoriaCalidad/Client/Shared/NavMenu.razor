@@ -9,12 +9,14 @@
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
-        <AuthorizeView Roles="Auditor">
+        <AuthorizeView Roles="Auditor, Administrador">
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Home
                 </NavLink>
             </li>
+        </AuthorizeView>
+        <AuthorizeView Roles="Auditor">
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="Auditorias">
                     <span class="oi oi-plus" aria-hidden="true"></span> Auditorias
@@ -22,11 +24,6 @@
             </li>
         </AuthorizeView>
         <AuthorizeView Roles="Administrador">
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="Home" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Home
-                </NavLink>
-            </li>
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="PuntosAuditoria">
                     <span class="oi oi-plus" aria-hidden="true"></span> Puntos de Auditoría
@@ -42,12 +39,14 @@
                     <span class="oi oi-plus" aria-hidden="true"></span> Importar
                 </NavLink>
             </li>
+        </AuthorizeView>
+        <AuthorizeView Roles="Administrador, Auditor">
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="#" @onclick="BeginSignOut">
                     <span class="oi oi-x" aria-hidden="true"></span> Cerrar Sesión
                 </NavLink>
             </li>
-        </AuthorizeView>
+        </AuthorizeView>        
     </ul>
 </div>
 
