@@ -1,0 +1,92 @@
+﻿@page "/"
+
+<br />
+<div class="page-content">
+    <div id="tab-general">
+        <div class="row">
+            <AuthorizeView Roles="Administrador">
+                <div class="col-sm-4">
+                    <a href="PuntosAuditoria" class="text-decoration-none ">
+                        <div class="panel card card-ContentAdmin titulo-Blanco">
+                            <div class="card-body">
+                                <p class="icon iconoPanel">
+                                    <i class="icon fa fa-inbox"></i>
+                                </p>
+                                <h4 class="card-title">PUNTOS DE AUDITORÍA</h4>
+                                <p class="card-text">INGRESAR</p>
+                                <div class="progress progress-sm">
+                                    <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <br />
+            </AuthorizeView>        
+            <AuthorizeView Roles="Administrador">
+                <div class="col-sm-4">
+                    <a href="Observaciones" class="text-decoration-none">
+                        <div class="panel card card-ContentAdmin titulo-Blanco">
+                            <div class="card-body">
+                                <p class="icon iconoPanel">
+                                    <i class="icon fa fa-wrench"></i>
+                                </p>
+                                <h4 class="card-title">OBSERVACIONES</h4>
+                                <p class="card-text">INGRESAR</p>
+                                <div class="progress progress-sm">
+                                    <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <br />
+            </AuthorizeView>   
+            <AuthorizeView Roles="Administrador">
+                <div class="col-sm-4">
+                    <a href="Importar" class="text-decoration-none">
+                        <div class="panel card card-ContentAdmin titulo-Blanco">
+                            <div class="card-body">
+                                <p class="icon iconoPanel">
+                                    <i class="icon fa fa-wrench"></i>
+                                </p>
+                                <h4 class="card-title">IMPORTAR</h4>
+                                <p class="card-text">INGRESAR</p>
+                                <div class="progress progress-sm">
+                                    <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <br />
+            </AuthorizeView>            
+        </div>
+        <br />
+        <AuthorizeView Roles="Auditor">
+            <div class="row">
+                <div class="col-sm-4">
+                    <a href="Auditorias" class="text-decoration-none ">
+                        <div class="panel card card-ContentAdmin titulo-Blanco">
+                            <div class="card-body">
+                                <p class="icon iconoPanel">
+                                    <i class="icon fa fa-inbox"></i>
+                                </p>
+                                <h4 class="card-title">AUDITORÍA</h4>
+                                <p class="card-text">INGRESAR</p>
+                                <div class="progress progress-sm">
+                                    <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </AuthorizeView>       
+    </div>
+</div>
+
+
+@code {
+
+}
