@@ -20,7 +20,8 @@
                     <tr>
                         <td>
                             <a href="Auditorias/editar/@item.ID" class="btn btn-success"><ion-icon name="create"></ion-icon></a>
-                            @*<button @onclick="@(() => BorrarAuditoria(item))" class="btn btn-danger"><ion-icon name="trash"></ion-icon></button>*@
+                            @*<a href="Auditorias/editar/@item.ID" class="btn btn-danger"><ion-icon name="trash"></ion-icon></a>*@
+                            <button @onclick="@(() => EliminarPuntoAuditoria(item))" class="btn btn-danger"><ion-icon name="trash"></ion-icon></button>
                         </td>
                         <td>@item.Descripcion</td>
                     </tr>
@@ -29,14 +30,55 @@
         </table>
     </HayRegistrosCompleto>
 </ListadoGenerico>
+<Confirmacion MostrarConfirmacion="Mostrar"
+              Titulo="@Titulo"
+              onCancel="CerrarConfirmacion"
+              onConfirm="OnDataAnnonationsValidated">
+    <ChildContent>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-12">
+                    <label>Nro de Orden:</label>
+                    <div>
+                        <input readonly class="form-control" value="" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ChildContent>
+</Confirmacion>
 
 @code {
     public List<PuntoAuditoria> ListadoPuntosAuditoria { get; set; }
-    //[Parameter] public List<PuntoAuditoria> ListadoPuntosAuditoria { get; set; } = new List<PuntoAuditoria>();
+    private PuntoAuditoria puntoAuditoriaEliminar;
+    private bool Mostrar = false;
+    private string Titulo = "";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
 
     protected async override Task OnInitializedAsync()
     {
         var responseHttpPuntosAuditoria = await repositorio.Get<List<PuntoAuditoria>>("api/PuntosAuditoria");
         ListadoPuntosAuditoria = responseHttpPuntosAuditoria.Response;
     }
+
+    private async Task CerrarConfirmacion()
+    {
+        Titulo = "";
+        Mostrar = false;
+    }
+
+    private async Task OnDataAnnonationsValidated()
+    {
+        await OnValidSubmit.InvokeAsync(null);
+    }
+
+    private async Task EliminarPuntoAuditoria(PuntoAuditoria item)
+    {
+        Titulo = "¿Esta seguro de eliminar este punto de auditoria?";
+        puntoAuditoriaEliminar = item;
+        Mostrar = true;
+    }
+
+
 }
