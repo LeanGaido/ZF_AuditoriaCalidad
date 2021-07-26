@@ -1,5 +1,42 @@
 ﻿@page "/PuntosAuditoria"
+@inject IRepositorio repositorio
+
+<div class="form-group">
+    <a class="btn btn-info" href="">Nuevo Punto Auditoria</a>
+</div>
+
+<ListadoGenerico Listado="ListadoPuntosAuditoria">
+    <HayRegistrosCompleto>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Descripcion</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ListadoPuntosAuditoria)
+                {
+                    <tr>
+                        <td>
+                            <a href="Auditorias/editar/@item.ID" class="btn btn-success"><ion-icon name="create"></ion-icon></a>
+                            @*<button @onclick="@(() => BorrarAuditoria(item))" class="btn btn-danger"><ion-icon name="trash"></ion-icon></button>*@
+                        </td>
+                        <td>@item.Descripcion</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </HayRegistrosCompleto>
+</ListadoGenerico>
 
 @code {
+    public List<PuntoAuditoria> ListadoPuntosAuditoria { get; set; }
+    //[Parameter] public List<PuntoAuditoria> ListadoPuntosAuditoria { get; set; } = new List<PuntoAuditoria>();
 
+    protected async override Task OnInitializedAsync()
+    {
+        var responseHttpPuntosAuditoria = await repositorio.Get<List<PuntoAuditoria>>("api/PuntosAuditoria");
+        ListadoPuntosAuditoria = responseHttpPuntosAuditoria.Response;
+    }
 }
