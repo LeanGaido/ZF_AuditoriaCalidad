@@ -138,6 +138,10 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                                 observacionNoContemplada.AreaResponsableID = obs.AreaResponsableID;
 
                                 context.ObservacionesNoContempladas.Add(observacionNoContemplada);
+
+                                context.SaveChanges();
+
+                                obs.ID = observacionNoContemplada.ID;
                             }
                             ObservacionDetalleAuditoria observacionDetalleAuditoria = new ObservacionDetalleAuditoria();
 
