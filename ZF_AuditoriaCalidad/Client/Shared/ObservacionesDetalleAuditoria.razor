@@ -12,7 +12,7 @@
         {
         <li data-id="@detalleAuditoria.Observaciones.IndexOf(observacion)">
             @observacion.Descripcion
-            @if (detalleAuditoria.ID == 0)
+            @if (PuedeEliminar && detalleAuditoria.ID == 0)
             {
                 <a class="btn btn-primary" @onclick="@(() => EliminarObservacion(detalleAuditoria.Observaciones.IndexOf(observacion)))" style="padding: 2px 10px 2px 10px; margin-left: 15px">x</a>
             }
@@ -80,6 +80,7 @@
     [Parameter] public List<Observacion> ListadoObservaciones { get; set; } = new List<Observacion>();
     [Parameter] public DetalleAuditoria detalleAuditoria { get; set; } = new DetalleAuditoria();
     [Parameter] public bool PuedeObservar { get; set; } = true;
+    [Parameter] public bool PuedeEliminar { get; set; } = true;
 
     private string descripcion = "";
     private int CantObservaciones = new Random().Next(0, 3);

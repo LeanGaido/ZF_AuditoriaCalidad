@@ -36,7 +36,8 @@
     {
         <br />
         <ObservacionesDetalleAuditoria detalleAuditoria="detalleAuditoria"
-                                        PuedeObservar="PuedeObservar">
+                                       PuedeObservar="PuedeObservar"
+                                       PuedeEliminar="PuedeEliminar">
         </ObservacionesDetalleAuditoria>
     }
 </div>
@@ -46,6 +47,7 @@
     [Parameter] public DetalleAuditoria detalleAuditoria { get; set; } = new DetalleAuditoria();
     [Parameter] public bool PuedeObservar { get; set; } = true;
     [Parameter] public bool PuedeResponder { get; set; } = true;
+    [Parameter] public bool PuedeEliminar { get; set; } = true;
     public RespuestaDetalleAuditoria respuestaSi = new RespuestaDetalleAuditoria() { Descripcion = "SI", ClaseHtml = "success", ID = 1 };
     public RespuestaDetalleAuditoria respuestaNo = new RespuestaDetalleAuditoria() { Descripcion = "NO", ClaseHtml = "danger", ID = 2 };
     public RespuestaDetalleAuditoria respuestaNA = new RespuestaDetalleAuditoria() { Descripcion = "N/A", ClaseHtml = "warning", ID = 3 };
