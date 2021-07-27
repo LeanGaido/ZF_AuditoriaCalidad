@@ -50,5 +50,13 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
             context.Remove(entity);
             context.SaveChanges();
         }
+
+        public async Task<bool> DeletePuntoAuditoriaAsync(PuntoAuditoria puntoAuditoria)
+        {
+            context.Remove(puntoAuditoria);
+            await context.SaveChangesAsync();
+            return true;
+        }
+
     }
 }
