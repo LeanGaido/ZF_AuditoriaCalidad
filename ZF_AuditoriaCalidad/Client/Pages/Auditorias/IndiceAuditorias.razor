@@ -93,8 +93,12 @@
                     <tr>
                         <td>
                             <a href="Auditorias/@item.ID" class="btn btn-success"><ion-icon name="folder-open"></ion-icon></a>
-                            <a href="Auditorias/editar/@item.ID" class="btn btn-success"><ion-icon name="create"></ion-icon></a>
-                            @*<button @onclick="@(() => BorrarAuditoria(item))" class="btn btn-danger"><ion-icon name="trash"></ion-icon></button>*@
+                            <AuthorizeView Roles="Auditor">
+                                <a href="Auditorias/editar/@item.ID" class="btn btn-success"><ion-icon name="create"></ion-icon></a>
+                            </AuthorizeView>
+                            <AuthorizeView Roles="Administrador">
+                                <button @onclick="@(() => BorrarAuditoria(item))" class="btn btn-danger"><ion-icon name="trash"></ion-icon></button>
+                            </AuthorizeView>
                         </td>
                         <td>@item.NroOrden</td>
                         <td>@item.NroPieza</td>
