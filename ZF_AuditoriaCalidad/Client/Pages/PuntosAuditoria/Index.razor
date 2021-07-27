@@ -33,14 +33,13 @@
 <Confirmacion MostrarConfirmacion="Mostrar"
               Titulo="@Titulo"
               onCancel="CerrarConfirmacion"
-              onConfirm="OnDataAnnonationsValidated">
+              onConfirm="EliminarConfirmado">
     <ChildContent>
         <div class="form-group">
             <div class="row">
                 <div class="col-md-12">
-                    <label>Nro de Orden:</label>
                     <div>
-                        <input readonly class="form-control" value="" />
+                        <input readonly class="form-control" value="@PuntoAuditoriaTexto" />
                     </div>
                 </div>
             </div>
@@ -53,6 +52,7 @@
     private PuntoAuditoria puntoAuditoriaEliminar;
     private bool Mostrar = false;
     private string Titulo = "";
+    private string PuntoAuditoriaTexto = "";
     [Parameter] public EventCallback OnValidSubmit { get; set; }
 
 
@@ -68,13 +68,14 @@
         Mostrar = false;
     }
 
-    private async Task OnDataAnnonationsValidated()
+    private async Task EliminarConfirmado()
     {
-        await OnValidSubmit.InvokeAsync(null);
+        //await Http.DeleteAsync($"api/PuntosAuditoria/{ puntoAuditoriaEliminar.ID }");
     }
 
-    private async Task EliminarPuntoAuditoria(PuntoAuditoria item)
+    private void EliminarPuntoAuditoria(PuntoAuditoria item)
     {
+        PuntoAuditoriaTexto = item.Descripcion;
         Titulo = "¿Esta seguro de eliminar este punto de auditoria?";
         puntoAuditoriaEliminar = item;
         Mostrar = true;

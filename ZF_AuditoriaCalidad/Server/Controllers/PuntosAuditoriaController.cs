@@ -42,5 +42,13 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
             return PuntoAuditoria;
         }
+
+        [HttpDelete("{id?}")]
+        public void Delete(PuntoAuditoria id)
+        {
+            var entity = context.PuntosAuditoria.Find(id);
+            context.Remove(entity);
+            context.SaveChanges();
+        }
     }
 }
