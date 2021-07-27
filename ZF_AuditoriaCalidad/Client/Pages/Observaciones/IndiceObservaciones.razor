@@ -1,0 +1,173 @@
+﻿@page "/Observaciones"
+@inject IRepositorio repositorio
+@attribute [Authorize]
+@inject HttpClientConToken Http
+
+<div class="">
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label for="titulo" class="">Descripcion</label>
+            <input @bind-value="Descripcion" @bind-value:event="oninput"
+                   @onkeypress="@((KeyboardEventArgs e) => DescripcionKeyPress(e))"
+                   type="text" class="form-control" id="Descripcion" placeholder="Descripcion" />
+        </div>
+        @*<div class="form-group col-md-3">
+                <label for="titulo" class="">Punto de Auditoria</label>
+                <select class="form-control" @bind="PuntoAuditoriaID">
+                    <option value="0">--Seleccione un Punto de Auditoria--</option>
+                    @foreach (var item in ListadoPuntosAuditoria)
+                    {
+                        <option value="@item.ID">@item.Descripcion</option>
+                    }
+                </select>
+            </div>*@
+        <div class="form-group col-md-3">
+            <label for="titulo" class="">Area Responsable</label>
+            <select class="form-control" @bind="AreaResponsableID">
+                <option value="0">--Seleccione un Area Responsable--</option>
+                @foreach (var item in ListadoAreasResponsables)
+                {
+                    <option value="@item.ID">@item.Descripcion</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-3"></div>
+        <div class="form-group col-md-3"></div>
+        <div class="form-group col-md-2">
+            <button type="button" class="btn btn-primary mb-2 mx-sm-3" @onclick="@(() => Cargar())">Filtrar</button>
+        </div>
+    </div>
+
+    @*<button type="button" class="btn btn-danger mb-2" @onclick="LimpiarOnClick">Limpiar</button>*@
+</div>
+
+
+<div class="form-group">
+    <a class="btn btn-info" href="auditorias/crear">Nueva Auditoria</a>
+</div>
+
+<ListadoGenerico Listado="Observaciones">
+    <HayRegistrosCompleto>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Descripcion</th>
+                    <th>Para La Linea</th>
+                    <td>Area/Linea Responsable</td>
+                    <td>Punto de Auditoria</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Observaciones)
+                {
+                    <tr>
+                        <td>
+                            @*<AuthorizeView Roles="Administrador">
+                                <button @onclick="@(() => BorrarAuditoria(item))" class="btn btn-danger"><ion-icon name="trash"></ion-icon></button>
+                            </AuthorizeView>*@
+                        </td>
+                        <td>@item.Descripcion</td>
+                        <td>
+                            @if (item.ParaLaLinea)
+                            {
+                                <input type="checkbox" checked readonly />
+                            }
+                            else
+                            {
+                                <input type="checkbox" readonly />
+                            }
+                        </td>
+                        <td>@item.AreaResponsable.Descripcion</td>
+                        <td>@item.PuntoAuditoria.Descripcion</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </HayRegistrosCompleto>
+</ListadoGenerico>
+
+<Paginacion PaginaActual="paginaActual" PaginaSeleccionada="paginaSeleccionada"
+            PaginasTotales="paginasTotales"></Paginacion>
+
+@code {
+    public List<Observacion> Observaciones { get; set; }
+
+    private int paginaActual = 1;
+    private int paginasTotales;
+
+    Dictionary<string, string> queryStringsDict = new Dictionary<string, string>();
+    public string Descripcion = "";
+    public bool? ParaLaLinea;
+    public int? AreaResponsableID = 0;
+    public int? PuntoAuditoriaID = 0;
+
+    [Parameter] public List<Area> ListadoAreasResponsables { get; set; } = new List<Area>();
+
+    [Parameter] public List<PuntoAuditoria> ListadoPuntosAuditoria { get; set; } = new List<PuntoAuditoria>();
+
+    private async Task DescripcionKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await Cargar();
+        }
+    }
+
+    private string GenerarQueryStrings()
+    {
+        if (queryStringsDict == null) { queryStringsDict = new Dictionary<string, string>(); }
+        queryStringsDict["Descripcion"] = Descripcion;
+        queryStringsDict["ParaLaLinea"] = ParaLaLinea.ToString();
+        queryStringsDict["AreaResponsableID"] = AreaResponsableID.ToString();
+        queryStringsDict["PuntoAuditoriaID"] = PuntoAuditoriaID.ToString();
+
+        var valoresPorDefecto = new List<string>() { "false", "", "0" };
+
+        // generoid=7&titulo=spider ...
+
+        return string.Join("&", queryStringsDict
+            .Where(x => !valoresPorDefecto.Contains(x.Value.ToLower()))
+            .Select(x => $"{x.Key}={System.Web.HttpUtility.UrlEncode(x.Value)}").ToArray());
+    }
+
+    private async Task paginaSeleccionada(int pagina)
+    {
+        paginaActual = pagina;
+        await Cargar(pagina);
+    }
+
+    private async Task Cargar(int pagina = 1)
+    {
+        var queryStrings = GenerarQueryStrings();
+        var responseHttp = await repositorio.Get<List<Observacion>>($"api/Observaciones?" + queryStrings);
+        if (!responseHttp.Error)
+        {
+            Observaciones = responseHttp.Response;
+            var conteo = responseHttp.HttpResponseMessage.Headers.GetValues("conteo").FirstOrDefault();
+            paginasTotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
+        }
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            var responseHttpAreas = await repositorio.Get<List<Area>>("api/Areas/");
+            ListadoAreasResponsables = responseHttpAreas.Response;
+            ///AreaID = (ListadoAreas.FirstOrDefault() != null) ? ListadoAreas.First().ID : 0;
+
+            //var responseHttpPuntosAuditoria = await repositorio.Get<List<PuntoAuditoria>>($"api/PuntoAuditoria/");
+            //ListadoPuntosAuditoria = responseHttpPuntosAuditoria.Response;
+            //MaquinaID = (ListadoMaquinas.FirstOrDefault() != null) ? ListadoMaquinas.First().ID : 0;
+
+            await Cargar();
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+}
