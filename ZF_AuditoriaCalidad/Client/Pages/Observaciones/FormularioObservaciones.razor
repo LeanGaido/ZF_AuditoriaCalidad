@@ -1,0 +1,227 @@
+﻿@inject IRepositorio repositorio
+
+<EditForm Model="observacion">
+    <DataAnnotationsValidator />
+
+    <Confirmacion MostrarConfirmacion="MostrarErrores"
+                  Titulo="@TituloErrores"
+                  onCancel="CerrarErrores"
+                  onConfirm="CerrarErrores"
+                  TextoBotonConfirmar="Revisar">
+        <ChildContent>
+            @if (mensajesError.Count > 0)
+            {
+                <ul class="list-group">
+                    @foreach (var error in mensajesError)
+                    {
+                        <li class="list-group-item list-group-item-danger"><b>@error</b></li>
+                    }
+                </ul>
+            }
+        </ChildContent>
+    </Confirmacion>
+
+    <div class="form-group">
+        <label>Descripcion:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Descripcion" />
+            <ValidationMessage For="@(() => observacion.Descripcion)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Para La Linea:</label>
+        <div>
+            <InputCheckbox @bind-Value="@ParaLaLinea" />
+            <ValidationMessage For="@(() => observacion.ParaLaLinea)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Area Responsable:</label>
+        <div>
+            <SelectorTypeahead Context="Area"
+                               SearchMethod="BuscarAreaResponsable"
+                               ElementosSeleccionados="AreaResponsableSeleccionada"
+                               ControlName="Area"
+                               Placeholder="Nombre del Area">
+                <MyListTemplate>
+                    @Area.Descripcion
+                </MyListTemplate>
+                <MyResultTemplate>
+                    @Area.Descripcion
+                </MyResultTemplate>
+            </SelectorTypeahead>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Punto de Auditoria:</label>
+        <div>
+            <SelectorTypeahead Context="PuntoAuditoria"
+                               SearchMethod="BuscarPuntosAuditoria"
+                               ElementosSeleccionados="PuntoAuditoriaSeleccionado"
+                               ControlName="Maquina"
+                               Placeholder="Nro de la Maquina">
+                <MyListTemplate>
+                    <div class="col-sm-12 col-md-8">@PuntoAuditoria.Descripcion</div>
+                </MyListTemplate>
+                <MyResultTemplate>
+                    @PuntoAuditoria.Descripcion
+                </MyResultTemplate>
+            </SelectorTypeahead>
+        </div>
+    </div>
+
+    <a @onclick="@(() => GuardarObservacion())" class="btn btn-success">Guardar Observacion</a>
+</EditForm>
+
+<Confirmacion MostrarConfirmacion="Mostrar"
+              Titulo="@Titulo"
+              onCancel="CerrarConfirmacion"
+              onConfirm="OnDataAnnonationsValidated">
+    <ChildContent>
+        <div class="form-group">
+            <label>Descripcion:</label>
+            <div>
+                <input type="text" readonly class="form-control" value="@Descripcion" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Para La Linea:</label>
+            <div>
+                @if (ParaLaLinea)
+                {
+                    <input type="checkbox" checked />
+                }
+                else
+                {
+                    <input type="checkbox" />
+                }
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Area Responsable:</label>
+            <div>
+                <input type="text" readonly class="form-control" value="@AreaResponsableSeleccionada.First().Descripcion" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Punto de Auditoria:</label>
+            <div>
+                <input type="text" readonly class="form-control" value="@PuntoAuditoriaSeleccionado.First().Descripcion" />
+            </div>
+        </div>
+    </ChildContent>
+</Confirmacion>
+
+@code {
+    private string Descripcion = "";
+    private bool ParaLaLinea = false;
+
+    [Parameter] public Observacion observacion { get; set; } = new Observacion();
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+    [Parameter] public List<Area> ListadoAreasResponsables { get; set; } = new List<Area>();
+    [Parameter] public List<Area> AreaResponsableSeleccionada { get; set; } = new List<Area>();
+
+    [Parameter] public List<PuntoAuditoria> ListadoPuntosAuditoria { get; set; } = new List<PuntoAuditoria>();
+    [Parameter] public List<PuntoAuditoria> PuntoAuditoriaSeleccionado { get; set; } = new List<PuntoAuditoria>();
+
+    private bool Mostrar = false, MostrarErrores = false;
+    private string Titulo = "", TituloErrores = "";
+    public List<string> mensajesError = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        if (observacion.ID != 0)
+        {
+            Descripcion = observacion.Descripcion;
+            ParaLaLinea = observacion.ParaLaLinea;
+
+            AreaResponsableSeleccionada.Add(observacion.AreaResponsable);
+
+            PuntoAuditoriaSeleccionado.Add(observacion.PuntoAuditoria);
+        }
+    }
+
+    private async Task<IEnumerable<Area>> BuscarAreaResponsable(string searchText)
+    {
+        var responseHttp = await repositorio.Get<List<Area>>($"api/Areas/buscar/{searchText}");
+        return responseHttp.Response;
+    }
+
+    private async Task<IEnumerable<PuntoAuditoria>> BuscarPuntosAuditoria(string searchText)
+    {
+        var responseHttp = await repositorio.Get<List<PuntoAuditoria>>($"api/PuntosAuditoria/buscar/{searchText}");
+
+        return responseHttp.Response;
+    }
+
+    private async Task OnDataAnnonationsValidated()
+    {
+        await OnValidSubmit.InvokeAsync(null);
+    }
+
+    private async Task GuardarObservacion()
+    {
+        bool error = false;
+        mensajesError = new List<string>();
+
+        if (string.IsNullOrEmpty(Descripcion.Trim()))
+        {
+            error = true;
+            mensajesError.Add("El Numero de Orden no puede estar Vacio");
+        }
+        else
+        {
+            observacion.Descripcion = Descripcion.Trim();
+        }
+
+        observacion.ParaLaLinea = ParaLaLinea;
+
+        if (AreaResponsableSeleccionada.Count < 1)
+        {
+            error = true;
+            mensajesError.Add("Es Nesesario que Seleccione un/a Area/Linea Responasble para Poder Continuar");
+        }
+        else
+        {
+            observacion.AreaResponsableID = AreaResponsableSeleccionada.Select(x => x.ID).FirstOrDefault();
+        }
+
+        if (PuntoAuditoriaSeleccionado.Count < 1)
+        {
+            error = true;
+            mensajesError.Add("Es Nesesario que Seleccione un Punto de Auditoria para Poder Continuar");
+        }
+        else
+        {
+            observacion.PuntoAuditoriaID = PuntoAuditoriaSeleccionado.Select(x => x.ID).FirstOrDefault();
+        }
+
+        //auditoria.DetallesAuditoria = ListadoDetallesAuditoria;
+
+        if (!error)
+        {
+            Titulo = "¿Esta seguro de guardar esta auditoria?";
+            Mostrar = true;
+        }
+        else
+        {
+            TituloErrores = "Por favor revise el Formulario y corriga los siguientes Errores";
+            MostrarErrores = true;
+        }
+    }
+
+    private async Task CerrarConfirmacion()
+    {
+        Titulo = "";
+        Mostrar = false;
+    }
+
+    private async Task CerrarErrores()
+    {
+        TituloErrores = "";
+        MostrarErrores = false;
+    }
+}
