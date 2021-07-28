@@ -70,8 +70,16 @@
 
     private async Task EliminarConfirmado()
     {
-        var httpResponse = await repositorio.Delete<PuntoAuditoria>("api/PuntosAuditoria", puntoAuditoriaEliminar);
-        //await HttpClient.DeleteAsync($"api/PuntosAuditoria/{ puntoAuditoriaEliminar.ID }");
+        var responseHttp = await repositorio.Delete($"api/PuntosAuditoria/{puntoAuditoriaEliminar.ID}");
+        if (!responseHttp.Error)
+        {
+            await CerrarConfirmacion();
+            await OnInitializedAsync();
+        }
+        else
+        {
+            await OnInitializedAsync();
+        }
     }
 
     private void EliminarPuntoAuditoria(PuntoAuditoria item)

@@ -43,19 +43,32 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
             return PuntoAuditoria;
         }
 
-        [HttpDelete("{id?}")]
-        public void Delete(PuntoAuditoria id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
         {
-            var entity = context.PuntosAuditoria.Find(id);
-            context.Remove(entity);
-            context.SaveChanges();
-        }
+            var puntoAuditoria = await context.PuntosAuditoria.FindAsync(id);
+            if (puntoAuditoria == null) { return NotFound(); }
 
-        public async Task<bool> DeletePuntoAuditoriaAsync(PuntoAuditoria puntoAuditoria)
-        {
-            context.Remove(puntoAuditoria);
+            //List<DetalleAuditoria> detallesAuditoria = context.DetallesAuditoria.Where(x => x.AuditoriaID == id).ToList();
+
+            //foreach (var detalle in detallesAuditoria)
+            //{
+            //    List<ObservacionDetalleAuditoria> observacionesDetalle = context.ObservacionesDetalleAuditoria.Where(x => x.DetalleAuditoriaID == detalle.ID).ToList();
+
+            //    if (observacionesDetalle != null && observacionesDetalle.Count > 0)
+            //    {
+            //        context.ObservacionesDetalleAuditoria.RemoveRange(observacionesDetalle);
+            //        await context.SaveChangesAsync();
+            //    }
+            //}
+
+            //context.DetallesAuditoria.RemoveRange(detallesAuditoria);
+            //await context.SaveChangesAsync();
+
+            context.PuntosAuditoria.Remove(puntoAuditoria);
             await context.SaveChangesAsync();
-            return true;
+
+            return NoContent();
         }
 
     }
