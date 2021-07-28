@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ZF_AuditoriaCalidad.Shared
 {
@@ -8,5 +9,11 @@ namespace ZF_AuditoriaCalidad.Shared
         public int ID { get; set; }
 
         public string Descripcion { get; set; }
+
+        public bool DeBaja { get; set; }
+
+        public DateTime FechaDeBaja { get; set; }
+
+        public string UsuarioDeBaja { get; set; }
     }
 }
