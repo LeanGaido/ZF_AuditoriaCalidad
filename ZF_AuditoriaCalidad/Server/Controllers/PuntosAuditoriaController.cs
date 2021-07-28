@@ -74,6 +74,19 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
             return NoContent();
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult<int> Post(PuntoAuditoria puntoAuditoria)
+        {
+            if (ModelState.IsValid)
+            {
+                context.Add(puntoAuditoria);
+                context.SaveChanges();
+            }
+
+            return puntoAuditoria.ID;
+        }
+
         //public class ParametrosBusquedaObservacion
         //{
         //    public int Pagina { get; set; } = 1;

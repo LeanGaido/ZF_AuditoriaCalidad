@@ -28,8 +28,22 @@
             <ValidationMessage For="@(() => PuntoAuditoria.Descripcion)" />
         </div>
     </div>
-    <a @onclick="@(() => GuardarObservacion())" class="btn btn-success">Guardar Observacion</a>
+    <a @onclick="@(() => Guardar())" class="btn btn-success">Guardar</a>
 </EditForm>
+
+<Confirmacion MostrarConfirmacion="Mostrar"
+              Titulo="@Titulo"
+              onCancel="CerrarConfirmacion"
+              onConfirm="OnDataAnnonationsValidated">
+    <ChildContent>
+        <div class="form-group">
+            <label>Descripcion:</label>
+            <div>
+                <input type="text" readonly class="form-control" value="@Descripcion" />
+            </div>
+        </div>
+    </ChildContent>
+</Confirmacion>
 @code {
     private string Descripcion = "";
     [Parameter] public PuntoAuditoria PuntoAuditoria { get; set; } = new PuntoAuditoria();
@@ -48,7 +62,12 @@
         }
     }
 
-    private async Task GuardarObservacion()
+    private async Task OnDataAnnonationsValidated()
+    {
+        await OnValidSubmit.InvokeAsync(null);
+    }
+
+    private async Task Guardar()
     {
         bool error = false;
         mensajesError = new List<string>();
