@@ -30,7 +30,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<List<PuntoAuditoria>>> Get()
         {
-            return await context.PuntosAuditoria.ToListAsync();
+            return await context.PuntosAuditoria.Where(x => x.DeBaja == false).ToListAsync();
         }
 
         [HttpGet("{id}")]
@@ -52,18 +52,6 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                 .Where(x => x.Descripcion.ToLower().Contains(textoBusqueda)).ToListAsync();
         }
 
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult> Delete(int id)
-        //{
-        //    var puntoAuditoria = await context.PuntosAuditoria.FindAsync(id);
-        //    if (puntoAuditoria == null) { return NotFound(); }
-
-        //    context.PuntosAuditoria.Remove(puntoAuditoria);
-        //    await context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
-
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
@@ -71,11 +59,10 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
             if (puntoAuditoria == null) { return NotFound(); }
 
-            //observacion.DeBaja = true;
-            //observacion.FechaDeBaja = DateTime.Now;
-            //observacion.UsuarioDeBaja = User.Identity.Name;
+            puntoAuditoria.DeBaja = true;
+            puntoAuditoria.FechaDeBaja = DateTime.Now;
+            puntoAuditoria.UsuarioDeBaja = User.Identity.Name;
 
-            context.PuntosAuditoria.Remove(puntoAuditoria);
             await context.SaveChangesAsync();
 
             return NoContent();
