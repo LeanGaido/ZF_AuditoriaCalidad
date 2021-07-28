@@ -23,6 +23,12 @@ namespace ZF_AuditoriaCalidad.Shared
         [NotMapped]
         public bool Contemplada { get; set; }
 
+        public bool DeBaja { get; set; }
+
+        public DateTime FechaDeBaja { get; set; }
+
+        public string UsuarioDeBaja { get; set; }
+
         public virtual Area AreaResponsable { get; set; }
 
         public virtual PuntoAuditoria PuntoAuditoria { get; set; }

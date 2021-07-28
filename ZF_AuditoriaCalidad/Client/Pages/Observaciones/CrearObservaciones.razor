@@ -1,0 +1,55 @@
+﻿@page "/observaciones/crear"
+@inject NavigationManager navigationManager
+@inject IRepositorio repositorio
+
+<h3>Nueva Observacion</h3>
+
+@if (MostrarFormulario)
+{
+    <FormularioObservaciones OnValidSubmit="Crear"
+                             observacion="observacion"
+                             ListadoAreasResponsables="ListadoAreasResponsables"
+                             ListadoPuntosAuditoria="ListadoPuntosAuditoria">
+    </FormularioObservaciones>
+}
+else
+{
+    <text>Cargando...</text>
+}
+
+@code {
+    private bool MostrarFormulario { get; set; } = false;
+    private Observacion observacion = new Observacion();
+
+    [Parameter] public List<Area> ListadoAreasResponsables { get; set; } = new List<Area>();
+    [Parameter] public List<PuntoAuditoria> ListadoPuntosAuditoria { get; set; } = new List<PuntoAuditoria>();
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        var responseHttpAreas = await repositorio.Get<List<Area>>("api/Areas");
+        ListadoAreasResponsables = responseHttpAreas.Response;
+
+        var responseHttpPuntosAuditoria = await repositorio.Get<List<PuntoAuditoria>>("api/PuntosAuditoria");
+        ListadoPuntosAuditoria = responseHttpPuntosAuditoria.Response;
+
+        MostrarFormulario = true;
+    }
+
+    async Task Crear()
+    {
+        var httpResponse = await repositorio.Post<Observacion, int>("api/Observaciones", observacion);
+
+        if (httpResponse.Error)
+        {
+            var mensajeError = await httpResponse.GetBody();
+            //await mostrarMensajes.MostrarMensajeError(mensajeError);
+        }
+        else
+        {
+            var AuditoriaId = httpResponse.Response;
+            //navigationManager.NavigateTo($"/Auditorias/{AuditoriaId}");
+            navigationManager.NavigateTo($"/Observaciones");
+        }
+    }
+}

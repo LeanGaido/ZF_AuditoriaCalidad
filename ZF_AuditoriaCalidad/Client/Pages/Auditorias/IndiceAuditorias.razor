@@ -181,6 +181,7 @@
     private string Titulo = "";
 
     #region Filtros y Busqueda
+    Dictionary<string, string> queryStringsDict = new Dictionary<string, string>();
     public string NroDeOrden = "";
     public string NroDePieza = "";
     public DateTime? Fecha = null;
@@ -262,8 +263,6 @@
         }
     }
     #endregion
-
-    Dictionary<string, string> queryStringsDict = new Dictionary<string, string>();
 
     protected async override Task OnInitializedAsync()
     {
