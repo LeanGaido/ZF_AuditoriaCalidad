@@ -11,16 +11,16 @@
                    @onkeypress="@((KeyboardEventArgs e) => DescripcionKeyPress(e))"
                    type="text" class="form-control" id="Descripcion" placeholder="Descripcion" />
         </div>
-        @*<div class="form-group col-md-3">
-                <label for="titulo" class="">Punto de Auditoria</label>
-                <select class="form-control" @bind="PuntoAuditoriaID">
-                    <option value="0">--Seleccione un Punto de Auditoria--</option>
-                    @foreach (var item in ListadoPuntosAuditoria)
-                    {
-                        <option value="@item.ID">@item.Descripcion</option>
-                    }
-                </select>
-            </div>*@
+        <div class="form-group col-md-3">
+            <label for="titulo" class="">Punto de Auditoria</label>
+            <select class="form-control" @bind="PuntoAuditoriaID">
+                <option value="0">--Seleccione un Punto de Auditoria--</option>
+                @foreach (var item in ListadoPuntosAuditoria)
+                {
+                    <option value="@item.ID">@item.Descripcion</option>
+                }
+            </select>
+        </div>
         <div class="form-group col-md-3">
             <label for="titulo" class="">Area Responsable</label>
             <select class="form-control" @bind="AreaResponsableID">
@@ -45,7 +45,7 @@
 
 
 <div class="form-group">
-    <a class="btn btn-info" href="auditorias/crear">Nueva Auditoria</a>
+    <a class="btn btn-info" href="observaciones/crear">Nueva Observacion</a>
 </div>
 
 <ListadoGenerico Listado="Observaciones">
@@ -65,9 +65,10 @@
                 {
                     <tr>
                         <td>
-                            @*<AuthorizeView Roles="Administrador">
-                                <button @onclick="@(() => BorrarAuditoria(item))" class="btn btn-danger"><ion-icon name="trash"></ion-icon></button>
-                            </AuthorizeView>*@
+                            <AuthorizeView Roles="Administrador">
+                                <a href="Observaciones/editar/@item.ID" class="btn btn-success"><ion-icon name="create"></ion-icon></a>
+                                <button @onclick="@(() => BorrarObservacion(item))" class="btn btn-danger"><ion-icon name="trash"></ion-icon></button>
+                            </AuthorizeView>
                         </td>
                         <td>@item.Descripcion</td>
                         <td>
@@ -92,8 +93,52 @@
 <Paginacion PaginaActual="paginaActual" PaginaSeleccionada="paginaSeleccionada"
             PaginasTotales="paginasTotales"></Paginacion>
 
+<Confirmacion MostrarConfirmacion="Mostrar"
+              Titulo="@Titulo"
+              onCancel="CerrarConfirmacion"
+              onConfirm="@(() => ConfirmacionBorrarObservacion(Observacion))">
+    <ChildContent>
+        <div class="form-group">
+            <label>Descripcion:</label>
+            <div>
+                <input readonly class="form-control" value="@Observacion.Descripcion" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Para La Linea:</label>
+            <div>
+                @if (Observacion.ParaLaLinea)
+                {
+                    <input type="checkbox" checked />
+                }
+                else
+                {
+                    <input type="checkbox" />
+                }
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Area Responsable:</label>
+            <div>
+                <input readonly class="form-control" value="@Observacion.AreaResponsable.Descripcion" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Punto de Auditoria:</label>
+            <div>
+                <input readonly class="form-control" value="@Observacion.PuntoAuditoria.Descripcion" />
+            </div>
+        </div>
+    </ChildContent>
+</Confirmacion>
+
 @code {
     public List<Observacion> Observaciones { get; set; }
+    private Observacion Observacion = new Observacion();
+
+    private bool Mostrar = false;
+    private string Titulo = "";
 
     private int paginaActual = 1;
     private int paginasTotales;
@@ -168,6 +213,35 @@
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
+        }
+    }
+
+    private async Task BorrarObservacion(Observacion observacion)
+    {
+        Titulo = "Esta seguro de eliminar esta Observacion?";
+        Observacion = observacion;
+        Mostrar = true;
+    }
+
+    private async Task CerrarConfirmacion()
+    {
+        Observacion = null;
+        Titulo = "";
+        Mostrar = false;
+    }
+
+    async void ConfirmacionBorrarObservacion(Observacion observacion)
+    {
+        var responseHttp = await repositorio.Delete($"api/Observaciones/{observacion.ID}");
+        if (!responseHttp.Error)
+        {
+            await CerrarConfirmacion();
+            await Cargar();
+        }
+        else
+        {
+            await CerrarConfirmacion();
+            await Cargar();
         }
     }
 }

@@ -42,5 +42,14 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
             return PuntoAuditoria;
         }
+
+        [HttpGet("buscar/{textoBusqueda}")]
+        public async Task<ActionResult<List<PuntoAuditoria>>> Get(string textoBusqueda)
+        {
+            if (string.IsNullOrWhiteSpace(textoBusqueda)) { return new List<PuntoAuditoria>(); }
+            textoBusqueda = textoBusqueda.ToLower();
+            return await context.PuntosAuditoria
+                .Where(x => x.Descripcion.ToLower().Contains(textoBusqueda)).ToListAsync();
+        }
     }
 }

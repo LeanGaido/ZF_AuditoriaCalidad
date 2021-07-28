@@ -32,7 +32,8 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<List<Observacion>>> Get([FromQuery] ParametrosBusquedaObservacion parametrosBusqueda)
         {
-            var observaciones = context.Observaciones.Include(t => t.AreaResponsable)
+            var observaciones = context.Observaciones.Where(x => x.DeBaja == false)
+                                                     .Include(t => t.AreaResponsable)
                                                      .Include(t => t.PuntoAuditoria).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(parametrosBusqueda.Descripcion))
