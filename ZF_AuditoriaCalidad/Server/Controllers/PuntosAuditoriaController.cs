@@ -8,7 +8,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ZF_AuditoriaCalidad.Server.Data;
+using ZF_AuditoriaCalidad.Server.Models;
 using ZF_AuditoriaCalidad.Shared;
+using ZF_AuditoriaCalidad.Shared.DTOs;
+
 
 namespace ZF_AuditoriaCalidad.Server.Controllers
 {
@@ -28,9 +31,11 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<List<PuntoAuditoria>>> Get()
+        public async Task<ActionResult<List<PuntoAuditoria>>> Get([FromQuery] ParametrosBusquedaObservacion parametrosBusqueda)
         {
-            return await context.PuntosAuditoria.Where(x => x.DeBaja == false).ToListAsync();
+            var puntosAuditoria = context.PuntosAuditoria.Where(x => x.DeBaja == false).AsQueryable();
+
+            return await puntosAuditoria.Paginar(parametrosBusqueda.Paginacion).ToListAsync();
         }
 
         [HttpGet("{id}")]
@@ -66,6 +71,16 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
             await context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        public class ParametrosBusquedaObservacion
+        {
+            public int Pagina { get; set; } = 1;
+            public int CantidadRegistros { get; set; } = 10;
+            public Paginacion Paginacion
+            {
+                get { return new Paginacion() { Pagina = Pagina, CantidadRegistros = CantidadRegistros }; }
+            }
         }
 
     }
