@@ -31,11 +31,12 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<List<PuntoAuditoria>>> Get([FromQuery] ParametrosBusquedaObservacion parametrosBusqueda)
+        public async Task<ActionResult<List<PuntoAuditoria>>> Get()
         {
-            var puntosAuditoria = context.PuntosAuditoria.Where(x => x.DeBaja == false).AsQueryable();
+            //var puntosAuditoria = context.PuntosAuditoria.Where(x => x.DeBaja == false).AsQueryable();
+            //return await puntosAuditoria.Paginar(parametrosBusqueda.Paginacion).ToListAsync();
 
-            return await puntosAuditoria.Paginar(parametrosBusqueda.Paginacion).ToListAsync();
+            return await context.PuntosAuditoria.Where(x => x.DeBaja == false).ToListAsync();
         }
 
         [HttpGet("{id}")]
@@ -73,15 +74,15 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
             return NoContent();
         }
 
-        public class ParametrosBusquedaObservacion
-        {
-            public int Pagina { get; set; } = 1;
-            public int CantidadRegistros { get; set; } = 10;
-            public Paginacion Paginacion
-            {
-                get { return new Paginacion() { Pagina = Pagina, CantidadRegistros = CantidadRegistros }; }
-            }
-        }
+        //public class ParametrosBusquedaObservacion
+        //{
+        //    public int Pagina { get; set; } = 1;
+        //    public int CantidadRegistros { get; set; } = 10;
+        //    public Paginacion Paginacion
+        //    {
+        //        get { return new Paginacion() { Pagina = Pagina, CantidadRegistros = CantidadRegistros }; }
+        //    }
+        //}
 
     }
 }
