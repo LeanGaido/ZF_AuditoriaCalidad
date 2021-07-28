@@ -52,27 +52,28 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                 .Where(x => x.Descripcion.ToLower().Contains(textoBusqueda)).ToListAsync();
         }
 
+        //[HttpDelete("{id}")]
+        //public async Task<ActionResult> Delete(int id)
+        //{
+        //    var puntoAuditoria = await context.PuntosAuditoria.FindAsync(id);
+        //    if (puntoAuditoria == null) { return NotFound(); }
+
+        //    context.PuntosAuditoria.Remove(puntoAuditoria);
+        //    await context.SaveChangesAsync();
+
+        //    return NoContent();
+        //}
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
             var puntoAuditoria = await context.PuntosAuditoria.FindAsync(id);
+
             if (puntoAuditoria == null) { return NotFound(); }
 
-            //List<DetalleAuditoria> detallesAuditoria = context.DetallesAuditoria.Where(x => x.AuditoriaID == id).ToList();
-
-            //foreach (var detalle in detallesAuditoria)
-            //{
-            //    List<ObservacionDetalleAuditoria> observacionesDetalle = context.ObservacionesDetalleAuditoria.Where(x => x.DetalleAuditoriaID == detalle.ID).ToList();
-
-            //    if (observacionesDetalle != null && observacionesDetalle.Count > 0)
-            //    {
-            //        context.ObservacionesDetalleAuditoria.RemoveRange(observacionesDetalle);
-            //        await context.SaveChangesAsync();
-            //    }
-            //}
-
-            //context.DetallesAuditoria.RemoveRange(detallesAuditoria);
-            //await context.SaveChangesAsync();
+            //observacion.DeBaja = true;
+            //observacion.FechaDeBaja = DateTime.Now;
+            //observacion.UsuarioDeBaja = User.Identity.Name;
 
             context.PuntosAuditoria.Remove(puntoAuditoria);
             await context.SaveChangesAsync();
