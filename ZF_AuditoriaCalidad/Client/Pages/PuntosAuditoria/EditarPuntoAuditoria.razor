@@ -1,0 +1,55 @@
+﻿@page "/PuntosAuditoria/editar/{PuntoAuditoriaId:int}"
+@inject NavigationManager navigationManager
+@inject IRepositorio repositorio
+
+<h3>Editar Punto de Auditoria</h3>
+@if (MostrarFormulario)
+{
+    <FormularioPuntoAuditoria OnValidSubmit="Editar"
+                              PuntoAuditoria="puntoAuditoria">
+    </FormularioPuntoAuditoria>
+}
+else
+{
+    <text>Cargando...</text>
+}
+@code {
+    private bool MostrarFormulario { get; set; } = false;
+    [Parameter] public int PuntoAuditoriaId { get; set; }
+    private PuntoAuditoria puntoAuditoria = new PuntoAuditoria();
+
+    protected async override Task OnInitializedAsync()
+    {
+        var httpResponse = await repositorio.Get<PuntoAuditoria>($"api/PuntosAuditoria/{PuntoAuditoriaId}");
+
+        if (httpResponse.Error)
+        {
+            if (httpResponse.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("IndiceAuditorias");
+            }
+        }
+        else
+        {
+            puntoAuditoria.ID = httpResponse.Response.ID;
+            puntoAuditoria.Descripcion = httpResponse.Response.Descripcion;
+        }
+
+        MostrarFormulario = true;
+    }
+
+    async Task Editar()
+    {
+        var httpResponse = await repositorio.Put<PuntoAuditoria>("api/PuntosAuditoria", puntoAuditoria);
+
+        if (httpResponse.Error)
+        {
+            var mensajeError = await httpResponse.GetBody();
+            //await mostrarMensajes.MostrarMensajeError(mensajeError);
+        }
+        else
+        {
+            navigationManager.NavigateTo($"/PuntosAuditoria");
+        }
+    }
+}

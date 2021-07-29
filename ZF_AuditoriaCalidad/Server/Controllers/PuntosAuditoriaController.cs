@@ -42,7 +42,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PuntoAuditoria>> Get(int id)
         {
-            var PuntoAuditoria = await context.PuntosAuditoria.FirstOrDefaultAsync(x => x.ID == id);
+            var PuntoAuditoria = await context.PuntosAuditoria.FirstOrDefaultAsync(x => x.ID == id && x.DeBaja == false);
 
             if (PuntoAuditoria == null) { return NotFound(); }
 
@@ -85,6 +85,18 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
             }
 
             return puntoAuditoria.ID;
+        }
+
+        [HttpPut]
+        public ActionResult Put(PuntoAuditoria puntoAuditoria)
+        {
+            //Obtengo el registro de auditoria a modificar
+            context.Entry(puntoAuditoria).State = EntityState.Modified;
+
+            //Guarda Cambios
+            context.SaveChanges();
+
+            return NoContent();
         }
 
         //public class ParametrosBusquedaObservacion

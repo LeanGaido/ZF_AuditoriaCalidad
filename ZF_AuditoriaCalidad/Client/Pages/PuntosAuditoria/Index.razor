@@ -19,8 +19,7 @@
                 {
                     <tr>
                         <td>
-                            <a href="Auditorias/editar/@item.ID" class="btn btn-success"><ion-icon name="create"></ion-icon></a>
-                            @*<a href="Auditorias/editar/@item.ID" class="btn btn-danger"><ion-icon name="trash"></ion-icon></a>*@
+                            <a href="PuntosAuditoria/Editar/@item.ID" class="btn btn-success"><ion-icon name="create"></ion-icon></a>
                             <button @onclick="@(() => EliminarPuntoAuditoria(item))" class="btn btn-danger"><ion-icon name="trash"></ion-icon></button>
                         </td>
                         <td>@item.Descripcion</td>
