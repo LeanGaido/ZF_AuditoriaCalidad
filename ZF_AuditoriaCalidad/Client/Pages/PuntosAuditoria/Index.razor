@@ -1,5 +1,121 @@
 ﻿@page "/PuntosAuditoria"
+@inject IRepositorio repositorio
+
+<div class="form-group">
+    <a class="btn btn-info" href="PuntosAuditoria/Crear">Nuevo Punto Auditoria</a>
+</div>
+
+<ListadoGenerico Listado="ListadoPuntosAuditoria">
+    <HayRegistrosCompleto>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Descripcion</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ListadoPuntosAuditoria)
+                {
+                    <tr>
+                        <td>
+                            <a href="PuntosAuditoria/Editar/@item.ID" class="btn btn-success"><ion-icon name="create"></ion-icon></a>
+                            <button @onclick="@(() => EliminarPuntoAuditoria(item))" class="btn btn-danger"><ion-icon name="trash"></ion-icon></button>
+                        </td>
+                        <td>@item.Descripcion</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </HayRegistrosCompleto>
+</ListadoGenerico>
+
+@*<Paginacion PaginaActual="paginaActual" PaginaSeleccionada="paginaSeleccionada"
+            PaginasTotales="paginasTotales"></Paginacion>*@
+
+<Confirmacion MostrarConfirmacion="Mostrar"
+              Titulo="@Titulo"
+              onCancel="CerrarConfirmacion"
+              onConfirm="EliminarConfirmado">
+    <ChildContent>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-12">
+                    <div>
+                        <input readonly class="form-control" value="@PuntoAuditoriaTexto" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ChildContent>
+</Confirmacion>
 
 @code {
+    public List<PuntoAuditoria> ListadoPuntosAuditoria { get; set; }
+    private PuntoAuditoria puntoAuditoriaEliminar;
+    private bool Mostrar = false;
+    private string Titulo = "";
+    private string PuntoAuditoriaTexto = "";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+    //private int paginaActual = 1;
+    //private int paginasTotales;
+
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        var responseHttpPuntosAuditoria = await repositorio.Get<List<PuntoAuditoria>>("api/PuntosAuditoria");
+        ListadoPuntosAuditoria = responseHttpPuntosAuditoria.Response;
+        //await Cargar();
+    }
+
+    //private async Task paginaSeleccionada(int pagina)
+    //{
+    //    paginaActual = pagina;
+    //    await Cargar(pagina);
+    //}
+
+    private async Task Cargar()
+    {
+        var responseHttp = await repositorio.Get<List<PuntoAuditoria>>("api/PuntosAuditoria");
+        if (!responseHttp.Error)
+        {
+            ListadoPuntosAuditoria = responseHttp.Response;
+            //var conteo = responseHttp.HttpResponseMessage.Headers.GetValues("conteo").FirstOrDefault();
+            //paginasTotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
+        }
+    }
+
+    private async Task CerrarConfirmacion()
+    {
+        puntoAuditoriaEliminar = null;
+        Titulo = "";
+        Mostrar = false;
+    }
+
+    private async Task EliminarConfirmado()
+    {
+        var responseHttp = await repositorio.Delete($"api/PuntosAuditoria/{puntoAuditoriaEliminar.ID}");
+        if (!responseHttp.Error)
+        {
+            await CerrarConfirmacion();
+            await Cargar();
+        }
+        else
+        {
+            await CerrarConfirmacion();
+            await Cargar();
+        }
+    }
+
+    private void EliminarPuntoAuditoria(PuntoAuditoria item)
+    {
+        PuntoAuditoriaTexto = item.Descripcion;
+        Titulo = "¿Esta seguro de eliminar este punto de auditoria?";
+        puntoAuditoriaEliminar = item;
+        Mostrar = true;
+    }
+
 
 }

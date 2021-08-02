@@ -1,0 +1,40 @@
+﻿@page "/PuntosAuditoria/crear"
+@inject NavigationManager navigationManager
+@inject IRepositorio repositorio
+
+<h3>Nuevo Punto de Auditoria</h3>
+@if (MostrarFormulario)
+{
+    <FormularioPuntoAuditoria OnValidSubmit="Crear"
+                PuntoAuditoria="puntoAuditoria">
+    </FormularioPuntoAuditoria>
+}
+else
+{
+    <text>Cargando...</text>
+}
+
+@code {
+    private bool MostrarFormulario { get; set; } = false;
+    private PuntoAuditoria puntoAuditoria = new PuntoAuditoria();
+
+    protected async override Task OnInitializedAsync()
+    {
+        MostrarFormulario = true;
+    }
+
+    async Task Crear()
+    {
+        var httpResponse = await repositorio.Post<PuntoAuditoria, int>("api/PuntosAuditoria", puntoAuditoria);
+
+        if (httpResponse.Error)
+        {
+            var mensajeError = await httpResponse.GetBody();
+            //await mostrarMensajes.MostrarMensajeError(mensajeError);
+        }
+        else
+        {
+            navigationManager.NavigateTo($"/PuntosAuditoria");
+        }
+    }
+}

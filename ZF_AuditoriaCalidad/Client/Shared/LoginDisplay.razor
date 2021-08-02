@@ -6,8 +6,7 @@
 
 <AuthorizeView>
     <Authorized>
-        <a class="EnlacesLoginDisplay" href="authentication/profile">Hello, @context.User.Identity.Name!</a>
-        <button class="nav-link btn btn-link EnlacesLoginDisplay" @onclick="BeginSignOut">Log out</button>
+        <a class="EnlacesLoginDisplay" href="authentication/profile">Bienvenido @context.User.Identity.Name!</a>
     </Authorized>
     <NotAuthorized>
         <a class="EnlacesLoginDisplay" href="authentication/register">Register</a>
