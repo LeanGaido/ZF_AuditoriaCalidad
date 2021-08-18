@@ -6,9 +6,9 @@
     Layout = null;
 }
 
-@*<style>
+<style>
     BODY {
-        background: #000;
+        background-image: linear-gradient( 180deg, rgb(5, 39, 103) 0%, #047cc4 70%);
         font-family: "Tahoma", verdana, arial;
         font-size: 12px;
         margin: auto;
@@ -77,9 +77,9 @@
         font-size: 14px;
         color: black;
     }
-</style>*@
+</style>
 
-<!--<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -112,26 +112,26 @@
                     <td rowspan="2" width="1px" height="50px" bgcolor="#dcdcdc"></td>
                     <td width="5%">&nbsp;</td>
                     <td><input asp-for="Input.Email" required class="texto10"> </td>
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>-->
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
                     @*<div class="form-group">
                         <label asp-for="Input.Email"></label>
                         <input asp-for="Input.Email" class="form-control" />
                         <span asp-validation-for="Input.Email" class="text-danger"></span>
                     </div>*@
-                    <!--<td width="5%">&nbsp;</td>
+                    <td width="5%">&nbsp;</td>
                 </tr>
                 <tr>
                     <td width="5%">&nbsp;</td>
                     <td width="100%"><b>CONTRASEÑA:</b></td>
                     <td width="5%">&nbsp;</td>
                     <td><input asp-for="Input.Password" required class="texto10"></td>
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>-->
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
                     @*<div class="form-group">
                         <label asp-for="Input.Password"></label>
                         <input asp-for="Input.Password" class="form-control" />
                         <span asp-validation-for="Input.Password" class="text-danger"></span>
                     </div>*@
-                    <!--<td width="5%">&nbsp;</td>
+                    <td width="5%">&nbsp;</td>
                 </tr>
             </table>
             <P>
@@ -150,15 +150,15 @@
         </form>
     </div>
 </body>
-</html>-->
-@*@section Scripts {
+</html>
+@section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}*@
+}
 
 
 
 
-<h1>@ViewData["Title"]</h1>
+@*<h1>@ViewData["Title"]</h1>
 <div class="row">
     <div class="col-md-4">
         <section>
@@ -199,7 +199,7 @@
         </section>
     </div>
     <div class="col-md-6 col-md-offset-2">
-        @*<section>
+        <section>
             <h4>Use another service to log in.</h4>
             <hr />
             @{
@@ -226,10 +226,10 @@
                     </form>
                 }
             }
-        </section>*@
+        </section>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}
+}*@
