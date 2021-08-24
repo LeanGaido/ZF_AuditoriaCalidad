@@ -74,11 +74,11 @@
                         <td>
                             @if (item.ParaLaLinea)
                             {
-                                <input type="checkbox" checked readonly />
+                                <input type="checkbox" checked disabled />
                             }
                             else
                             {
-                                <input type="checkbox" readonly />
+                                <input type="checkbox" disabled />
                             }
                         </td>
                         <td>@item.AreaResponsable.Descripcion</td>
@@ -191,8 +191,8 @@
         if (!responseHttp.Error)
         {
             Observaciones = responseHttp.Response;
-            var conteo = responseHttp.HttpResponseMessage.Headers.GetValues("conteo").FirstOrDefault();
-            paginasTotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
+            //var conteo = responseHttp.HttpResponseMessage.Headers.GetValues("conteo").FirstOrDefault();
+            //paginasTotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
         }
     }
 

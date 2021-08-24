@@ -57,9 +57,9 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                 observaciones = observaciones.Where(x => x.AreaResponsableID == parametrosBusqueda.AreaResponsableID);
             }
 
-            await HttpContext.InsertarParametrosPaginacionEnRespuesta(observaciones, parametrosBusqueda.CantidadRegistros);
+            //await HttpContext.InsertarParametrosPaginacionEnRespuesta(observaciones, parametrosBusqueda.Paginacion.CantidadRegistros);
 
-            return await observaciones.Paginar(parametrosBusqueda.Paginacion).ToListAsync();
+            return observaciones.ToList();
         }
 
         //[HttpGet("{id}")]

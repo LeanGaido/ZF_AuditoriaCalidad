@@ -37,6 +37,7 @@
 
   <ItemGroup>
     <Folder Include="Data\Images\Logo\" />
+    <Folder Include="UploadedFile\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

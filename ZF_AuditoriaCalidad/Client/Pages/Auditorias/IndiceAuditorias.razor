@@ -112,8 +112,8 @@
     </HayRegistrosCompleto>
 </ListadoGenerico>
 
-<Paginacion PaginaActual="paginaActual" PaginaSeleccionada="paginaSeleccionada"
-            PaginasTotales="paginasTotales"></Paginacion>
+@*<Paginacion PaginaActual="paginaActual" PaginaSeleccionada="paginaSeleccionada"
+            PaginasTotales="paginasTotales"></Paginacion>*@
 
 <Confirmacion MostrarConfirmacion="Mostrar"
               Titulo="@Titulo"
@@ -258,8 +258,8 @@
         if (!responseHttp.Error)
         {
             Auditorias = responseHttp.Response;
-            var conteo = responseHttp.HttpResponseMessage.Headers.GetValues("conteo").FirstOrDefault();
-            paginasTotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
+            //var conteo = responseHttp.HttpResponseMessage.Headers.GetValues("conteo").FirstOrDefault();
+            //paginasTotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
         }
     }
     #endregion

@@ -33,48 +33,48 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         {
             var queryable = context.Auditorias.Include(x => x.Maquina).ThenInclude(x => x.Area)
                                               .Include(x => x.Operario)
-                                              .Include(x => x.Supervisor).AsQueryable();
+                                              .Include(x => x.Supervisor).ToList();
 
             if (!string.IsNullOrWhiteSpace(parametrosBusqueda.NroDeOrden))
             {
                 queryable = queryable
-                    .Where(x => x.NroOrden.ToLower() == parametrosBusqueda.NroDeOrden.ToLower());
+                    .Where(x => x.NroOrden.ToLower() == parametrosBusqueda.NroDeOrden.ToLower()).ToList();
             }
 
             if (!string.IsNullOrWhiteSpace(parametrosBusqueda.NroDePieza))
             {
                 queryable = queryable
-                    .Where(x => x.NroPieza.ToLower() == parametrosBusqueda.NroDePieza.ToLower());
+                    .Where(x => x.NroPieza.ToLower() == parametrosBusqueda.NroDePieza.ToLower()).ToList();
             }
 
             if (parametrosBusqueda.Fecha != null)
             {
-                queryable = queryable.Where(x => x.Fecha >= parametrosBusqueda.Fecha);
+                queryable = queryable.Where(x => x.Fecha >= parametrosBusqueda.Fecha).ToList();
             }
 
             if (parametrosBusqueda.AreaID != null && parametrosBusqueda.AreaID != 0)
             {
-                queryable = queryable.Where(x => x.Maquina.AreaID == parametrosBusqueda.AreaID);
+                queryable = queryable.Where(x => x.Maquina.AreaID == parametrosBusqueda.AreaID).ToList();
             }
 
             if (parametrosBusqueda.MaquinaID != null && parametrosBusqueda.MaquinaID != 0)
             {
-                queryable = queryable.Where(x => x.MaquinaID == parametrosBusqueda.MaquinaID);
+                queryable = queryable.Where(x => x.MaquinaID == parametrosBusqueda.MaquinaID).ToList();
             }
 
             if (parametrosBusqueda.OperarioID != null && parametrosBusqueda.OperarioID != 0)
             {
-                queryable = queryable.Where(x => x.OperarioID == parametrosBusqueda.OperarioID);
+                queryable = queryable.Where(x => x.OperarioID == parametrosBusqueda.OperarioID).ToList();
             }
 
             if (parametrosBusqueda.SupervisorID != null && parametrosBusqueda.SupervisorID != 0)
             {
-                queryable = queryable.Where(x => x.SupervisorID == parametrosBusqueda.SupervisorID);
+                queryable = queryable.Where(x => x.SupervisorID == parametrosBusqueda.SupervisorID).ToList();
             }
 
-            await HttpContext.InsertarParametrosPaginacionEnRespuesta(queryable, parametrosBusqueda.CantidadRegistros);
+            //await HttpContext.InsertarParametrosPaginacionEnRespuesta(queryable, parametrosBusqueda.CantidadRegistros);
 
-            return await queryable.Paginar(parametrosBusqueda.Paginacion).ToListAsync();
+            return queryable;
         }
 
         [HttpGet("{id}")]
