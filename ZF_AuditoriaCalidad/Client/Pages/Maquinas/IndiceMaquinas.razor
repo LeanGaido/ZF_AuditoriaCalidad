@@ -1,0 +1,130 @@
+﻿@page "/maquinas"
+@inject IRepositorio repositorio
+@attribute [Authorize]
+@inject HttpClientConToken Http
+
+<ListadoGenerico Listado="Maquinas">
+    <HayRegistrosCompleto>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Area</th>
+                    <th>Proceso</th>
+                    <td>Maquina</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Maquinas)
+                {
+                    <tr>
+                        <td>
+                            @*<a href="Auditorias/@item.ID" class="btn btn-success"><ion-icon name="folder-open"></ion-icon></a>*@
+                            <AuthorizeView Roles="Administrador">
+                                <button @onclick="@(() => BorrarMaquina(item))" class="btn btn-danger"><ion-icon name="trash"></ion-icon></button>
+                            </AuthorizeView>
+                        </td>
+                        <td>@item.Proceso.Area.Descripcion</td>
+                        <td>@item.Proceso.Descripcion</td>
+                        <td>@item.Descripcion</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </HayRegistrosCompleto>
+</ListadoGenerico>
+
+<Confirmacion MostrarConfirmacion="Mostrar"
+              Titulo="@Titulo"
+              onCancel="CerrarConfirmacion"
+              onConfirm="@(() => ConfirmacionBorrarMaquina(Maquina))">
+    <ChildContent>
+        <div class="form-group">
+            <label>Area:</label>
+            <div>
+                <input readonly class="form-control" value="@Maquina.Proceso.Area.Descripcion" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Proceso:</label>
+            <div>
+                <input readonly class="form-control" value="@Maquina.Proceso.Descripcion" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Maquina:</label>
+            <div>
+                <input readonly class="form-control" value="@Maquina.Descripcion" />
+            </div>
+        </div>
+    </ChildContent>
+</Confirmacion>
+
+@code {
+    public List<Maquina> Maquinas { get; set; }
+    private Maquina Maquina = new Maquina();
+
+    private bool Mostrar = false;
+    private string Titulo = "";
+
+    private async Task Cargar(int pagina = 1)
+    {
+        var responseHttp = await repositorio.Get<List<Maquina>>($"api/Maquinas");
+        if (!responseHttp.Error)
+        {
+            Maquinas = responseHttp.Response;
+            //var conteo = responseHttp.HttpResponseMessage.Headers.GetValues("conteo").FirstOrDefault();
+            //paginasTotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
+        }
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            await Cargar();
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+    private async Task CerrarConfirmacion()
+    {
+        Maquina = null;
+        Titulo = "";
+        Mostrar = false;
+    }
+
+    private async Task BorrarMaquina(Maquina maquina)
+    {
+        Titulo = "Esta seguro de eliminar esta Maquina?";
+        Maquina = maquina;
+        Mostrar = true;
+    }
+
+    async void ConfirmacionBorrarMaquina(Maquina maquina)
+    {
+        if(maquina != null)
+        {
+            var responseHttp = await repositorio.Delete($"api/Maquinas/{maquina.ID}");
+            if (!responseHttp.Error)
+            {
+                await CerrarConfirmacion();
+                await Cargar();
+            }
+            else
+            {
+                await Cargar();
+            }
+        }
+        else
+        {
+            await CerrarConfirmacion();
+            await Cargar();
+        }
+    }
+}

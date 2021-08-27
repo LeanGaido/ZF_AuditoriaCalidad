@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using ExcelDataReader;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -6,6 +8,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ZF_AuditoriaCalidad.Server.Data;
+using ZF_AuditoriaCalidad.Shared;
 
 namespace ZF_AuditoriaCalidad.Server.Controllers
 {
@@ -13,13 +17,20 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
     [ApiController]
     public class ImportarController : ControllerBase
     {
+        private readonly ApplicationDbContext context;
+        private readonly IMapper mapper;
         private readonly IHostEnvironment _environment;
 
-        public ImportarController(IHostEnvironment environment)
+        public ImportarController(IHostEnvironment environment,
+                                  ApplicationDbContext context,
+                                  IMapper mapper)
         {
-            _environment = environment;
+            this._environment = environment;
+            this.context = context;
+            this.mapper = mapper;
         }
 
+        [HttpPost]
         public async Task<IActionResult> Post([FromForm]IFormFile File)
         {
             if(File == null || File.Length == 0)

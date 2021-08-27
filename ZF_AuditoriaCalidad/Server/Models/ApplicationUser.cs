@@ -8,5 +8,10 @@ namespace ZF_AuditoriaCalidad.Server.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        public bool DeBaja { get; set; }
+
+        public DateTime? FechaBaja { get; set; }
+
+        public string UserBajaId { get; set; }
     }
 }

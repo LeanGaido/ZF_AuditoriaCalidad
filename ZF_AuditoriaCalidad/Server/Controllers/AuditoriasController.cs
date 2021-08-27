@@ -31,7 +31,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Auditoria>>> Get([FromQuery] ParametrosBusquedaAuditorias parametrosBusqueda)
         {
-            var queryable = context.Auditorias.Include(x => x.Maquina).ThenInclude(x => x.Area)
+            var queryable = context.Auditorias.Include(x => x.Maquina).ThenInclude(x => x.Proceso).ThenInclude(x => x.Area)
                                               .Include(x => x.Operario)
                                               .Include(x => x.Supervisor).ToList();
 
@@ -54,7 +54,12 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
             if (parametrosBusqueda.AreaID != null && parametrosBusqueda.AreaID != 0)
             {
-                queryable = queryable.Where(x => x.Maquina.AreaID == parametrosBusqueda.AreaID).ToList();
+                queryable = queryable.Where(x => x.Maquina.Proceso.AreaID == parametrosBusqueda.AreaID).ToList();
+            }
+
+            if (parametrosBusqueda.ProcesoID != null && parametrosBusqueda.ProcesoID != 0)
+            {
+                queryable = queryable.Where(x => x.Maquina.ProcesoID == parametrosBusqueda.ProcesoID).ToList();
             }
 
             if (parametrosBusqueda.MaquinaID != null && parametrosBusqueda.MaquinaID != 0)
@@ -82,7 +87,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         public ActionResult<AuditoriaDTO> Get(int id)
         {
             var Auditoria = context.Auditorias.Where(x => x.ID == id)
-                                              .Include(x => x.Maquina).ThenInclude(x => x.Area)
+                                              .Include(x => x.Maquina).ThenInclude(x => x.Proceso).ThenInclude(x => x.Area)
                                               .Include(x => x.Operario)
                                               .Include(x => x.Supervisor).FirstOrDefault();
 
@@ -97,7 +102,8 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
             AuditoriaDTO.Hora = Auditoria.Hora;
             AuditoriaDTO.NroOrden = Auditoria.NroOrden;
             AuditoriaDTO.NroPieza = Auditoria.NroPieza;
-            AuditoriaDTO.Area = Auditoria.Maquina.Area;
+            AuditoriaDTO.Area = Auditoria.Maquina.Proceso.Area;
+            AuditoriaDTO.Proceso = Auditoria.Maquina.Proceso;
             AuditoriaDTO.MaquinaID = Auditoria.Maquina.ID;
             AuditoriaDTO.Maquina = Auditoria.Maquina;
             AuditoriaDTO.OperarioID = Auditoria.Operario.ID;
@@ -212,6 +218,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         public string NroDePieza { get; set; }
         public DateTime? Fecha { get; set; }
         public int? AreaID { get; set; }
+        public int? ProcesoID { get; set; }
         public int? MaquinaID { get; set; }
         public int? OperarioID { get; set; }
         public int? SupervisorID { get; set; }

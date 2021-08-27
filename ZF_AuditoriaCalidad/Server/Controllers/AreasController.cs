@@ -31,13 +31,13 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<List<Area>>> Get()
         {
-            return await context.Areas.ToListAsync();
+            return await context.Areas.Where(x => !x.DeBaja).ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Area>> Get(int id)
         {
-            var area = await context.Areas.FirstOrDefaultAsync(x => x.ID == id);
+            var area = await context.Areas.FirstOrDefaultAsync(x => x.ID == id && !x.DeBaja);
 
             if (area == null) { return NotFound(); }
 
@@ -50,7 +50,35 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
             if (string.IsNullOrWhiteSpace(textoBusqueda)) { return new List<Area>(); }
             textoBusqueda = textoBusqueda.ToLower();
             return await context.Areas
-                .Where(x => x.Descripcion.ToLower().Contains(textoBusqueda)).ToListAsync();
+                .Where(x => x.Descripcion.ToLower().Contains(textoBusqueda) && 
+                            !x.DeBaja).ToListAsync();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var area = await context.Areas.FindAsync(id);
+            if (area == null) { return NotFound(); }
+
+            var procesos = await context.Procesos.Where(x => x.AreaID == id).ToListAsync();
+
+            foreach (var proceso in procesos)
+            {
+                var maquinas = await context.Maquinas.Where(x => x.ProcesoID == proceso.ID).ToListAsync();
+
+                foreach (var maquina in maquinas)
+                {
+                    maquina.DeBaja = true;
+                }
+
+                proceso.DeBaja = true;
+            }
+
+            area.DeBaja = true;
+
+            await context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

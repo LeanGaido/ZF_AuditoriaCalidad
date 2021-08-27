@@ -78,13 +78,17 @@ namespace ZF_AuditoriaCalidad.Server.Areas.Identity.Pages.Account
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
+
+            var usuarios = _context.Users.Select(x => x.UserName).ToList();
+
             Auditores = _context.Operarios.AsNoTracking()
-                                          .Where(x => x.Auditor)
+                                          .Where(x => x.Auditor &&
+                                                      !usuarios.Contains(x.Legajo))
                                           .Select(n =>
                                               new SelectListItem
                                               {
                                                   Value = n.Legajo.ToString(),
-                                                  Text = n.ApellidoYNombre
+                                                  Text = n.Legajo.ToString() + "-" + n.ApellidoYNombre
                                               }).ToList();
         }
 

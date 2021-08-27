@@ -6,6 +6,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ZF_AuditoriaCalidad.Client.Helpers;
+using Blazor.FileReader;
 
 namespace ZF_AuditoriaCalidad.Client
 {
@@ -21,6 +22,11 @@ namespace ZF_AuditoriaCalidad.Client
 
             builder.Services.AddHttpClient<HttpClientSinToken>(
                cliente => cliente.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+
+            builder.Services.AddFileReaderService(options =>
+            {
+
+            });
 
             ConfigureServices(builder.Services);
             await builder.Build().RunAsync();

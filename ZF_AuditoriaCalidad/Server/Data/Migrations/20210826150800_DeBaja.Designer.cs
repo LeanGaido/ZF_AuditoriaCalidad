@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ZF_AuditoriaCalidad.Server.Data;
 
 namespace ZF_AuditoriaCalidad.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210826150800_DeBaja")]
+    partial class DeBaja
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -542,12 +544,6 @@ namespace ZF_AuditoriaCalidad.Server.Data.Migrations
                     b.Property<bool>("Auditor")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("DeBaja")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Legajo")
                         .HasColumnType("nvarchar(4)")
                         .HasMaxLength(4);
@@ -558,9 +554,6 @@ namespace ZF_AuditoriaCalidad.Server.Data.Migrations
 
                     b.Property<bool>("Supervisor")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Telefono")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 

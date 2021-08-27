@@ -1,1 +1,128 @@
-﻿
+﻿@page "/Importar"
+@inject IRepositorio repositorio
+@inject NavigationManager navigationManager
+
+@using System.IO;
+@using Blazor.FileReader;
+
+@inject IFileReaderService fileReader
+@inject HttpClientConToken client
+
+<h1>Upload file!</h1>
+
+<div class="row">
+    <div class="col-4">
+        <div class="form-group">
+            <input type="file" @ref="inputReference" @onchange="async () => await OpenFileAsync()" />
+            <ul>
+                <li>Nombre del Archivo: @fileName</li>
+                <li>Tamaño: @size</li>
+                <li>Tipo: @type</li>
+            </ul>
+        </div>
+        <button class="btn btn-block btn-success" @onclick="async () => await UploadFileAsync()">Subir Excel de Datos</button>
+        @if (filePath != null)
+        {
+            <hr />
+            <label>Seleccione que Datos va a Importar</label>
+            <br />
+            <select class="form-control" @bind="fileType">
+                <option value="1">Maquinas</option>
+                <option value="2">Operarios</option>
+            </select>
+            <br />
+            <button class="btn btn-block btn-success" @onclick="async () => await ReadFileAsync()">Importar Excel de Datos</button>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(message))
+        {
+            <hr />
+            <div class="alert alert-success">
+                @message
+            </div>
+        }
+    </div>
+    @*<div class="col-4">
+            @if (imagePath != null)
+            {
+                <img style="width:150px" src="@filePath" />
+            }
+        </div>*@
+</div>
+
+@functions
+{
+    ElementReference inputReference;
+    string message = string.Empty;
+    string filePath = null;
+
+    string fileName = string.Empty;
+    int fileType = 1;
+    string type = string.Empty;
+    string size = string.Empty;
+
+    Stream fileStream = null;
+
+    async Task OpenFileAsync()
+    {
+        // Read the files
+        var file = (await fileReader.CreateReference(inputReference).EnumerateFilesAsync()).FirstOrDefault();
+
+        if (file == null)
+            return;
+
+        // Get the info of that files
+        var fileInfo = await file.ReadFileInfoAsync();
+        fileName = fileInfo.Name;
+        size = $"{fileInfo.Size}b";
+        type = fileInfo.Type;
+
+        using (var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size))
+        {
+            fileStream = new MemoryStream(ms.ToArray());
+        }
+    }
+
+    async Task UploadFileAsync()
+    {
+        // Create the content
+        var content = new MultipartFormDataContent();
+        content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data");
+
+        content.Add(new StreamContent(fileStream, (int)fileStream.Length), "File", fileName);
+
+        string url = "https://localhost:44302";
+
+        var response = await client.Client.PostAsync($"{url}/api/Importar", content);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var uploadedFileName = await response.Content.ReadAsStringAsync();
+            filePath = uploadedFileName;
+            message = "El Archivo se a Subido Correctamente!";
+        }
+    }
+
+    async Task ReadFileAsync()
+    {
+        try
+        {
+            var httpResponse = await repositorio.Get<string>($"api/Actualizar?FilePath={filePath}&FileType={fileType}");
+            var body = await httpResponse.GetBody();
+            message = body;
+        }
+        catch (Exception ex)
+        {
+            if (ex.GetType().ToString() == "WebAssembly.JSException")
+            {
+                //await js.GuardarRegistroParaCrear("api/generos", Genero);
+                //await appState.NotificarActualizarSincronizacionesPendientes();
+                //navigationManager.NavigateTo("/generos");
+            }
+            else
+            {
+                throw ex;
+            }
+        }
+    }
+}

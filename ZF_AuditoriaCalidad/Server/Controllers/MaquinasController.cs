@@ -30,13 +30,17 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<List<Maquina>>> Get()
         {
-            return await context.Maquinas.ToListAsync();
+            return await context.Maquinas.Where(x => !x.DeBaja)
+                                         .Include(x => x.Proceso)
+                                         .ThenInclude(x => x.Area).ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<List<Maquina>>> Get(int id)
         {
-            var maquinas = await context.Maquinas.Where(x => x.AreaID == id).ToListAsync();
+            var maquinas = await context.Maquinas.Where(x => x.ProcesoID == id && !x.DeBaja)
+                                                 .Include(x => x.Proceso)
+                                                 .ThenInclude(x => x.Area).ToListAsync();
 
             if (maquinas == null) { return NotFound(); }
 
@@ -49,8 +53,11 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
             if (string.IsNullOrWhiteSpace(textoBusqueda)) { return new List<Maquina>(); }
             textoBusqueda = textoBusqueda.ToLower();
             var maquinas = await context.Maquinas
-                .Where(x => x.Descripcion.ToLower().Contains(textoBusqueda)  &&
-                            x.AreaID == Id).ToListAsync();
+                                        .Where(x => x.Descripcion.ToLower().Contains(textoBusqueda)  &&
+                                                    x.ProcesoID == Id &&
+                                                    !x.DeBaja)
+                                        .Include(x => x.Proceso)
+                                        .ThenInclude(x => x.Area).ToListAsync();
 
             var periodoDeAudicion = context.ParametrosGenerales.Where(x => x.Key == "Periodo de Audicion(Dias)").FirstOrDefault();
 
@@ -68,6 +75,19 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
             }
 
             return maquinas;
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var maquina = await context.Maquinas.FindAsync(id);
+            if (maquina == null) { return NotFound(); }
+
+            maquina.DeBaja = true;
+
+            await context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

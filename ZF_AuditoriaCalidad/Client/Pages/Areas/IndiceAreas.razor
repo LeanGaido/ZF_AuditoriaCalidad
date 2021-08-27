@@ -1,0 +1,112 @@
+﻿@page "/areas"
+@inject IRepositorio repositorio
+@attribute [Authorize]
+@inject HttpClientConToken Http
+
+<ListadoGenerico Listado="Areas">
+    <HayRegistrosCompleto>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Area</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Areas)
+                {
+                    <tr>
+                        <td>
+                            @*<a href="Auditorias/@item.ID" class="btn btn-success"><ion-icon name="folder-open"></ion-icon></a>*@
+                            <AuthorizeView Roles="Administrador">
+                                <button @onclick="@(() => BorrarArea(item))" class="btn btn-danger"><ion-icon name="trash"></ion-icon></button>
+                            </AuthorizeView>
+                        </td>
+                        <td>@item.Descripcion</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </HayRegistrosCompleto>
+</ListadoGenerico>
+
+<Confirmacion MostrarConfirmacion="Mostrar"
+              Titulo="@Titulo"
+              onCancel="CerrarConfirmacion"
+              onConfirm="@(() => ConfirmacionBorrarArea(Area))">
+    <ChildContent>
+        <div class="form-group">
+            <label>Area:</label>
+            <div>
+                <input readonly class="form-control" value="@Area.Descripcion" />
+            </div>
+        </div>
+    </ChildContent>
+</Confirmacion>
+
+@code {
+    public List<Area> Areas { get; set; }
+    private Area Area = new Area();
+
+    private bool Mostrar = false;
+    private string Titulo = "";
+
+    private async Task Cargar(int pagina = 1)
+    {
+        var responseHttp = await repositorio.Get<List<Area>>($"api/areas");
+        if (!responseHttp.Error)
+        {
+            Areas = responseHttp.Response;
+            //var conteo = responseHttp.HttpResponseMessage.Headers.GetValues("conteo").FirstOrDefault();
+            //paginasTotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
+        }
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            await Cargar();
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+    private async Task CerrarConfirmacion()
+    {
+        Area = null;
+        Titulo = "";
+        Mostrar = false;
+    }
+
+    private async Task BorrarArea(Area area)
+    {
+        Titulo = "Esta seguro de eliminar esta Area?";
+        Area = area;
+        Mostrar = true;
+    }
+
+    async void ConfirmacionBorrarArea(Area area)
+    {
+        if(area != null)
+        {
+            var responseHttp = await repositorio.Delete($"api/Areas/{area.ID}");
+            if (!responseHttp.Error)
+            {
+                await CerrarConfirmacion();
+                await Cargar();
+            }
+            else
+            {
+                await Cargar();
+            }
+        }
+        else
+        {
+            await CerrarConfirmacion();
+            await Cargar();
+        }
+    }
+}
