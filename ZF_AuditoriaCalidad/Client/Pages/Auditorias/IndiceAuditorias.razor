@@ -18,11 +18,23 @@
                    @onkeypress="@((KeyboardEventArgs e) => NroDePiezaKeyPress(e))"
                    type="number" class="form-control" id="NroDePieza" placeholder="Nro De Pieza" />
         </div>
+    </div>
+    <div class="row">
         <div class="form-group col-md-3">
             <label for="titulo">Area/Linea</label>
-            <select class="form-control" value="@AreaID" @onchange="ActualizarMaquinas">
+            <select class="form-control" value="@AreaID" @onchange="ActualizarProcesos">
                 <option value="0">--Seleccione una Area--</option>
                 @foreach (var item in ListadoAreas)
+                {
+                    <option value="@item.ID">@item.Descripcion</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="titulo">Proceso</label>
+            <select class="form-control" value="@ProcesoID" @onchange="ActualizarMaquinas">
+                <option value="0">--Seleccione un Proceso--</option>
+                @foreach (var item in ListadoProcesos)
                 {
                     <option value="@item.ID">@item.Descripcion</option>
                 }
@@ -70,9 +82,11 @@
     @*<button type="button" class="btn btn-danger mb-2" @onclick="LimpiarOnClick">Limpiar</button>*@
 </div>
 
-<div class="form-group">
-    <a class="btn btn-info" href="auditorias/crear">Nueva Auditoria</a>
-</div>
+<AuthorizeView Roles="Auditor">
+    <div class="form-group">
+        <a class="btn btn-info" href="auditorias/crear">Nueva Auditoria</a>
+    </div>
+</AuthorizeView>
 
 <ListadoGenerico Listado="Auditorias">
     <HayRegistrosCompleto>
@@ -102,7 +116,7 @@
                         </td>
                         <td>@item.NroOrden</td>
                         <td>@item.NroPieza</td>
-                        <td>@item.Maquina.Area.Descripcion</td>
+                        <td>@item.Maquina.Proceso.Descripcion</td>
                         <td>@item.Maquina.Descripcion</td>
                         <td>@item.Operario.Legajo - @item.Operario.ApellidoYNombre</td>
                     </tr>
@@ -138,14 +152,21 @@
         </div>
 
         <div class="form-group">
-            <label>Areas:</label>
+            <label>Area:</label>
             <div>
-                <input readonly class="form-control" value="@Auditoria.Maquina.Area.Descripcion" />
+                <input readonly class="form-control" value="@Auditoria.Maquina.Proceso.Area.Descripcion" />
             </div>
         </div>
 
         <div class="form-group">
-            <label>Maquinas:</label>
+            <label>Proceso:</label>
+            <div>
+                <input readonly class="form-control" value="@Auditoria.Maquina.Proceso.Descripcion" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Maquina:</label>
             <div>
                 <input readonly class="form-control" value="@Auditoria.Maquina.Descripcion" />
             </div>
@@ -186,12 +207,15 @@
     public string NroDePieza = "";
     public DateTime? Fecha = null;
     public int? AreaID = 0;
+    public int? ProcesoID = 0;
     public int? MaquinaID = 0;
     public int? OperarioID = 0;
     public int? SupervisorID = 0;
     public int? AuditorID = 0;
 
     [Parameter] public List<Area> ListadoAreas { get; set; } = new List<Area>();
+
+    [Parameter] public List<Proceso> ListadoProcesos { get; set; } = new List<Proceso>();
 
     [Parameter] public List<Maquina> ListadoMaquinas { get; set; } = new List<Maquina>();
 
@@ -217,12 +241,20 @@
         }
     }
 
-    private async Task ActualizarMaquinas(ChangeEventArgs countryEvent)
+    private async Task ActualizarProcesos(ChangeEventArgs countryEvent)
     {
         AreaID = int.Parse(countryEvent.Value.ToString());
-        var responseHttpMaquinas = await repositorio.Get<List<Maquina>>($"api/Maquinas/{AreaID.Value}");
+        var responseHttpProcesos = await repositorio.Get<List<Proceso>>($"api/Procesos/{AreaID.Value}");
+        ListadoProcesos = responseHttpProcesos.Response;
+        //ProcesoID = (ListadoProcesos.FirstOrDefault() != null) ? ListadoProcesos.First().ID : 0;
+    }
+
+    private async Task ActualizarMaquinas(ChangeEventArgs countryEvent)
+    {
+        ProcesoID = int.Parse(countryEvent.Value.ToString());
+        var responseHttpMaquinas = await repositorio.Get<List<Maquina>>($"api/Maquinas/{ProcesoID.Value}");
         ListadoMaquinas = responseHttpMaquinas.Response;
-        MaquinaID = (ListadoMaquinas.FirstOrDefault() != null) ? ListadoMaquinas.First().ID : 0;
+        //MaquinaID = (ListadoMaquinas.FirstOrDefault() != null) ? ListadoMaquinas.First().ID : 0;
     }
 
     private string GenerarQueryStrings()
@@ -232,6 +264,7 @@
         queryStringsDict["NroDePieza"] = NroDePieza;
         queryStringsDict["Fecha"] = Fecha.ToString();
         queryStringsDict["AreaID"] = AreaID.ToString();
+        queryStringsDict["ProcesoID"] = ProcesoID.ToString();
         queryStringsDict["MaquinaID"] = MaquinaID.ToString();
         queryStringsDict["OperarioID"] = OperarioID.ToString();
         queryStringsDict["SupervisorID"] = SupervisorID.ToString();

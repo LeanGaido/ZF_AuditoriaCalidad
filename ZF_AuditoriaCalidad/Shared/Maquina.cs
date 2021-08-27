@@ -11,15 +11,17 @@ namespace ZF_AuditoriaCalidad.Shared
     {
         public int ID { get; set; }
 
-        [ForeignKey("Area")]
-        public int AreaID { get; set; }
+        [ForeignKey("Proceso")]
+        public int ProcesoID { get; set; }
 
         [StringLength(240, ErrorMessage = "El largo del texto no puede superar 240 Caracteres")]
         public string Descripcion { get; set; }
 
+        public bool DeBaja { get; set; }
+
         [NotMapped]
         public string CantDeVecesAuditada { get; set; }
 
-        public virtual Area Area { get; set; }
+        public virtual Proceso Proceso { get; set; }
     }
 }

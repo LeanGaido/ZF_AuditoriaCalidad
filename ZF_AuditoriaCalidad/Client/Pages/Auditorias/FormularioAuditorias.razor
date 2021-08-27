@@ -43,18 +43,50 @@
     <div class="form-group">
         <label>Areas:</label>
         <div>
-            <SelectorTypeahead Context="Area"
+            @*<SelectorTypeahead Context="Area"
                                SearchMethod="BuscarAreas"
                                ElementosSeleccionados="AreaSeleccionada"
                                ControlName="Area"
-                               Placeholder="Nombre del Area">
+                               Placeholder="Seleccione un Area">
                 <MyListTemplate>
                     @Area.Descripcion
                 </MyListTemplate>
                 <MyResultTemplate>
                     @Area.Descripcion
                 </MyResultTemplate>
-            </SelectorTypeahead>
+            </SelectorTypeahead>*@
+            <select class="form-control" value="@AreaID" @onchange="ActualizarProcesos">
+                <option value="0">--Seleccione una Area--</option>
+                @foreach (var item in ListadoAreas)
+                {
+                    <option value="@item.ID">@item.Descripcion</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Procesos:</label>
+        <div>
+            @*<SelectorTypeahead Context="Proceso"
+                               SearchMethod="BuscarProcesos"
+                               ElementosSeleccionados="ProcesoSeleccionado"
+                               ControlName="Proceso"
+                               Placeholder="Seleccione un Proceso">
+                <MyListTemplate>
+                    @Proceso.Descripcion
+                </MyListTemplate>
+                <MyResultTemplate>
+                    @Proceso.Descripcion
+                </MyResultTemplate>
+            </SelectorTypeahead>*@
+            <select class="form-control" @bind="@ProcesoID">
+                <option value="0">--Seleccione un Proceso--</option>
+                @foreach (var item in ListadoProcesos)
+                {
+                    <option value="@item.ID">@item.Descripcion</option>
+                }
+            </select>
         </div>
     </div>
 
@@ -65,7 +97,7 @@
                                SearchMethod="BuscarMaquinas"
                                ElementosSeleccionados="MaquinaSeleccionada"
                                ControlName="Maquina"
-                               Placeholder="Nro de la Maquina">
+                               Placeholder="Seleccione una Maquina">
                 <MyListTemplate>
                     <div class="col-sm-12 col-md-8">@Maquina.Descripcion - <span class="text-info">@Maquina.CantDeVecesAuditada</span></div>
                 </MyListTemplate>
@@ -155,6 +187,13 @@
         </div>
 
         <div class="form-group">
+            <label>Areas:</label>
+            <div>
+                <input readonly class="form-control" value="@ProcesoSeleccionado.First().Descripcion" />
+            </div>
+        </div>
+
+        <div class="form-group">
             <label>Maquinas:</label>
             <div>
                 <input readonly class="form-control" value="@MaquinaSeleccionada.First().Descripcion" />
@@ -194,12 +233,17 @@
 
     private bool Mostrar = false,  MostrarErrores = false;
     private string Titulo = "", TituloErrores = "";
+    public int? AreaID = 0;
+    public int? ProcesoID = 0;
 
     [Parameter] public Auditoria auditoria { get; set; }
     [Parameter] public EventCallback OnValidSubmit { get; set; }
 
     [Parameter] public List<Area> ListadoAreas { get; set; } = new List<Area>();
     [Parameter] public List<Area> AreaSeleccionada { get; set; } = new List<Area>();
+
+    [Parameter] public List<Proceso> ListadoProcesos { get; set; } = new List<Proceso>();
+    [Parameter] public List<Proceso> ProcesoSeleccionado { get; set; } = new List<Proceso>();
 
     [Parameter] public List<Maquina> ListadoMaquinas { get; set; } = new List<Maquina>();
     [Parameter] public List<Maquina> MaquinaSeleccionada { get; set; } = new List<Maquina>();
@@ -238,9 +282,11 @@
             NroDeOrden = auditoria.NroOrden;
             NroDePieza = auditoria.NroPieza;
 
-            AreaSeleccionada.Add(auditoria.Maquina.Area);
-
             MaquinaSeleccionada.Add(auditoria.Maquina);
+
+            ProcesoSeleccionado.Add(auditoria.Maquina.Proceso);
+
+            AreaSeleccionada.Add(auditoria.Maquina.Proceso.Area);
 
             SupervisorSeleccionado.Add(auditoria.Supervisor);
 
@@ -256,9 +302,26 @@
         return responseHttp.Response;
     }
 
-    private async Task<IEnumerable<Maquina>> BuscarMaquinas(string searchText)
+    private async Task ActualizarProcesos(ChangeEventArgs countryEvent)
+    {
+        AreaID = int.Parse(countryEvent.Value.ToString());
+        var responseHttpProcesos = await repositorio.Get<List<Proceso>>($"api/Procesos/{AreaID.Value}");
+        ListadoProcesos = responseHttpProcesos.Response;
+        ProcesoID = 0;
+        //ProcesoID = (ListadoProcesos.FirstOrDefault() != null) ? ListadoProcesos.First().ID : 0;
+    }
+
+    private async Task<IEnumerable<Maquina>> BuscarProcesos(string searchText)
     {
         int id = AreaSeleccionada.FirstOrDefault().ID;
+        var responseHttp = await repositorio.Get<List<Maquina>>($"api/Procesos/buscar/{searchText}?Id=" + id);
+
+        return responseHttp.Response;
+    }
+
+    private async Task<IEnumerable<Maquina>> BuscarMaquinas(string searchText)
+    {
+        int id = ProcesoID.Value;
         var responseHttp = await repositorio.Get<List<Maquina>>($"api/Maquinas/buscar/{searchText}?Id=" + id);
 
         return responseHttp.Response;
@@ -338,11 +401,17 @@
         }
         auditoria.NroPieza = NroDePieza;
 
-        if (AreaSeleccionada.Count < 1)
-        {
-            error = true;
-            mensajesError.Add("Es Nesesario que Seleccione un/a Area/Linea para Poder Continuar");
-        }
+        //if (AreaSeleccionada.Count < 1)
+        //{
+        //    error = true;
+        //    mensajesError.Add("Es Nesesario que Seleccione un/a Area/Linea para Poder Continuar");
+        //}
+
+        //if (ProcesoSeleccionado.Count < 1)
+        //{
+        //    error = true;
+        //    mensajesError.Add("Es Nesesario que Seleccione un Proceso para Poder Continuar");
+        //}
 
         if (MaquinaSeleccionada.Count < 1)
         {

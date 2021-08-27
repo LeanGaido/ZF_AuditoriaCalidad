@@ -30,7 +30,9 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<List<Operario>>> Get()
         {
-            return await context.Operarios.ToListAsync();
+            var operarios = await context.Operarios.Where(x => !x.DeBaja).ToListAsync();
+
+            return operarios;
         }
 
         [HttpGet("{id}")]
@@ -71,6 +73,19 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                 .Where(x => x.Auditor == auditor &&
                             x.Supervisor == supervisor &&
                             x.Legajo.ToLower().Contains(textoBusqueda)).ToListAsync();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var operario = await context.Operarios.FindAsync(id);
+            if (operario == null) { return NotFound(); }
+
+            operario.DeBaja = true;
+
+            await context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

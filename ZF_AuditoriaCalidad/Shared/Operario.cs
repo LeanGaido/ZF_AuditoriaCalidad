@@ -26,5 +26,10 @@ namespace ZF_AuditoriaCalidad.Shared
 
         public string ApellidoYNombre { get { return Apellido + ", " + Nombre; } }
 
+        public string Email { get; set; }
+
+        public string Telefono { get; set; }
+
+        public bool DeBaja { get; set; }
     }
 }

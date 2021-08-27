@@ -69,6 +69,14 @@ namespace ZF_AuditoriaCalidad.Server
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder =>
+                builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+            });
             
             services.AddAutoMapper(typeof(Startup));
         }
@@ -95,6 +103,8 @@ namespace ZF_AuditoriaCalidad.Server
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
+
+            app.UseCors("CorsPolicy");
 
             app.UseRouting();
 

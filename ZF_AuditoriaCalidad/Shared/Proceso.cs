@@ -6,16 +6,19 @@ using System.Text;
 
 namespace ZF_AuditoriaCalidad.Shared
 {
-    [Table("tblAreas")]
-    public class Area
+    [Table("tblProcesos")]
+    public class Proceso
     {
         public int ID { get; set; }
+
+        [ForeignKey("Area")]
+        public int AreaID { get; set; }
 
         [StringLength(240, ErrorMessage = "El largo del texto no puede superar 240 Caracteres")]
         public string Descripcion { get; set; }
 
         public bool DeBaja { get; set; }
 
-        public string Email { get; set; }
+        public virtual Area Area { get; set; }
     }
 }

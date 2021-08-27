@@ -44,6 +44,8 @@ namespace ZF_AuditoriaCalidad.Shared.DTOs
 
         public Area Area { get; set; }
 
+        public Proceso Proceso { get; set; }
+
         public Maquina Maquina { get; set; }
 
         public Operario Operario { get; set; }

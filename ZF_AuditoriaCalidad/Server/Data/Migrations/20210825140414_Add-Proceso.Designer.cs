@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ZF_AuditoriaCalidad.Server.Data;
 
 namespace ZF_AuditoriaCalidad.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210825140414_Add-Proceso")]
+    partial class AddProceso
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -308,9 +310,6 @@ namespace ZF_AuditoriaCalidad.Server.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("DeBaja")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Descripcion")
                         .HasColumnType("nvarchar(240)")
                         .HasMaxLength(240);
@@ -321,6 +320,50 @@ namespace ZF_AuditoriaCalidad.Server.Data.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("tblAreas");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            Descripcion = "GPS1",
+                            Email = ""
+                        },
+                        new
+                        {
+                            ID = 2,
+                            Descripcion = "GPS2",
+                            Email = ""
+                        },
+                        new
+                        {
+                            ID = 3,
+                            Descripcion = "HD",
+                            Email = ""
+                        },
+                        new
+                        {
+                            ID = 4,
+                            Descripcion = "Empaque",
+                            Email = ""
+                        },
+                        new
+                        {
+                            ID = 5,
+                            Descripcion = "Vástago",
+                            Email = ""
+                        },
+                        new
+                        {
+                            ID = 6,
+                            Descripcion = "Manual",
+                            Email = ""
+                        },
+                        new
+                        {
+                            ID = 7,
+                            Descripcion = "Tubos",
+                            Email = ""
+                        });
                 });
 
             modelBuilder.Entity("ZF_AuditoriaCalidad.Shared.Auditoria", b =>
@@ -420,9 +463,6 @@ namespace ZF_AuditoriaCalidad.Server.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("DeBaja")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Descripcion")
                         .HasColumnType("nvarchar(240)")
                         .HasMaxLength(240);
@@ -435,6 +475,134 @@ namespace ZF_AuditoriaCalidad.Server.Data.Migrations
                     b.HasIndex("ProcesoID");
 
                     b.ToTable("tblMaquinas");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            Descripcion = "Maquina Nro 1 del Proceso Nro 1",
+                            ProcesoID = 1
+                        },
+                        new
+                        {
+                            ID = 2,
+                            Descripcion = "Maquina Nro 2 del Proceso Nro 1",
+                            ProcesoID = 1
+                        },
+                        new
+                        {
+                            ID = 3,
+                            Descripcion = "Maquina Nro 3 del Proceso Nro 1",
+                            ProcesoID = 1
+                        },
+                        new
+                        {
+                            ID = 4,
+                            Descripcion = "Maquina Nro 4 del Proceso Nro 1",
+                            ProcesoID = 1
+                        },
+                        new
+                        {
+                            ID = 5,
+                            Descripcion = "Maquina Nro 5 del Proceso Nro 1",
+                            ProcesoID = 1
+                        },
+                        new
+                        {
+                            ID = 6,
+                            Descripcion = "Maquina Nro 6 del Proceso Nro 2",
+                            ProcesoID = 2
+                        },
+                        new
+                        {
+                            ID = 7,
+                            Descripcion = "Maquina Nro 7 del Proceso Nro 2",
+                            ProcesoID = 2
+                        },
+                        new
+                        {
+                            ID = 8,
+                            Descripcion = "Maquina Nro 8 del Proceso Nro 2",
+                            ProcesoID = 2
+                        },
+                        new
+                        {
+                            ID = 9,
+                            Descripcion = "Maquina Nro 9 del Proceso Nro 2",
+                            ProcesoID = 2
+                        },
+                        new
+                        {
+                            ID = 10,
+                            Descripcion = "Maquina Nro 10 del Proceso Nro 2",
+                            ProcesoID = 2
+                        },
+                        new
+                        {
+                            ID = 11,
+                            Descripcion = "Maquina Nro 11 del Proceso Nro 3",
+                            ProcesoID = 3
+                        },
+                        new
+                        {
+                            ID = 12,
+                            Descripcion = "Maquina Nro 12 del Proceso Nro 3",
+                            ProcesoID = 3
+                        },
+                        new
+                        {
+                            ID = 13,
+                            Descripcion = "Maquina Nro 13 del Proceso Nro 3",
+                            ProcesoID = 3
+                        },
+                        new
+                        {
+                            ID = 14,
+                            Descripcion = "Maquina Nro 14 del Proceso Nro 4",
+                            ProcesoID = 4
+                        },
+                        new
+                        {
+                            ID = 15,
+                            Descripcion = "Maquina Nro 15 del Proceso Nro 4",
+                            ProcesoID = 4
+                        },
+                        new
+                        {
+                            ID = 16,
+                            Descripcion = "Maquina Nro 16 del Proceso Nro 4",
+                            ProcesoID = 4
+                        },
+                        new
+                        {
+                            ID = 17,
+                            Descripcion = "Maquina Nro 17 del Proceso Nro 4",
+                            ProcesoID = 4
+                        },
+                        new
+                        {
+                            ID = 18,
+                            Descripcion = "Maquina Nro 18 del Proceso Nro 4",
+                            ProcesoID = 4
+                        },
+                        new
+                        {
+                            ID = 19,
+                            Descripcion = "Maquina Nro 19 del Proceso Nro 4",
+                            ProcesoID = 4
+                        },
+                        new
+                        {
+                            ID = 20,
+                            Descripcion = "Maquina Nro 20 del Proceso Nro 5",
+                            ProcesoID = 5
+                        },
+                        new
+                        {
+                            ID = 21,
+                            Descripcion = "Maquina Nro 21 del Proceso Nro 5",
+                            ProcesoID = 5
+                        });
                 });
 
             modelBuilder.Entity("ZF_AuditoriaCalidad.Shared.Observacion", b =>
@@ -542,12 +710,6 @@ namespace ZF_AuditoriaCalidad.Server.Data.Migrations
                     b.Property<bool>("Auditor")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("DeBaja")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Legajo")
                         .HasColumnType("nvarchar(4)")
                         .HasMaxLength(4);
@@ -559,12 +721,191 @@ namespace ZF_AuditoriaCalidad.Server.Data.Migrations
                     b.Property<bool>("Supervisor")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Telefono")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("ID");
 
                     b.ToTable("tblOperarios");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            Apellido = "NEGRO",
+                            Auditor = false,
+                            Legajo = "7",
+                            Nombre = "RAUL SEBASTIAN",
+                            Supervisor = true
+                        },
+                        new
+                        {
+                            ID = 2,
+                            Apellido = "QUINTEROS",
+                            Auditor = false,
+                            Legajo = "11",
+                            Nombre = "LORENZO JUAN",
+                            Supervisor = true
+                        },
+                        new
+                        {
+                            ID = 3,
+                            Apellido = "VILLOSIO",
+                            Auditor = false,
+                            Legajo = "13",
+                            Nombre = "DANTE ALBERTO",
+                            Supervisor = true
+                        },
+                        new
+                        {
+                            ID = 4,
+                            Apellido = "GARETTO",
+                            Auditor = false,
+                            Legajo = "20",
+                            Nombre = "GERMAN SANTIAGO",
+                            Supervisor = true
+                        },
+                        new
+                        {
+                            ID = 5,
+                            Apellido = "GOMEZ",
+                            Auditor = true,
+                            Legajo = "286",
+                            Nombre = "CRISTIAN GABRIEL",
+                            Supervisor = false
+                        },
+                        new
+                        {
+                            ID = 6,
+                            Apellido = "ALBARRACIN",
+                            Auditor = true,
+                            Legajo = "290",
+                            Nombre = "JORGE ALBERTO",
+                            Supervisor = false
+                        },
+                        new
+                        {
+                            ID = 7,
+                            Apellido = "MINA",
+                            Auditor = true,
+                            Legajo = "102",
+                            Nombre = "JAVIER EDUARDO",
+                            Supervisor = false
+                        },
+                        new
+                        {
+                            ID = 8,
+                            Apellido = "PASTORE",
+                            Auditor = true,
+                            Legajo = "211",
+                            Nombre = "RUBEN JOSE DARIO",
+                            Supervisor = false
+                        },
+                        new
+                        {
+                            ID = 9,
+                            Apellido = "SEGHEZZI",
+                            Auditor = false,
+                            Legajo = "1107",
+                            Nombre = "DAVID",
+                            Supervisor = false
+                        },
+                        new
+                        {
+                            ID = 10,
+                            Apellido = "PASCHIERO",
+                            Auditor = false,
+                            Legajo = "33",
+                            Nombre = "NORBERTO RENATO",
+                            Supervisor = false
+                        },
+                        new
+                        {
+                            ID = 11,
+                            Apellido = "MORONE",
+                            Auditor = false,
+                            Legajo = "39",
+                            Nombre = "MIGUEL ELIO",
+                            Supervisor = false
+                        },
+                        new
+                        {
+                            ID = 12,
+                            Apellido = "JAIMES",
+                            Auditor = false,
+                            Legajo = "53",
+                            Nombre = "OSCAR HONORIO",
+                            Supervisor = false
+                        },
+                        new
+                        {
+                            ID = 13,
+                            Apellido = "ZAPATA",
+                            Auditor = false,
+                            Legajo = "65",
+                            Nombre = "OMAR ENRIQUE",
+                            Supervisor = false
+                        },
+                        new
+                        {
+                            ID = 14,
+                            Apellido = "PRIOTTI",
+                            Auditor = false,
+                            Legajo = "68",
+                            Nombre = "OSCAR ALBERTO",
+                            Supervisor = false
+                        },
+                        new
+                        {
+                            ID = 15,
+                            Apellido = "BURGOS",
+                            Auditor = false,
+                            Legajo = "70",
+                            Nombre = "JORGE OMAR",
+                            Supervisor = false
+                        },
+                        new
+                        {
+                            ID = 16,
+                            Apellido = "BUSATO",
+                            Auditor = false,
+                            Legajo = "85",
+                            Nombre = "CLAUDIO RAMON",
+                            Supervisor = false
+                        },
+                        new
+                        {
+                            ID = 17,
+                            Apellido = "MINA",
+                            Auditor = false,
+                            Legajo = "102",
+                            Nombre = "JAVIER EDUARDO",
+                            Supervisor = false
+                        },
+                        new
+                        {
+                            ID = 18,
+                            Apellido = "PEREZ",
+                            Auditor = false,
+                            Legajo = "108",
+                            Nombre = "ENRIQUE DOLORES",
+                            Supervisor = false
+                        },
+                        new
+                        {
+                            ID = 19,
+                            Apellido = "ABBURRA",
+                            Auditor = false,
+                            Legajo = "118",
+                            Nombre = "MARCELO FABIAN",
+                            Supervisor = false
+                        },
+                        new
+                        {
+                            ID = 20,
+                            Apellido = "ZAPATA",
+                            Auditor = false,
+                            Legajo = "126",
+                            Nombre = "EDGARDO JAVIER",
+                            Supervisor = false
+                        });
                 });
 
             modelBuilder.Entity("ZF_AuditoriaCalidad.Shared.ParametroGeneral", b =>
@@ -583,6 +924,14 @@ namespace ZF_AuditoriaCalidad.Server.Data.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("tblParametrosGenerales");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            Key = "Periodo de Audicion(Dias)",
+                            Value = "30"
+                        });
                 });
 
             modelBuilder.Entity("ZF_AuditoriaCalidad.Shared.Proceso", b =>
@@ -595,9 +944,6 @@ namespace ZF_AuditoriaCalidad.Server.Data.Migrations
                     b.Property<int>("AreaID")
                         .HasColumnType("int");
 
-                    b.Property<bool>("DeBaja")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Descripcion")
                         .HasColumnType("nvarchar(240)")
                         .HasMaxLength(240);
@@ -607,6 +953,50 @@ namespace ZF_AuditoriaCalidad.Server.Data.Migrations
                     b.HasIndex("AreaID");
 
                     b.ToTable("tblProcesos");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            AreaID = 0,
+                            Descripcion = "Proceso 1 del Area de Produccion 1"
+                        },
+                        new
+                        {
+                            ID = 2,
+                            AreaID = 0,
+                            Descripcion = "Proceso 2 del Area de Produccion 2"
+                        },
+                        new
+                        {
+                            ID = 3,
+                            AreaID = 0,
+                            Descripcion = "Proceso 3 del Area de Produccion 3"
+                        },
+                        new
+                        {
+                            ID = 4,
+                            AreaID = 0,
+                            Descripcion = "Proceso 4 del Area de Produccion 4"
+                        },
+                        new
+                        {
+                            ID = 5,
+                            AreaID = 0,
+                            Descripcion = "Proceso 5 del Area de Produccion 5"
+                        },
+                        new
+                        {
+                            ID = 6,
+                            AreaID = 0,
+                            Descripcion = "Proceso 6 del Area de Produccion 6"
+                        },
+                        new
+                        {
+                            ID = 7,
+                            AreaID = 0,
+                            Descripcion = "Proceso 7 del Area de Produccion 7"
+                        });
                 });
 
             modelBuilder.Entity("ZF_AuditoriaCalidad.Shared.PuntoAuditoria", b =>
@@ -631,6 +1021,99 @@ namespace ZF_AuditoriaCalidad.Server.Data.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("tblPuntosAuditoria");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            DeBaja = false,
+                            Descripcion = "Existe Pieza Puesta a Punto",
+                            FechaDeBaja = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 2,
+                            DeBaja = false,
+                            Descripcion = "Orden de Fabricación Disponible",
+                            FechaDeBaja = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 3,
+                            DeBaja = false,
+                            Descripcion = "Control de Frabr.  ¿Registros?",
+                            FechaDeBaja = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 4,
+                            DeBaja = false,
+                            Descripcion = "Documentación necesaria disponible",
+                            FechaDeBaja = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 5,
+                            DeBaja = false,
+                            Descripcion = "Dimensional Pieza en Proceso",
+                            FechaDeBaja = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 6,
+                            DeBaja = false,
+                            Descripcion = "Funciona caja NO CONFORME",
+                            FechaDeBaja = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 7,
+                            DeBaja = false,
+                            Descripcion = "Ins. de medición calibrado/apropiado/POKA YOKE",
+                            FechaDeBaja = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 8,
+                            DeBaja = false,
+                            Descripcion = "TPM",
+                            FechaDeBaja = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 9,
+                            DeBaja = false,
+                            Descripcion = "Seguridad",
+                            FechaDeBaja = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 10,
+                            DeBaja = false,
+                            Descripcion = "5S",
+                            FechaDeBaja = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 11,
+                            DeBaja = false,
+                            Descripcion = "Mejoras",
+                            FechaDeBaja = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 12,
+                            DeBaja = false,
+                            Descripcion = "Identificación",
+                            FechaDeBaja = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 13,
+                            DeBaja = false,
+                            Descripcion = "Polivalencia",
+                            FechaDeBaja = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("ZF_AuditoriaCalidad.Shared.RespuestaDetalleAuditoria", b =>
@@ -649,6 +1132,32 @@ namespace ZF_AuditoriaCalidad.Server.Data.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("tblRespuestasDetalleAuditoria");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            ClaseHtml = "success",
+                            Descripcion = "SI"
+                        },
+                        new
+                        {
+                            ID = 2,
+                            ClaseHtml = "danger",
+                            Descripcion = "NO"
+                        },
+                        new
+                        {
+                            ID = 3,
+                            ClaseHtml = "warning",
+                            Descripcion = "N/A"
+                        },
+                        new
+                        {
+                            ID = 4,
+                            ClaseHtml = "info",
+                            Descripcion = "Corregido"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
