@@ -1,0 +1,139 @@
+﻿@page "/usuarios"
+@inject IRepositorio repositorio
+@attribute [Authorize]
+@inject HttpClientConToken Http
+
+<ListadoGenerico Listado="Usuarios">
+    <HayRegistrosCompleto>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Email</th>
+                    <th>Nombre Usuario</th>
+                    <td>Activo</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Usuarios)
+                {
+                    <tr>
+                        <td>
+                            @*<a href="Auditorias/@item.ID" class="btn btn-success"><ion-icon name="folder-open"></ion-icon></a>*@
+                            @if (!item.DeBaja)
+                            {
+                                <AuthorizeView Roles="Administrador">
+                                    <button @onclick="@(() => BorrarOperario(item))" class="btn btn-danger"><ion-icon name="trash"></ion-icon></button>
+                                </AuthorizeView>
+                            }
+                        </td>
+                        <td>@item.email</td>
+                        <td>@item.UserName</td>
+                        <td>
+                            @if (!item.DeBaja)
+                            {
+                                <span>Activo</span>
+                            }
+                            else
+                            {
+                                <span>De Baja</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </HayRegistrosCompleto>
+</ListadoGenerico>
+
+<Confirmacion MostrarConfirmacion="Mostrar"
+              Titulo="@Titulo"
+              onCancel="@(() => CerrarConfirmacion())"
+              onConfirm="@(() => ConfirmacionBorrarOperario(Usuario))">
+    <ChildContent>
+        <div class="form-group">
+            <label>Nombre de Usuario:</label>
+            <div>
+                <input readonly class="form-control" value="@Usuario.UserName" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Email:</label>
+            <div>
+                <input readonly class="form-control" value="@Usuario.email" />
+            </div>
+        </div>
+    </ChildContent>
+</Confirmacion>
+
+@code {
+    public List<UserDto> Usuarios { get; set; }
+    private UserDto Usuario = new UserDto();
+
+    private bool Mostrar = false;
+    private string Titulo = "";
+
+    private async Task Cargar(int pagina = 1)
+    {
+        var responseHttp = await repositorio.Get<List<UserDto>>($"api/usuarios");
+        if (!responseHttp.Error)
+        {
+            Usuarios = responseHttp.Response;
+            //var conteo = responseHttp.HttpResponseMessage.Headers.GetValues("conteo").FirstOrDefault();
+            //paginasTotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
+        }
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            await Cargar();
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+    private async Task CerrarConfirmacion()
+    {
+        Mostrar = false;
+        Usuario = null;
+        Titulo = "";
+    }
+
+    private async Task BorrarOperario(UserDto usuario)
+    {
+        Titulo = "Esta seguro de eliminar este Operario?";
+        Usuario = usuario;
+        Mostrar = true;
+    }
+
+    async void ConfirmacionBorrarOperario(UserDto usuario)
+    {
+        if (usuario != null)
+        {
+            var responseHttp = await repositorio.Delete($"api/usuarios/{usuario.UserId}");
+            if (!responseHttp.Error)
+            {
+                Mostrar = false;
+                Usuario = null;
+                Titulo = "";
+                await Cargar();
+            }
+            else
+            {
+                await Cargar();
+            }
+        }
+        else
+        {
+            Mostrar = false;
+            Usuario = null;
+            Titulo = "";
+            await Cargar();
+        }
+    }
+}

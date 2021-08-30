@@ -30,7 +30,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
             this.mapper = mapper;
         }
 
-        public async Task<string> Get(string FilePath, int FileType)
+        public async Task<IActionResult> Get(string FilePath, int FileType)
         {
             string Mensaje = "";
             switch (FileType)
@@ -41,11 +41,14 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                 case 2:
                     Mensaje = await ImportarOperarios(FilePath);
                     break;
+                case 3:
+                    Mensaje = await ImportarPuntosDeAuditoria(FilePath);
+                    break;
                 default:
                     break;
             }
 
-            return Mensaje;
+            return Ok(Mensaje);
         }
 
         private async Task<string> ImportarMaquinas(string filePath)
@@ -224,6 +227,67 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                             operario.Auditor = (operarioAuditor == 1) ? true : false;
                             operario.Supervisor = (operarioSupervisor == 1) ? true : false;
                             operario.DeBaja = false;
+                            context.SaveChanges();
+                        }
+                        row++;
+                    }
+                    //} while (reader.NextResult()); //Move to NEXT SHEET
+
+                }
+            }
+
+            return "Operarios Importados";
+        }
+
+        private async Task<string> ImportarPuntosDeAuditoria(string filePath)
+        {
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
+            {
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    int row = 1;
+                    //do
+                    //{
+
+                    PuntoAuditoria puntoAuditoria = new PuntoAuditoria();
+
+                    while (reader.Read()) //Each ROW
+                    {
+                        if (row == 1)
+                        {
+                            row++;
+                            continue;
+                        }
+                        if (reader.GetValue(0) == null)
+                        {
+                            continue;
+                        }
+                        string DescripcionPuntoAuditoria = reader.GetValue(0).ToString();
+                        if (string.IsNullOrEmpty(DescripcionPuntoAuditoria))
+                        {
+                            string mensajeError = "La Descripcion del punto de Auditoria en la fila: " + row + ", no puede estar Vacio.";
+                            return mensajeError;
+                        }
+
+                        if (puntoAuditoria.Descripcion != DescripcionPuntoAuditoria)
+                        {
+                            puntoAuditoria = context.PuntosAuditoria.Where(x => x.Descripcion == DescripcionPuntoAuditoria).FirstOrDefault();
+                        }
+
+                        if (puntoAuditoria == null)
+                        {
+                            puntoAuditoria = new PuntoAuditoria();
+                            puntoAuditoria.Descripcion = DescripcionPuntoAuditoria;
+                            puntoAuditoria.DeBaja = false;
+
+                            context.PuntosAuditoria.Add(puntoAuditoria);
+                            context.SaveChanges();
+                        }
+                        else
+                        {
+                            puntoAuditoria.Descripcion = DescripcionPuntoAuditoria;
+                            puntoAuditoria.DeBaja = false;
                             context.SaveChanges();
                         }
                         row++;

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ZF_AuditoriaCalidad.Server.Data;
 using ZF_AuditoriaCalidad.Server.Models;
+using ZF_AuditoriaCalidad.Shared.DTOs;
 
 namespace ZF_AuditoriaCalidad.Server.Controllers
 {
@@ -27,17 +28,33 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<List<ApplicationUser>>> Get()
+        public async Task<ActionResult<List<UserDto>>> Get()
         {
-            var usuarios = context.Users.Where(x => !x.DeBaja).ToList();
+            var usuarios = (from oUsuarios in context.Users
+                            where !oUsuarios.DeBaja
+                            select new UserDto
+                            {
+                                UserId = oUsuarios.Id,
+                                email = oUsuarios.Email,
+                                UserName = oUsuarios.UserName,
+                                DeBaja = oUsuarios.DeBaja
+                            }).ToList();
 
             return usuarios;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApplicationUser>> Get(string id)
+        public async Task<ActionResult<UserDto>> Get(string id)
         {
-            var usuario = context.Users.Where(x => x.Id == id && !x.DeBaja).FirstOrDefault();
+            var usuario = (from oUsuarios in context.Users
+                           where !oUsuarios.DeBaja
+                           select new UserDto
+                           {
+                               UserId = oUsuarios.Id,
+                               email = oUsuarios.Email,
+                               UserName = oUsuarios.UserName,
+                               DeBaja = oUsuarios.DeBaja
+                           }).FirstOrDefault();
 
             if (usuario == null) { return NotFound(); }
 
@@ -45,15 +62,24 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         }
 
         [HttpGet("buscar/{textoBusqueda}")]
-        public async Task<ActionResult<List<ApplicationUser>>> Get(string textoBusqueda, int? tipoFiltro)
+        public async Task<ActionResult<List<UserDto>>> Get(string textoBusqueda, int? tipoFiltro)
         {
-            if (string.IsNullOrWhiteSpace(textoBusqueda)) { return new List<ApplicationUser>(); }
+            if (string.IsNullOrWhiteSpace(textoBusqueda)) { return new List<UserDto>(); }
 
             textoBusqueda = textoBusqueda.ToLower();
 
-            return context.Users
-                .Where(x => x.NormalizedUserName.Contains(textoBusqueda.ToUpper()) && 
-                            !x.DeBaja).ToList();
+            var usuarios = (from oUsuarios in context.Users
+                            where oUsuarios.NormalizedUserName.Contains(textoBusqueda.ToUpper()) &&
+                                  !oUsuarios.DeBaja
+                            select new UserDto
+                            {
+                                UserId = oUsuarios.Id,
+                                email = oUsuarios.Email,
+                                UserName = oUsuarios.UserName,
+                                DeBaja = oUsuarios.DeBaja
+                            }).ToList();
+
+            return usuarios;
         }
 
         [HttpDelete("{id}")]

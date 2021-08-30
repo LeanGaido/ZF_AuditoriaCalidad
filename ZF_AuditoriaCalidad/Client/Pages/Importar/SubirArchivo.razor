@@ -29,6 +29,7 @@
             <select class="form-control" @bind="fileType">
                 <option value="1">Maquinas</option>
                 <option value="2">Operarios</option>
+                <option value="3">Puntos de Auditoria</option>
             </select>
             <br />
             <button class="btn btn-block btn-success" @onclick="async () => await ReadFileAsync()">Importar Excel de Datos</button>
@@ -108,8 +109,8 @@
         try
         {
             var httpResponse = await repositorio.Get<string>($"api/Actualizar?FilePath={filePath}&FileType={fileType}");
-            var body = await httpResponse.GetBody();
-            message = body;
+            
+            Console.WriteLine(httpResponse);
         }
         catch (Exception ex)
         {
