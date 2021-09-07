@@ -3,6 +3,40 @@
 @attribute [Authorize]
 @inject HttpClientConToken Http
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb" style="background-color: #047cc4;">
+        <li class="breadcrumb-item active" aria-current="page" style="color:white"><h4 style="margin-bottom: 0;">Procesos</h4></li>
+    </ol>
+</nav>
+
+<div class="">
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label for="titulo" class="">Descripcion</label>
+            <input @bind-value="Descripcion" @bind-value:event="oninput"
+                   @onkeypress="@((KeyboardEventArgs e) => DescripcionKeyPress(e))"
+                   type="number" class="form-control" id="Descripcion" placeholder="Descripcion" />
+        </div>
+        <div class="form-group col-md-3">
+            <label for="titulo">Area/Linea</label>
+            <select class="form-control" value="@AreaID" @onchange="ActualizarProcesos">
+                <option value="0">--Seleccione una Area--</option>
+                @foreach (var item in ListadoAreas)
+                {
+                    <option value="@item.ID">@item.Descripcion</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-md-2"></div>
+        <div class="form-group col-md-2"></div>
+        <div class="form-group col-md-2">
+            <button type="button" class="btn btn-primary mb-2 mx-sm-3" @onclick="@(() => Cargar())">Filtrar</button>
+        </div>
+    </div>
+
+    @*<button type="button" class="btn btn-danger mb-2" @onclick="LimpiarOnClick">Limpiar</button>*@
+</div>
+
 <ListadoGenerico Listado="Procesos">
     <HayRegistrosCompleto>
         <table class="table table-striped">
@@ -60,9 +94,51 @@
     private bool Mostrar = false;
     private string Titulo = "";
 
+    #region Filtros y Busqueda
+    Dictionary<string, string> queryStringsDict = new Dictionary<string, string>();
+    public string Descripcion = "";
+    public int? AreaID = 0;
+    public int? ProcesoID = 0;
+
+    [Parameter] public List<Area> ListadoAreas { get; set; } = new List<Area>();
+
+    [Parameter] public List<Proceso> ListadoProcesos { get; set; } = new List<Proceso>();
+
+    private async Task DescripcionKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await Cargar();
+        }
+    }
+
+    private async Task ActualizarProcesos(ChangeEventArgs countryEvent)
+    {
+        AreaID = int.Parse(countryEvent.Value.ToString());
+        var responseHttpProcesos = await repositorio.Get<List<Proceso>>($"api/Procesos/{AreaID.Value}");
+        ListadoProcesos = responseHttpProcesos.Response;
+        //ProcesoID = (ListadoProcesos.FirstOrDefault() != null) ? ListadoProcesos.First().ID : 0;
+    }
+
+    private string GenerarQueryStrings()
+    {
+        if (queryStringsDict == null) { queryStringsDict = new Dictionary<string, string>(); }
+        queryStringsDict["Descripcion"] = Descripcion;
+        queryStringsDict["AreaID"] = AreaID.ToString();
+
+        var valoresPorDefecto = new List<string>() { "false", "", "0" };
+
+        // generoid=7&titulo=spider ...
+
+        return string.Join("&", queryStringsDict
+            .Where(x => !valoresPorDefecto.Contains(x.Value.ToLower()))
+            .Select(x => $"{x.Key}={System.Web.HttpUtility.UrlEncode(x.Value)}").ToArray());
+    }
+
     private async Task Cargar(int pagina = 1)
     {
-        var responseHttp = await repositorio.Get<List<Proceso>>($"api/procesos");
+        var queryStrings = GenerarQueryStrings();
+        var responseHttp = await repositorio.Get<List<Proceso>>($"api/procesos?" + queryStrings);
         if (!responseHttp.Error)
         {
             Procesos = responseHttp.Response;
@@ -70,11 +146,15 @@
             //paginasTotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
         }
     }
+    #endregion
 
     protected async override Task OnInitializedAsync()
     {
         try
         {
+            var responseHttpAreas = await repositorio.Get<List<Area>>("api/Areas/");
+            ListadoAreas = responseHttpAreas.Response;
+
             await Cargar();
         }
         catch (AccessTokenNotAvailableException exception)
@@ -99,7 +179,7 @@
 
     async void ConfirmacionBorrarProceso(Proceso proceso)
     {
-        if(proceso != null)
+        if (proceso != null)
         {
             var responseHttp = await repositorio.Delete($"api/procesos/{proceso.ID}");
             if (!responseHttp.Error)

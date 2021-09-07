@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ZF_AuditoriaCalidad.Server.Data;
 using ZF_AuditoriaCalidad.Shared;
+using ZF_AuditoriaCalidad.Shared.DTOs;
 
 namespace ZF_AuditoriaCalidad.Server.Controllers
 {
@@ -28,10 +29,22 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<List<Proceso>>> Get()
+        public async Task<ActionResult<List<Proceso>>> Get([FromQuery] ParametrosBusquedaProcesos parametrosBusqueda)
         {
-            return await context.Procesos.Where(x => !x.DeBaja)
+            var Procesos = await context.Procesos.Where(x => !x.DeBaja)
                                          .Include(x => x.Area).ToListAsync();
+
+            if (!string.IsNullOrWhiteSpace(parametrosBusqueda.Descripcion))
+            {
+                Procesos = Procesos.Where(x => x.Descripcion.ToLower().Contains(parametrosBusqueda.Descripcion.ToLower())).ToList();
+            }
+
+            if (parametrosBusqueda.AreaID != null && parametrosBusqueda.AreaID != 0)
+            {
+                Procesos = Procesos.Where(x => x.AreaID == parametrosBusqueda.AreaID).ToList();
+            }
+
+            return Procesos;
         }
 
         [HttpGet("{id}")]
@@ -79,5 +92,17 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
             return NoContent();
         }
+    }
+
+    public class ParametrosBusquedaProcesos
+    {
+        public int Pagina { get; set; } = 1;
+        public int CantidadRegistros { get; set; } = 10;
+        public Paginacion Paginacion
+        {
+            get { return new Paginacion() { Pagina = Pagina, CantidadRegistros = CantidadRegistros }; }
+        }
+        public string Descripcion { get; set; }
+        public int? AreaID { get; set; }
     }
 }

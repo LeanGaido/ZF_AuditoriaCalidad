@@ -1,6 +1,12 @@
 ﻿@page "/PuntosAuditoria"
 @inject IRepositorio repositorio
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb" style="background-color: #047cc4;">
+        <li class="breadcrumb-item active" aria-current="page" style="color:white"><h4 style="margin-bottom: 0;">Puntos de Auditoria</h4></li>
+    </ol>
+</nav>
+
 <div class="form-group">
     <a class="btn btn-info" href="PuntosAuditoria/Crear">Nuevo Punto Auditoria</a>
 </div>
@@ -31,7 +37,7 @@
 </ListadoGenerico>
 
 @*<Paginacion PaginaActual="paginaActual" PaginaSeleccionada="paginaSeleccionada"
-            PaginasTotales="paginasTotales"></Paginacion>*@
+    PaginasTotales="paginasTotales"></Paginacion>*@
 
 <Confirmacion MostrarConfirmacion="Mostrar"
               Titulo="@Titulo"

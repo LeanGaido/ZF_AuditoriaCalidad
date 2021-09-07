@@ -3,6 +3,32 @@
 @attribute [Authorize]
 @inject HttpClientConToken Http
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb" style="background-color: #047cc4;">
+        <li class="breadcrumb-item active" aria-current="page" style="color:white"><h4 style="margin-bottom: 0;">Areas</h4></li>
+    </ol>
+</nav>
+
+<div class="">
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label for="titulo" class="">Descripcion</label>
+            <input @bind-value="Descripcion" @bind-value:event="oninput"
+                   @onkeypress="@((KeyboardEventArgs e) => DescripcionKeyPress(e))"
+                   type="text" class="form-control" id="Descripcion" placeholder="Descripcion" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-3"></div>
+        <div class="form-group col-md-3"></div>
+        <div class="form-group col-md-2">
+            <button type="button" class="btn btn-primary mb-2 mx-sm-3" @onclick="@(() => Cargar())">Filtrar</button>
+        </div>
+    </div>
+
+    @*<button type="button" class="btn btn-danger mb-2" @onclick="LimpiarOnClick">Limpiar</button>*@
+</div>
+
 <ListadoGenerico Listado="Areas">
     <HayRegistrosCompleto>
         <table class="table table-striped">
@@ -51,9 +77,27 @@
     private bool Mostrar = false;
     private string Titulo = "";
 
+    Dictionary<string, string> queryStringsDict = new Dictionary<string, string>();
+    public string Descripcion = "";
+
+    private string GenerarQueryStrings()
+    {
+        if (queryStringsDict == null) { queryStringsDict = new Dictionary<string, string>(); }
+        queryStringsDict["Descripcion"] = Descripcion;
+
+        var valoresPorDefecto = new List<string>() { "false", "", "0" };
+
+        // generoid=7&titulo=spider ...
+
+        return string.Join("&", queryStringsDict
+            .Where(x => !valoresPorDefecto.Contains(x.Value.ToLower()))
+            .Select(x => $"{x.Key}={System.Web.HttpUtility.UrlEncode(x.Value)}").ToArray());
+    }
+
     private async Task Cargar(int pagina = 1)
     {
-        var responseHttp = await repositorio.Get<List<Area>>($"api/areas");
+        var queryStrings = GenerarQueryStrings();
+        var responseHttp = await repositorio.Get<List<Area>>($"api/Areas?" + queryStrings);
         if (!responseHttp.Error)
         {
             Areas = responseHttp.Response;
@@ -90,7 +134,7 @@
 
     async void ConfirmacionBorrarArea(Area area)
     {
-        if(area != null)
+        if (area != null)
         {
             var responseHttp = await repositorio.Delete($"api/Areas/{area.ID}");
             if (!responseHttp.Error)
@@ -106,6 +150,14 @@
         else
         {
             await CerrarConfirmacion();
+            await Cargar();
+        }
+    }
+
+    private async Task DescripcionKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
             await Cargar();
         }
     }

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ZF_AuditoriaCalidad.Server.Data;
 using ZF_AuditoriaCalidad.Shared;
+using ZF_AuditoriaCalidad.Shared.DTOs;
 
 namespace ZF_AuditoriaCalidad.Server.Controllers
 {
@@ -28,9 +29,32 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<List<Operario>>> Get()
+        public async Task<ActionResult<List<Operario>>> Get([FromQuery] ParametrosBusquedaOperarios parametrosBusqueda)
         {
-            var operarios = await context.Operarios.Where(x => !x.DeBaja).ToListAsync();
+            var operarios = await context.Operarios.Where(x => !x.DeBaja &&
+                                                                x.Auditor == parametrosBusqueda.Auditor &&
+                                                                x.Supervisor == parametrosBusqueda.Supervisor).ToListAsync();
+
+
+            if (!string.IsNullOrWhiteSpace(parametrosBusqueda.Legajo))
+            {
+                operarios = operarios
+                    .Where(x => x.Legajo.ToLower().Contains(parametrosBusqueda.Legajo.ToLower())).ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(parametrosBusqueda.Apellido))
+            {
+                operarios = operarios
+                    .Where(x => x.Apellido.ToLower().Contains(parametrosBusqueda.Apellido.ToLower())).ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(parametrosBusqueda.Nombre))
+            {
+                operarios = operarios
+                    .Where(x => x.Nombre.ToLower().Contains(parametrosBusqueda.Nombre.ToLower())).ToList();
+            }
+
+
 
             return operarios;
         }
@@ -87,5 +111,19 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
             return NoContent();
         }
+    }
+    public class ParametrosBusquedaOperarios
+    {
+        public int Pagina { get; set; } = 1;
+        public int CantidadRegistros { get; set; } = 10;
+        public Paginacion Paginacion
+        {
+            get { return new Paginacion() { Pagina = Pagina, CantidadRegistros = CantidadRegistros }; }
+        }
+        public string Legajo { get; set; }
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
+        public bool Auditor { get; set; }
+        public bool Supervisor { get; set; }
     }
 }

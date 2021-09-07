@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ZF_AuditoriaCalidad.Server.Data;
 using ZF_AuditoriaCalidad.Shared;
+using ZF_AuditoriaCalidad.Shared.DTOs;
 
 namespace ZF_AuditoriaCalidad.Server.Controllers
 {
@@ -28,11 +29,30 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<List<Maquina>>> Get()
+        public async Task<ActionResult<List<Maquina>>> Get([FromQuery] ParametrosBusquedaMaquinas parametrosBusqueda)
         {
-            return await context.Maquinas.Where(x => !x.DeBaja)
+            var maquinas = await context.Maquinas.Where(x => !x.DeBaja)
                                          .Include(x => x.Proceso)
                                          .ThenInclude(x => x.Area).ToListAsync();
+
+
+            if (!string.IsNullOrWhiteSpace(parametrosBusqueda.Descripcion))
+            {
+                maquinas = maquinas.Where(x => x.Descripcion.ToLower().Contains(parametrosBusqueda.Descripcion.ToLower())).ToList();
+            }
+
+            if (parametrosBusqueda.AreaID != null && parametrosBusqueda.AreaID != 0)
+            {
+                maquinas = maquinas.Where(x => x.Proceso.AreaID == parametrosBusqueda.AreaID).ToList();
+            }
+
+            if (parametrosBusqueda.ProcesoID != null && parametrosBusqueda.ProcesoID != 0)
+            {
+                maquinas = maquinas.Where(x => x.ProcesoID == parametrosBusqueda.ProcesoID).ToList();
+            }
+
+
+            return maquinas;
         }
 
         [HttpGet("{id}")]
@@ -89,5 +109,18 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
             return NoContent();
         }
+    }
+
+    public class ParametrosBusquedaMaquinas
+    {
+        public int Pagina { get; set; } = 1;
+        public int CantidadRegistros { get; set; } = 10;
+        public Paginacion Paginacion
+        {
+            get { return new Paginacion() { Pagina = Pagina, CantidadRegistros = CantidadRegistros }; }
+        }
+        public string Descripcion { get; set; }
+        public int? AreaID { get; set; }
+        public int? ProcesoID { get; set; }
     }
 }

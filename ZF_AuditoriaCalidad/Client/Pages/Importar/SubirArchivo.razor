@@ -8,7 +8,11 @@
 @inject IFileReaderService fileReader
 @inject HttpClientConToken client
 
-<h1>Upload file!</h1>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb" style="background-color: #047cc4;">
+        <li class="breadcrumb-item active" aria-current="page" style="color:white"><h4 style="margin-bottom: 0;">Exportar desde Excel</h4></li>
+    </ol>
+</nav>
 
 <div class="row">
     <div class="col-4">
@@ -109,7 +113,7 @@
         try
         {
             var httpResponse = await repositorio.Get<string>($"api/Actualizar?FilePath={filePath}&FileType={fileType}");
-            
+
             Console.WriteLine(httpResponse);
         }
         catch (Exception ex)

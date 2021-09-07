@@ -31,12 +31,16 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<List<PuntoAuditoria>>> Get()
+        public async Task<ActionResult<List<PuntoAuditoria>>> Get([FromQuery] ParametrosBusquedaPuntosAuditorias parametrosBusqueda)
         {
-            //var puntosAuditoria = context.PuntosAuditoria.Where(x => x.DeBaja == false).AsQueryable();
-            //return await puntosAuditoria.Paginar(parametrosBusqueda.Paginacion).ToListAsync();
+            var puntosAuditoria = await context.PuntosAuditoria.Where(x => x.DeBaja == false).ToListAsync();
 
-            return await context.PuntosAuditoria.Where(x => x.DeBaja == false).ToListAsync();
+            if (!string.IsNullOrWhiteSpace(parametrosBusqueda.Descripcion))
+            {
+                puntosAuditoria = puntosAuditoria.Where(x => x.Descripcion.ToLower().Contains(parametrosBusqueda.Descripcion.ToLower())).ToList();
+            }
+
+            return puntosAuditoria;
         }
 
         [HttpGet("{id}")]
@@ -99,15 +103,16 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
             return NoContent();
         }
 
-        //public class ParametrosBusquedaObservacion
-        //{
-        //    public int Pagina { get; set; } = 1;
-        //    public int CantidadRegistros { get; set; } = 10;
-        //    public Paginacion Paginacion
-        //    {
-        //        get { return new Paginacion() { Pagina = Pagina, CantidadRegistros = CantidadRegistros }; }
-        //    }
-        //}
+        public class ParametrosBusquedaPuntosAuditorias
+        {
+            public int Pagina { get; set; } = 1;
+            public int CantidadRegistros { get; set; } = 10;
+            public Paginacion Paginacion
+            {
+                get { return new Paginacion() { Pagina = Pagina, CantidadRegistros = CantidadRegistros }; }
+            }
+            public string Descripcion { get; set; }
+        }
 
     }
 }
