@@ -1,81 +1,233 @@
 ﻿@page
 @model RegisterModel
 @{
-    ViewData["Title"] = "Crear Cuenta de Usuario a un Auditor";
+    ViewData["Title"] = "REGISTRAR AUDITOR";
+    Layout = null;
 }
+<style>
+    BODY {
+        background-image: linear-gradient( 180deg, rgb(5, 39, 103) 0%, #047cc4 70%);
+        font-family: "Tahoma", verdana, arial;
+        font-size: 12px;
+        margin: auto;
+        margin-top: 30px;
+    }
 
-<h1>@ViewData["Title"]</h1>
+    #capa_titulo_login {
+        background: url(../extranet_archivos/titulo_login.png);
+        font-family: "Tahoma", verdana, arial;
+        height: 100px;
+        margin: auto;
+        width: 540px;
+    }
 
-<div class="row">
-    <div class="col-md-4">
+    #capa_cuerpo_login {
+        background-color: #fff;
+        border-radius: 10px;
+        color: #000;
+        margin: auto;
+        padding: 10px 20px 20px 20px;
+        width: 550px;
+    }
+
+    input {
+        background-color: #0079DC;
+        border-radius: 5px;
+        color: #FFF;
+        height: 20px;
+        width: 350px;
+    }
+
+    select {
+        background-color: #0079DC;
+        border-radius: 5px;
+        color: #FFF;
+        height: 20px;
+        width: 350px;
+    }
+
+    .boton {
+        height: 40px;
+        width: 141px;
+    }
+
+    .textoblanco {
+        font: 9pt tahoma, verdana, Arial, sans-serif;
+        color: #FFFFFF;
+        text-align: justify;
+    }
+
+    .tituloBlanco {
+        font: 20pt tahoma, verdana, Arial, sans-serif;
+        color: #FFFFFF;
+        text-align: justify;
+    }
+
+    .subtituloBlanco {
+        font: 14pt tahoma, verdana, Arial, sans-serif;
+        color: #FFFFFF;
+        text-align: justify;
+    }
+
+    .link {
+        color: #333;
+        text-decoration: none;
+    }
+
+    .center {
+        text-align: center
+    }
+
+    .enlaces {
+        text-decoration: none;
+        font-size: 14px;
+        color: black;
+    }
+</style>
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>ContentAdmin | Sistema Administrador</title>
+    <link href="~/Content/login/login.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" type="image\/png" href="~/Content/images/favicon/favicon.png" />
+</head>
+<body>
+    <br /><br /><br />
+    <p></p>
+    <div id="capa_cuerpo_login">
         <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <hr />
             <div asp-validation-summary="All" class="text-danger"></div>
+            <table style="border-collapse:separate; border-spacing:0px 20px;"> 
+                <tr>
+                    <td width="5%">&nbsp;</td>
+                    <td colspan="5">
+                        <div class="center">
+                            <h2>@ViewData["Title"]</h2>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="5%">&nbsp;</td>
+                    <td width="100%"><b>LEGAJO:</b></td>
+                    <td>
+                        <select class="form-control" asp-for="Input.Legajo">
+                                @foreach (var auditor in Model.Auditores)
+                                {
+                                    <option value="@auditor.Value">@auditor.Text</option>
+                                }
+                        </select>
+                    </td>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    <td width="5%">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td width="5%">&nbsp;</td>
+                    <td width="100%"><b>EMAIL:</b></td>
+                    <td><input asp-for="Input.Email" required class="texto10"> </td>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    <td width="5%">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td width="5%">&nbsp;</td>
+                    <td width="100%"><b>CONTRASEÑA:</b></td>
+                    <td><input asp-for="Input.Password" required class="texto10"></td>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    <td width="5%">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td width="5%">&nbsp;</td>
+                    <td width="100%"><b>CONFIRMAR CONTRASEÑA:</b></td>
+                    <td><input asp-for="Input.ConfirmPassword" required class="texto10"></td>
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                    <td width="5%">&nbsp;</td>
+                </tr>
+            </table>
+            <P>
 
-            <div class="form-group">
-                <label>Legajo</label>
-                <select class="form-control" asp-for="Input.Legajo">
-                    @foreach (var auditor in Model.Auditores)
-                    {
-                        <option value="@auditor.Value">@auditor.Text</option>
-                    }
-                </select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.Email"></label>
-                <input asp-for="Input.Email" class="form-control" />
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.Email"></label>
-                <input asp-for="Input.Email" class="form-control" />
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.Password"></label>
-                <input asp-for="Input.Password" class="form-control" />
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.ConfirmPassword"></label>
-                <input asp-for="Input.ConfirmPassword" class="form-control" />
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-primary">Register</button>
+                <div align="center"><input type="submit" name="ingresar" value="REGISTRAR" class="boton"></div>
+                &nbsp;
+            </P>
         </form>
     </div>
-    <div class="col-md-6 col-md-offset-2">
-        @*<section>
-            <h4>Use another service to register.</h4>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
-                            for details on setting up this ASP.NET application to support logging in via external services.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
-        </section>*@
-    </div>
-</div>
+</body>
+</html>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+@*<h1>@ViewData["Title"]</h1>
+
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                <hr />
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label>Legajo</label>
+                    <select class="form-control" asp-for="Input.Legajo">
+                        @foreach (var auditor in Model.Auditores)
+                        {
+                            <option value="@auditor.Value">@auditor.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Email"></label>
+                    <input asp-for="Input.Email" class="form-control" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Email"></label>
+                    <input asp-for="Input.Email" class="form-control" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Password"></label>
+                    <input asp-for="Input.Password" class="form-control" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.ConfirmPassword"></label>
+                    <input asp-for="Input.ConfirmPassword" class="form-control" />
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+        </div>
+        <div class="col-md-6 col-md-offset-2">*@
+@*<section>
+        <h4>Use another service to register.</h4>
+        <hr />
+        @{
+            if ((Model.ExternalLogins?.Count ?? 0) == 0)
+            {
+                <div>
+                    <p>
+                        There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
+                        for details on setting up this ASP.NET application to support logging in via external services.
+                    </p>
+                </div>
+            }
+            else
+            {
+                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                    <div>
+                        <p>
+                            @foreach (var provider in Model.ExternalLogins)
+                            {
+                                <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                            }
+                        </p>
+                    </div>
+                </form>
+            }
+        }
+    </section>*@
+@*</div>
+    </div>*@
+
+
