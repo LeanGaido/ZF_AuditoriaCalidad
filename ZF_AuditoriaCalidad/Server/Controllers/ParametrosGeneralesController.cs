@@ -52,5 +52,16 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                 .Where(x => x.Key.Equals(textoBusqueda)).ToListAsync();
         }
 
+        [HttpPut]
+        public ActionResult Put(ParametroGeneral parametroGeneral)
+        {
+            //Obtengo el registro de auditoria a modificar
+            context.Entry(parametroGeneral).State = EntityState.Modified;
+
+            //Guarda Cambios
+            context.SaveChanges();
+
+            return NoContent();
+        }
     }
 }

@@ -1,0 +1,55 @@
+﻿@page "/ParametrosGenerales/editar/{ParametroGeneralId:int}"
+@inject NavigationManager navigationManager
+@inject IRepositorio repositorio
+
+<h3>Editar Parametro General</h3>
+@if (MostrarFormulario)
+{
+    <FormularioParametrosGenerales OnValidSubmit="Editar"
+                                   ParametroGeneral="parametroGeneral">
+    </FormularioParametrosGenerales>
+}
+else
+{
+    <text>Cargando...</text>
+}
+@code {
+    private bool MostrarFormulario { get; set; } = false;
+    [Parameter] public int ParametroGeneralId { get; set; }
+    private ParametroGeneral parametroGeneral = new ParametroGeneral();
+
+    protected async override Task OnInitializedAsync()
+    {
+        var httpResponse = await repositorio.Get<ParametroGeneral>($"api/parametrosgenerales/{ParametroGeneralId}");
+
+        if (httpResponse.Error)
+        {
+            if (httpResponse.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("IndiceAuditorias");
+            }
+        }
+        else
+        {
+            parametroGeneral.Key = httpResponse.Response.Key;
+            parametroGeneral.Value = httpResponse.Response.Value;
+        }
+
+        MostrarFormulario = true;
+    }
+
+    async Task Editar()
+    {
+        var httpResponse = await repositorio.Put<ParametroGeneral>("api/parametrosgenerales", parametroGeneral);
+
+        if (httpResponse.Error)
+        {
+            var mensajeError = await httpResponse.GetBody();
+            //await mostrarMensajes.MostrarMensajeError(mensajeError);
+        }
+        else
+        {
+            navigationManager.NavigateTo($"/PuntosAuditoria");
+        }
+    }
+}

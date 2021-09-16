@@ -1,0 +1,108 @@
+﻿@inject IRepositorio repositorio
+
+<EditForm Model="ParametroGeneral">
+    <DataAnnotationsValidator />
+
+    <Confirmacion MostrarConfirmacion="MostrarErrores"
+                  Titulo="@TituloErrores"
+                  onCancel="CerrarErrores"
+                  onConfirm="CerrarErrores"
+                  TextoBotonConfirmar="Revisar">
+        <ChildContent>
+            @if (mensajesError.Count > 0)
+            {
+                <ul class="list-group">
+                    @foreach (var error in mensajesError)
+                    {
+                        <li class="list-group-item list-group-item-danger"><b>@error</b></li>
+                    }
+                </ul>
+            }
+        </ChildContent>
+    </Confirmacion>
+
+    <div class="form-group">
+        <label>@ParametroGeneral.Key:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@ParametroGeneral.Value" />
+            <ValidationMessage For="@(() => ParametroGeneral.Value)" />
+        </div>
+    </div>
+    <a @onclick="@(() => Guardar())" class="btn btn-success">Guardar</a>
+</EditForm>
+
+<Confirmacion MostrarConfirmacion="Mostrar"
+              Titulo="@Titulo"
+              onCancel="CerrarConfirmacion"
+              onConfirm="OnDataAnnonationsValidated">
+    <ChildContent>
+        <div class="form-group">
+            <label>Descripcion:</label>
+            <div>
+                <input type="text" readonly class="form-control" value="@Descripcion" />
+            </div>
+        </div>
+    </ChildContent>
+</Confirmacion>
+@code {
+    private string Descripcion = "";
+    [Parameter] public ParametroGeneral ParametroGeneral { get; set; } = new ParametroGeneral();
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+
+    private bool Mostrar = false, MostrarErrores = false;
+    private string Titulo = "", TituloErrores = "";
+    public List<string> mensajesError = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrEmpty(ParametroGeneral.Key))
+        {
+            Descripcion = ParametroGeneral.Value;
+        }
+    }
+
+    private async Task OnDataAnnonationsValidated()
+    {
+        await OnValidSubmit.InvokeAsync(null);
+    }
+
+    private async Task Guardar()
+    {
+        bool error = false;
+        mensajesError = new List<string>();
+
+        if (string.IsNullOrEmpty(Descripcion.Trim()))
+        {
+            error = true;
+            mensajesError.Add("La descripción no puede estar vacia");
+        }
+        else
+        {
+            ParametroGeneral.Value = Descripcion.Trim();
+        }
+
+        if (!error)
+        {
+            Titulo = "¿Esta seguro de guardar los cambios?";
+            Mostrar = true;
+        }
+        else
+        {
+            TituloErrores = "Por favor revise el Formulario y corriga los siguientes Errores";
+            MostrarErrores = true;
+        }
+    }
+
+    private async Task CerrarConfirmacion()
+    {
+        Titulo = "";
+        Mostrar = false;
+    }
+
+    private async Task CerrarErrores()
+    {
+        TituloErrores = "";
+        MostrarErrores = false;
+    }
+}
