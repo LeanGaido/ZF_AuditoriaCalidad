@@ -179,7 +179,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        @*<div class="form-group">
             <label>Areas:</label>
             <div>
                 <input readonly class="form-control" value="@AreaSeleccionada.First().Descripcion" />
@@ -191,7 +191,7 @@
             <div>
                 <input readonly class="form-control" value="@ProcesoSeleccionado.First().Descripcion" />
             </div>
-        </div>
+        </div>*@
 
         <div class="form-group">
             <label>Maquinas:</label>
@@ -390,28 +390,28 @@
         if (string.IsNullOrEmpty(NroDeOrden.Trim()))
         {
             error = true;
-            mensajesError.Add("El Numero de Orden no puede estar Vacio");
+            mensajesError.Add("El Numero de Orden es dato requerido");
         }
         auditoria.NroOrden = NroDeOrden;
 
         if (string.IsNullOrEmpty(NroDePieza.Trim()))
         {
             error = true;
-            mensajesError.Add("El Numero de Pieza no puede estar Vacio");
+            mensajesError.Add("El Numero de Pieza es dato requerido");
         }
         auditoria.NroPieza = NroDePieza;
 
-        //if (AreaSeleccionada.Count < 1)
-        //{
-        //    error = true;
-        //    mensajesError.Add("Es Nesesario que Seleccione un/a Area/Linea para Poder Continuar");
-        //}
+        if (AreaID == 0)
+        {
+            error = true;
+            mensajesError.Add("Es Nesesario que Seleccione un/a Area/Linea para Poder Continuar");
+        }
 
-        //if (ProcesoSeleccionado.Count < 1)
-        //{
-        //    error = true;
-        //    mensajesError.Add("Es Nesesario que Seleccione un Proceso para Poder Continuar");
-        //}
+        if (ProcesoID == 0)
+        {
+            error = true;
+            mensajesError.Add("Es Nesesario que Seleccione un Proceso para Poder Continuar");
+        }
 
         if (MaquinaSeleccionada.Count < 1)
         {

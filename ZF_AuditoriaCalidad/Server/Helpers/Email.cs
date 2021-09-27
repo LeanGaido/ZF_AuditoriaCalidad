@@ -61,7 +61,14 @@ namespace ZF_AuditoriaCalidad.Server.Helpers
             }
             catch (Exception e)
             {
-                return e.InnerException.Message.ToString();
+                if(e.InnerException != null)
+                {
+                    return e.InnerException.Message.ToString();
+                }
+                else
+                {
+                    return "Ocurrio un error, intente mas tarde";
+                }
             }
         }
     }

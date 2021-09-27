@@ -10,6 +10,12 @@
     </ol>
 </nav>
 
+<AuthorizeView Roles="Auditor">
+    <div class="form-group">
+        <a class="btn btn-info" href="auditorias/crear">Nueva Auditoria</a>
+    </div>
+</AuthorizeView>
+
 <div class="">
     <div class="row">
         <div class="form-group col-md-3">
@@ -88,12 +94,6 @@
     @*<button type="button" class="btn btn-danger mb-2" @onclick="LimpiarOnClick">Limpiar</button>*@
 </div>
 
-<AuthorizeView Roles="Auditor">
-    <div class="form-group">
-        <a class="btn btn-info" href="auditorias/crear">Nueva Auditoria</a>
-    </div>
-</AuthorizeView>
-
 <ListadoGenerico Listado="Auditorias">
     <HayRegistrosCompleto>
         <table class="table table-striped">
@@ -133,7 +133,7 @@
 </ListadoGenerico>
 
 @*<Paginacion PaginaActual="paginaActual" PaginaSeleccionada="paginaSeleccionada"
-            PaginasTotales="paginasTotales"></Paginacion>*@
+    PaginasTotales="paginasTotales"></Paginacion>*@
 
 <Confirmacion MostrarConfirmacion="Mostrar"
               Titulo="@Titulo"

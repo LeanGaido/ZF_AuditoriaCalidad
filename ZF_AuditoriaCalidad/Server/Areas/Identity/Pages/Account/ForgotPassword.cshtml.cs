@@ -60,7 +60,7 @@ namespace ZF_AuditoriaCalidad.Server.Areas.Identity.Pages.Account
 
 
                 Email nuevoEmail = new Email();
-                nuevoEmail.SendEmail($"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.", Input.Email, "Reset Password");
+                nuevoEmail.SendEmail($"Por favor reestablesca su contraseña haciendo <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Click Aquin</a>.", Input.Email, "Reestablecer Contraseña");
                 //await _emailSender.SendEmailAsync(
                 //    Input.Email,
                 //    "Reset Password",

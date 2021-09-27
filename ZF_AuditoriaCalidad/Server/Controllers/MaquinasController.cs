@@ -80,6 +80,16 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                                         .ThenInclude(x => x.Area).ToListAsync();
 
             var periodoDeAudicion = context.ParametrosGenerales.Where(x => x.Key == "Periodo de Audicion(Dias)").FirstOrDefault();
+            if(periodoDeAudicion == null)
+            {
+                periodoDeAudicion = new ParametroGeneral();
+
+                periodoDeAudicion.Key = "Periodo de Audicion(Dias)";
+                periodoDeAudicion.Value = "30";
+
+                context.ParametrosGenerales.Add(periodoDeAudicion);
+                context.SaveChanges();
+            }
 
             DateTime hoy = DateTime.Today;
 

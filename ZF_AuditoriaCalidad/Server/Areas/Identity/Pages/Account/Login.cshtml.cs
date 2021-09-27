@@ -82,12 +82,18 @@ namespace ZF_AuditoriaCalidad.Server.Areas.Identity.Pages.Account
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
 
                 var usuarioAux = await _userManager.FindByNameAsync(Input.Email);
+                if(usuarioAux == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Inicio de Sesion no valido.");
+                    return Page();
+                }
+
                 if (await _userManager.IsInRoleAsync(usuarioAux, "Auditor"))
                 {
                     var claimsUsuarioAux = await _userManager.GetClaimsAsync(usuarioAux);
                     if (claimsUsuarioAux.Where(x => x.Type == "Auditor").FirstOrDefault() == null)
                     {
-                        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                        ModelState.AddModelError(string.Empty, "Inicio de Sesion no valido.");
                         return Page();
                     }
                 }
@@ -95,7 +101,7 @@ namespace ZF_AuditoriaCalidad.Server.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
 
-                    _logger.LogInformation("User logged in.");
+                    _logger.LogInformation("Sesion iniciada.");
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -104,12 +110,12 @@ namespace ZF_AuditoriaCalidad.Server.Areas.Identity.Pages.Account
                 }
                 if (result.IsLockedOut)
                 {
-                    _logger.LogWarning("User account locked out.");
+                    _logger.LogWarning("Cuenta de usuario Bloqueada.");
                     return RedirectToPage("./Lockout");
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Inicio de Sesion no valido.");
                     return Page();
                 }
             }
