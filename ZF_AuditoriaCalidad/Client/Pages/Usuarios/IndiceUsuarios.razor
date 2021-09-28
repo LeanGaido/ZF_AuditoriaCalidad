@@ -9,6 +9,12 @@
     </ol>
 </nav>
 
+<AuthorizeView Roles="Administrador">
+    <div class="form-group">
+        <a class="btn EnlacesLoginDisplay" href="authentication/register">Registrar Usuario</a>
+    </div>
+</AuthorizeView>
+
 <ListadoGenerico Listado="Usuarios">
     <HayRegistrosCompleto>
         <table class="table table-striped">
