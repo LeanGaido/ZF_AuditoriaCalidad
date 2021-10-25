@@ -10,6 +10,7 @@ namespace ZF_AuditoriaCalidad.Shared
     public class Operario
     {
         public int ID { get; set; }
+        public string Z { get; set; }
 
         public bool Auditor { get; set; }
 

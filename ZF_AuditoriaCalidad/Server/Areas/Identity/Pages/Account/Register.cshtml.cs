@@ -55,8 +55,8 @@ namespace ZF_AuditoriaCalidad.Server.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Display(Name = "Legajo")]
-            public string Legajo { get; set; }
+            [Display(Name = "Z")]
+            public string Z { get; set; }
 
             [Required]
             [EmailAddress]
@@ -83,12 +83,12 @@ namespace ZF_AuditoriaCalidad.Server.Areas.Identity.Pages.Account
 
             Auditores = _context.Operarios.AsNoTracking()
                                           .Where(x => x.Auditor &&
-                                                      !usuarios.Contains(x.Legajo))
+                                                      !usuarios.Contains(x.Z))
                                           .Select(n =>
                                               new SelectListItem
                                               {
-                                                  Value = n.Legajo.ToString(),
-                                                  Text = n.Legajo.ToString() + "-" + n.ApellidoYNombre
+                                                  Value = n.Z.ToString(),
+                                                  Text = n.Z.ToString() + "-" + n.ApellidoYNombre
                                               }).ToList();
         }
 
@@ -97,10 +97,10 @@ namespace ZF_AuditoriaCalidad.Server.Areas.Identity.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByNameAsync(Input.Legajo);
+                var user = await _userManager.FindByNameAsync(Input.Z);
                 if(user == null)
                 {
-                    user = new ApplicationUser { UserName = Input.Legajo, Email = Input.Email, EmailConfirmed = true };
+                    user = new ApplicationUser { UserName = Input.Z, Email = Input.Email, EmailConfirmed = true };
                     var result = await _userManager.CreateAsync(user, Input.Password);
                     if (result.Succeeded)
                     {
@@ -109,7 +109,7 @@ namespace ZF_AuditoriaCalidad.Server.Areas.Identity.Pages.Account
                         await _userManager.AddToRoleAsync(user, "Auditor");
                         _logger.LogInformation("Usuario agregado al rol Auditor.");
 
-                        await _userManager.AddClaimAsync(user, new Claim("Auditor", Input.Legajo));
+                        await _userManager.AddClaimAsync(user, new Claim("Auditor", Input.Z));
                         _logger.LogInformation("Se le Agrego el Claim del Legajo del Auditor al Usuario.");
 
                         //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

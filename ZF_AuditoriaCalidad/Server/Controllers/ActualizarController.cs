@@ -159,41 +159,41 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                             row++;
                             continue;
                         }
-                        if(reader.GetValue(0) == null)
+                        if(reader.GetValue(1) == null)
                         {
                             continue;
                         }
-                        string legajo = reader.GetValue(0).ToString();
+                        string legajo = reader.GetValue(1).ToString();
                         if (string.IsNullOrEmpty(legajo))
                         {
                             string mensajeError = "El numero de legajo en la fila: " + row + ", no puede estar Vacio.";
                             return mensajeError;
                         }
-                        string nombreOperario = reader.GetString(1);
+                        string nombreOperario = reader.GetString(2);
                         if (string.IsNullOrEmpty(nombreOperario))
                         {
                             string mensajeError = "El nombre del Operario en la fila: " + row + ", no puede estar Vacio.";
                             return mensajeError;
                         }
-                        string telefonoOperario = reader.GetString(2);
+                        string telefonoOperario = reader.GetString(3);
                         if (string.IsNullOrEmpty(telefonoOperario))
                         {
                             string mensajeError = "El telefono del Operario en la fila: " + row + ", no puede estar Vacio.";
                             //return mensajeError;
                         }
-                        string emailOperario = reader.GetString(3);
+                        string emailOperario = reader.GetString(4);
                         if (string.IsNullOrEmpty(emailOperario))
                         {
                             string mensajeError = "El email del Operario en la fila: " + row + ", no puede estar Vacio.";
                             //return mensajeError;
                         }
                         int operarioAuditor = 0;
-                        if(!int.TryParse(reader.GetValue(4).ToString(), out operarioAuditor)){
+                        if(!int.TryParse(reader.GetValue(5).ToString(), out operarioAuditor)){
                             string mensajeError = "Valor no valido para la Columna Auditor(0/1) en la fila: " + row + ".";
                             return mensajeError;
                         }
                         int operarioSupervisor = 0;
-                        if (!int.TryParse(reader.GetValue(5).ToString(), out operarioSupervisor))
+                        if (!int.TryParse(reader.GetValue(6).ToString(), out operarioSupervisor))
                         {
                             string mensajeError = "Valor no valido para la Columna Supervisor(0/1) en la fila: " + row + ".";
                             return mensajeError;
@@ -204,9 +204,21 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                             operario = context.Operarios.Where(x => x.Legajo == legajo).FirstOrDefault();
                         }
 
+                        string z = "";
+                        if (operario.Auditor)
+                        {
+                            z = reader.GetValue(0).ToString();
+                            if (string.IsNullOrEmpty(z))
+                            {
+                                string mensajeError = "El numero Z en la fila: " + row + ", no puede estar Vacio.";
+                                //return mensajeError;
+                            }
+                        }
+
                         if (operario == null)
                         {
                             operario = new Operario();
+                            operario.Z = z;
                             operario.Legajo = legajo;
                             operario.Nombre = nombreOperario;
                             operario.Telefono = telefonoOperario;
@@ -220,6 +232,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                         }
                         else
                         {
+                            operario.Z = z;
                             operario.Legajo = legajo;
                             operario.Nombre = nombreOperario;
                             operario.Telefono = telefonoOperario;
@@ -227,6 +240,8 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                             operario.Auditor = (operarioAuditor == 1) ? true : false;
                             operario.Supervisor = (operarioSupervisor == 1) ? true : false;
                             operario.DeBaja = false;
+
+                            context.Entry(operario).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                             context.SaveChanges();
                         }
                         row++;
