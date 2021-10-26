@@ -221,6 +221,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         public int? ProcesoID { get; set; }
         public int? MaquinaID { get; set; }
         public int? OperarioID { get; set; }
+        public int? AuditorID { get; set; }
         public int? SupervisorID { get; set; }
     }
 }

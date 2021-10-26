@@ -32,8 +32,8 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         public async Task<ActionResult<List<Operario>>> Get([FromQuery] ParametrosBusquedaOperarios parametrosBusqueda)
         {
             var operarios = await context.Operarios.Where(x => !x.DeBaja &&
-                                                                x.Auditor == parametrosBusqueda.Auditor &&
-                                                                x.Supervisor == parametrosBusqueda.Supervisor).ToListAsync();
+                                                               (parametrosBusqueda.Auditor == null || x.Auditor == parametrosBusqueda.Auditor) ||
+                                                               (parametrosBusqueda.Supervisor == null || x.Supervisor == parametrosBusqueda.Supervisor)).ToListAsync();
 
 
             if (!string.IsNullOrWhiteSpace(parametrosBusqueda.Legajo))
@@ -123,7 +123,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         public string Legajo { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }
-        public bool Auditor { get; set; }
-        public bool Supervisor { get; set; }
+        public bool? Auditor { get; set; }
+        public bool? Supervisor { get; set; }
     }
 }
