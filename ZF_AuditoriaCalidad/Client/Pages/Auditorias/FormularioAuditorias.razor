@@ -119,10 +119,10 @@
                                        ControlName="Operario"
                                        Placeholder="Buscar Por Legajo">
                         <MyListTemplate>
-                            @Operario.Legajo
+                            @Operario.Legajo - @Operario.ApellidoYNombre
                         </MyListTemplate>
                         <MyResultTemplate>
-                            @Operario.Legajo
+                            @Operario.Legajo - @Operario.ApellidoYNombre
                         </MyResultTemplate>
                     </SelectorTypeahead>
                 </div>
@@ -136,10 +136,10 @@
                                        ControlName="Supervisor"
                                        Placeholder="Buscar Por Legajo">
                         <MyListTemplate>
-                            @Supervisor.Legajo
+                            @Supervisor.Legajo - @Supervisor.ApellidoYNombre
                         </MyListTemplate>
                         <MyResultTemplate>
-                            @Supervisor.Legajo
+                            @Supervisor.Legajo - @Supervisor.ApellidoYNombre
                         </MyResultTemplate>
                     </SelectorTypeahead>
                 </div>
@@ -330,7 +330,7 @@
     private async Task<IEnumerable<Operario>> BuscarSupervisores(string searchText)
     {
         int tipoFiltro = 1;
-        var responseHttp = await repositorio.Get<List<Operario>>($"api/Operarios/buscar/{searchText}?tipoFiltro=" + tipoFiltro);
+        var responseHttp = await repositorio.Get<List<Operario>>($"api/Operarios/buscar/{searchText}");//?tipoFiltro=" + tipoFiltro);
         return responseHttp.Response;
     }
 
