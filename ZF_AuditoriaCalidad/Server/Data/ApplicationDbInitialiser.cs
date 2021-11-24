@@ -17,9 +17,10 @@ namespace ZF_AuditoriaCalidad.Server.Data
 
         public static void SeedUsers(UserManager<ApplicationUser> userManager)
         {
-            (string name, string password, string role)[] demoUsers = new[]
+            (string name, string password, string role)[] demoUsers = new (string name, string password, string role)[]
             {
-                (name: "admin@gmail.com", password: "Adminzf.20", role: "Administrador")
+                (name: "admin@gmail.com", password: "Adminzf.20", role: "Administrador"),
+                (name: "gonzalo.cerutti@zf.com", password: "AdmGcZf.21", role: "Administrador")
             };
 
             foreach ((string name, string password, string role) user in demoUsers)
