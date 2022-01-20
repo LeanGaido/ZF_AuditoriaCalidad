@@ -239,7 +239,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                             //operario.Email = emailOperario;
                             //operario.Auditor = (operarioAuditor == 1) ? true : false;
                             //operario.Supervisor = (operarioSupervisor == 1) ? true : false;
-                            operario.DeBaja = false;
+                            operario.DeBaja = operario.DeBaja;
 
                             context.Entry(operario).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                             context.SaveChanges();
