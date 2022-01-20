@@ -32,7 +32,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         public async Task<ActionResult<List<Operario>>> Get([FromQuery] ParametrosBusquedaOperarios parametrosBusqueda)
         {
             var operarios = await context.Operarios.Where(x => !x.DeBaja &&
-                                                               (parametrosBusqueda.Auditor == null || x.Auditor == parametrosBusqueda.Auditor) ||
+                                                               (parametrosBusqueda.Auditor == null || x.Auditor == parametrosBusqueda.Auditor) &&
                                                                (parametrosBusqueda.Supervisor == null || x.Supervisor == parametrosBusqueda.Supervisor)).ToListAsync();
 
 
@@ -97,6 +97,26 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                 .Where(x => x.Auditor == auditor &&
                             x.Supervisor == supervisor &&
                             x.Legajo.ToLower().Contains(textoBusqueda)).ToListAsync();
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<Operario>> Put(Operario operario)
+        {
+            if(context.Operarios.Where(x => x.ID != operario.ID && x.Z == operario.Z).FirstOrDefault() != null)
+            {
+                return BadRequest("Ya existe otro Operario con este Z");
+            }
+
+            if (context.Operarios.Where(x => x.ID != operario.ID && x.Legajo == operario.Legajo).FirstOrDefault() != null)
+            {
+                return BadRequest("Ya existe otro Operario con este Legajo");
+            }
+
+            context.Entry(operario).State = EntityState.Modified;
+
+            await context.SaveChangesAsync();
+
+            return NoContent();
         }
 
         [HttpDelete("{id}")]

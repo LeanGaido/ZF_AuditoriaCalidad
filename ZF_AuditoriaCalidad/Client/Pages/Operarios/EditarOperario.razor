@@ -1,0 +1,68 @@
+﻿@page "/operarios/editar/{OperarioId:int}"
+@inject NavigationManager navigationManager
+@inject IRepositorio repositorio
+
+@using ZF_AuditoriaCalidad.Shared.DTOs
+
+<h3>Nueva Auditoria</h3>
+
+@if (MostrarFormulario)
+{
+    if (!string.IsNullOrEmpty(MensajeError))
+    {
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            @MensajeError.
+        </div>
+    }
+    <FormularioOperarios OnValidSubmit="Editar"
+                         operario="operario">
+    </FormularioOperarios>
+}
+else
+{
+    <text>Cargando...</text>
+}
+
+@code {
+    private bool MostrarFormulario { get; set; } = false;
+    [Parameter] public int OperarioId { get; set; }
+    private Operario operario = new Operario();
+    private string MensajeError = "";
+
+    protected async override Task OnInitializedAsync()
+    {
+        var httpResponse = await repositorio.Get<Operario>($"api/Operarios/{OperarioId}");
+
+        if (httpResponse.Error)
+        {
+            if (httpResponse.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("operarios");
+            }
+        }
+        else
+        {
+            operario = httpResponse.Response;
+        }
+
+        MostrarFormulario = true;
+    }
+
+    async Task Editar()
+    {
+        var httpResponse = await repositorio.Put<Operario>("api/Operarios", operario);
+
+        if (httpResponse.Error)
+        {
+            MensajeError = await httpResponse.GetBody();
+            //await mostrarMensajes.MostrarMensajeError(mensajeError);
+        }
+        else
+        {
+            var AuditoriaId = httpResponse.Response;
+            //navigationManager.NavigateTo($"/Auditorias/{AuditoriaId}");
+            navigationManager.NavigateTo($"/Operarios");
+        }
+    }
+
+}
