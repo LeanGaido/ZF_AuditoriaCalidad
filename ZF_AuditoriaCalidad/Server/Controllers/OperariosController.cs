@@ -31,9 +31,9 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<List<Operario>>> Get([FromQuery] ParametrosBusquedaOperarios parametrosBusqueda)
         {
-            var operarios = await context.Operarios.Where(x => !x.DeBaja &&
-                                                               (parametrosBusqueda.Auditor == null || x.Auditor == parametrosBusqueda.Auditor) &&
-                                                               (parametrosBusqueda.Supervisor == null || x.Supervisor == parametrosBusqueda.Supervisor)).ToListAsync();
+            var operarios = await context.Operarios.Where(x => (parametrosBusqueda.Auditor == null || x.Auditor == parametrosBusqueda.Auditor) &&
+                                                               (parametrosBusqueda.Supervisor == null || x.Supervisor == parametrosBusqueda.Supervisor) &&
+                                                               (parametrosBusqueda.Bajas == null || x.DeBaja == parametrosBusqueda.Bajas)).ToListAsync();
 
 
             if (!string.IsNullOrWhiteSpace(parametrosBusqueda.Legajo))
@@ -99,6 +99,22 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
                             x.Legajo.ToLower().Contains(textoBusqueda)).ToListAsync();
         }
 
+        [HttpPost]
+        public async Task<ActionResult<int>> Post(int Id)
+        {
+            Operario operario = context.Operarios.Where(x => x.ID == Id).FirstOrDefault();
+            if (operario == null)
+            {
+                return BadRequest("Ya existe otro Operario con este Z");
+            }
+
+            operario.DeBaja = false;
+
+            await context.SaveChangesAsync();
+
+            return operario.ID;
+        }
+
         [HttpPut]
         public async Task<ActionResult<Operario>> Put(Operario operario)
         {
@@ -116,7 +132,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
             await context.SaveChangesAsync();
 
-            return NoContent();
+            return operario;
         }
 
         [HttpDelete("{id}")]
@@ -145,5 +161,6 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         public string Apellido { get; set; }
         public bool? Auditor { get; set; }
         public bool? Supervisor { get; set; }
+        public bool? Bajas { get; set; }
     }
 }
