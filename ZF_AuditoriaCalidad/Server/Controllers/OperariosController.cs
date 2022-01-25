@@ -33,7 +33,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         {
             var operarios = await context.Operarios.Where(x => (parametrosBusqueda.Auditor == null || x.Auditor == parametrosBusqueda.Auditor) &&
                                                                (parametrosBusqueda.Supervisor == null || x.Supervisor == parametrosBusqueda.Supervisor) &&
-                                                               (parametrosBusqueda.Bajas == null || x.DeBaja == parametrosBusqueda.Bajas)).ToListAsync();
+                                                               (x.DeBaja == parametrosBusqueda.Bajas)).ToListAsync();
 
 
             if (!string.IsNullOrWhiteSpace(parametrosBusqueda.Legajo))
@@ -100,9 +100,9 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> Post(int Id)
+        public async Task<ActionResult<Operario>> Post(Operario Operario)
         {
-            Operario operario = context.Operarios.Where(x => x.ID == Id).FirstOrDefault();
+            Operario operario = context.Operarios.Where(x => x.ID == Operario.ID).FirstOrDefault();
             if (operario == null)
             {
                 return BadRequest("Ya existe otro Operario con este Z");
@@ -112,7 +112,7 @@ namespace ZF_AuditoriaCalidad.Server.Controllers
 
             await context.SaveChangesAsync();
 
-            return operario.ID;
+            return Operario;
         }
 
         [HttpPut]
