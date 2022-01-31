@@ -1,23 +1,82 @@
-<CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(Program).Assembly">
-        <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-                <NotAuthorized>
-                    @if (!context.User.Identity.IsAuthenticated)
-                    {
-                        <RedirectToLogin />
-                    }
-                    else
-                    {
-                        <p>You are not authorized to access this resource.</p>
-                    }
-                </NotAuthorized>
-            </AuthorizeRouteView>
-        </Found>
-        <NotFound>
-            <LayoutView Layout="@typeof(MainLayout)">
-                <p>Sorry, there's nothing at this address.</p>
-            </LayoutView>
-        </NotFound>
-    </Router>
-</CascadingAuthenticationState>
+@if (isLoaded)
+{
+    <CascadingAuthenticationState>
+        <Router AppAssembly="@typeof(Program).Assembly">
+            <Found Context="routeData">
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                    <NotAuthorized>
+                        @if (!context.User.Identity.IsAuthenticated)
+                        {
+                            <RedirectToLogin />
+                        }
+                        else
+                        {
+                            <p>You are not authorized to access this resource.</p>
+                        }
+                    </NotAuthorized>
+                </AuthorizeRouteView>
+            </Found>
+            <NotFound>
+                <LayoutView Layout="@typeof(MainLayout)">
+                    <p>Sorry, there's nothing at this address.</p>
+                </LayoutView>
+            </NotFound>
+        </Router>
+    </CascadingAuthenticationState>
+}
+else
+{
+    <style type="text/css">
+        body{
+            background-color: #2954A2; 
+            text-align: center;
+            margin-top: 50px;
+
+        }
+        div.image {
+            text-align: center;
+        }
+        div.texto {
+            font-size: 20pt;
+            font-family: verdana, Verdana, Arial, Helvetica, sans-serif;
+            text-align: justify;
+            color: #fff;
+            text-align: center;
+        }
+        div.titulo {
+            background-color: #004AE6;
+            font-size: 50pt;
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            color: #fff;
+            font-weight: bold;
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+        div.sub-titulo {
+            font-size: 25pt; 
+            font-family: Helvetica, sans-serif; 
+            text-align: center; 
+            color:#fff;
+        }
+    </style>
+    <div class="container">
+        <div class="image"><img src="/ZF-Audicel-Logo.png"></div>
+        <br>
+        <div class="sub-titulo">BIENVENIDO</div>
+        <br><br>
+        <div class="titulo">ZF V-Pro</div>
+        <br><br>
+        <div class="texto">Web App para Validacion de Insumos de Productos</div>
+    </div>
+}
+
+@code {
+    bool isLoaded;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1500); // TODO actual initialization job
+        isLoaded = true;
+    }
+}
